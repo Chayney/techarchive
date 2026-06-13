@@ -10,25 +10,31 @@ import {
 import { Platform } from "./platforms.entity";
 import { Article } from "./articles.entity";
 
-@Entity("trend_articles")
-export class TrendArticle {
+@Entity("trends")
+export class Trend {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Column({ name: "platform_id", nullable: true })
+    platform_id!: number | null;
+
+    @Column({ name: "article_id", nullable: true })
+    article_id!: number | null;
+
     @Column({ name: "like_count", default: 0 })
-    likeCount!: number;
+    like_count!: number;
 
     @CreateDateColumn({ name: "created_at" })
-    createdAt!: Date;
+    created_at!: Date;
 
     @UpdateDateColumn({ name: "updated_at" })
-    updatedAt!: Date;
+    updated_at!: Date;
 
-    @ManyToOne(() => Platform, (platform) => platform.articles)
+    @ManyToOne(() => Platform, (platform) => platform.trends)
     @JoinColumn({ name: "platform_id" })
     platform!: Platform;
 
-    @ManyToOne(() => Article, (article) => article.trendArticles)
+    @ManyToOne(() => Article, (article) => article.trends)
     @JoinColumn({ name: "article_id" })
     article!: Article;
 }

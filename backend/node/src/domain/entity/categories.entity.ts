@@ -8,8 +8,7 @@ import {
     JoinColumn,
     OneToMany,
 } from "typeorm";
-import { FavoriteArticle } from "./favorite_articles.entity";
-import { Profile } from "./profiles.entity";
+import { Feed } from "./feeds.entity";
 
 @Entity("categories")
 export class Category {
@@ -19,16 +18,9 @@ export class Category {
     @Column()
     name!: string;
 
-    @CreateDateColumn({ name: "created_at" })
-    createdAt!: Date;
+    @Column()
+    type!: number;
 
-    @UpdateDateColumn({ name: "updated_at" })
-    updatedAt!: Date;
-
-    @ManyToOne(() => Profile, (profile) => profile.categories, { onDelete: "CASCADE" })
-    @JoinColumn({ name: "profile_id" })
-    profile!: Profile;
-
-    @OneToMany(() => FavoriteArticle, (fa) => fa.category)
-    favoriteArticles!: FavoriteArticle[];
+    @OneToMany(() => Feed, (feed) => feed.category)
+    feeds!: Feed[];
 }

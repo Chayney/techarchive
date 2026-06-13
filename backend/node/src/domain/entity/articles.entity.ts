@@ -1,56 +1,57 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import { Platform } from "./platforms.entity";
-import { TrendArticle } from "./trend_articles.entity";
-import { FavoriteArticle } from "./favorite_articles.entity";
+import { Trend } from "./trends.entity";
+import { Feed } from "./feeds.entity";
 
 @Entity("articles")
 export class Article {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "integer", nullable: true })
+    @Column({ name: "platform_id" })
     platform_id!: number;
 
-    @Column({ type: "varchar" })
+    @Column({ name: "feed_id" })
+    feed_id!: number;
+
+    @Column()
     title!: string;
 
-    @Column({ type: "text" })
-    description!: string;
-
-    @Column({ type: "varchar" })
+    @Column()
     article_url!: string;
 
-    @Column({ type: "timestamp", nullable: true })
-    published_at!: Date | null;
-
-    @Column({ type: "varchar", nullable: true })
-    author_name!: string | null;
-
-    @Column({ type: "varchar", nullable: true })
+    @Column({ type: "text", nullable: true })
     tags!: string | null;
 
-    @Column({ type: "varchar" })
-    thumbnail_url!: string;
+    @Column({ name: "thumbnail_url", type: "text", nullable: true })
+    thumbnail_url!: string | null;
 
-    @Column({ type: "boolean" })
-    is_eng!: boolean;
-
-    @Column({ type: "boolean" })
+    @Column({ name: "is_private", default: false })
     is_private!: boolean;
 
     @CreateDateColumn({ name: "created_at" })
-    createdAt!: Date;
+    created_at!: Date;
 
     @UpdateDateColumn({ name: "updated_at" })
-    updatedAt!: Date;
+    updated_at!: Date;
 
     @ManyToOne(() => Platform, (platform) => platform.articles)
     @JoinColumn({ name: "platform_id" })
     platform!: Platform;
 
-    @OneToMany(() => TrendArticle, (ta) => ta.article)
-    trendArticles!: TrendArticle[];
+    @ManyToOne(() => Feed, (feed) => feed.articles)
+    @JoinColumn({ name: "feed_id" })
+    feed!: Feed;
 
-    @OneToMany(() => FavoriteArticle, (fa) => fa.article)
-    favoriteArticles!: FavoriteArticle[];
+    @OneToMany(() => Trend, (trend) => trend.article)
+    trends!: Trend[];
 }

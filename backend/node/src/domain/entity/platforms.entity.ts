@@ -5,9 +5,11 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
+    DeleteDateColumn,
 } from "typeorm";
 import { Article } from "./articles.entity";
-import { TrendArticle } from "./trend_articles.entity";
+import { Trend } from "./trends.entity";
+import { Feed } from "./feeds.entity";
 
 @Entity("platforms")
 export class Platform {
@@ -17,41 +19,36 @@ export class Platform {
     @Column()
     name!: string;
 
-    @Column()
-    siteUrl!: string;
+    @Column({ name: "site_url" })
+    site_url!: string;
 
-    @Column()
-    platformSiteType!: number;
+    @Column({ name: "platform_site_type" })
+    platform_site_type!: number;
 
-    @Column()
-    faviconUrl!: string;
+    @Column({ name: "favicon_url" })
+    favicon_url!: string;
 
-    @Column()
-    isEng!: boolean;
+    @Column({
+        name: "is_eng",
+        default: false,
+    })
+    is_eng!: boolean;
 
     @CreateDateColumn({ name: "created_at" })
-    createdAt!: Date;
+    created_at!: Date;
 
     @UpdateDateColumn({ name: "updated_at" })
-    updatedAt!: Date;
+    updated_at!: Date;
 
-    @Column({ type: "timestamp", nullable: true })
-    deletedAt!: Date | null;
+    @DeleteDateColumn({ name: "deleted_at", nullable: true })
+    deleted_at!: Date | null;
 
-    // ===== Relations =====
+    @OneToMany(() => Feed, (feed) => feed.platform)
+    feeds!: Feed[];
 
     @OneToMany(() => Article, (article) => article.platform)
     articles!: Article[];
 
-    @OneToMany(() => TrendArticle, (ta) => ta.platform)
-    trendArticles!: TrendArticle[];
-
-    // @OneToMany(() => Bookmark, (bookmark) => bookmark.platform)
-    // bookmarks!: Bookmark[];
-
-    // @OneToMany(() => FavoriteArticle, (fa) => fa.platform)
-    // favoriteArticles!: FavoriteArticle[];
-
-    // @OneToMany(() => Feed, (feed) => feed.platform)
-    // feeds!: Feed[];
+    @OneToMany(() => Trend, (trend) => trend.platform)
+    trends!: Trend[];
 }

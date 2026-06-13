@@ -1,10 +1,10 @@
 import { DataSource } from "typeorm";
-import { FavoriteArticle } from "../../domain/entity/favorite_articles.entity";
+import { Favorite } from "../../domain/entity/favorites.entity";
 import { Category } from "../../domain/entity/categories.entity";
 import { Article } from "../../domain/entity/articles.entity";
 
 export const FavoriteArticleData = async (dataSource: DataSource) => {
-    const favoriteRepository = dataSource.getRepository(FavoriteArticle);
+    const favoriteRepository = dataSource.getRepository(Favorite);
     const categoryRepository = dataSource.getRepository(Category);
     const articleRepository = dataSource.getRepository(Article);
 
@@ -51,16 +51,16 @@ export const FavoriteArticleData = async (dataSource: DataSource) => {
         },
     ];
 
-    const entities = favoriteRepository.create(favorites);
-    await favoriteRepository.save(entities);
+    // const entities = favoriteRepository.create(favorites);
+    // await favoriteRepository.save(entities);
 
-    console.log(
-        "FavoriteArticle seed complete:",
-        await favoriteRepository.find({
-            relations: {
-                category: true,
-                article: true,
-            },
-        })
-    );
+    // console.log(
+    //     "FavoriteArticle seed complete:",
+    //     await favoriteRepository.find({
+    //         relations: {
+    //             category: true,
+    //             article: true,
+    //         },
+    //     })
+    // );
 };

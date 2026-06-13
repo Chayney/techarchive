@@ -20,22 +20,22 @@ export class User {
     password!: string;
 
     @Column({ default: false })
-    isAdmin!: boolean;
+    is_admin!: boolean;
 
     @Column({ default: true })
-    isActive!: boolean;
+    is_active!: boolean;
 
     @Column({ nullable: true, type: "timestamp" })
-    emailVerifiedAt?: Date;
+    email_verified_at?: Date;
 
     @Column({ nullable: true, type: "timestamp" })
-    lastLoginAt?: Date;
+    last_login_at?: Date;
 
     @CreateDateColumn({ name: "created_at" })
-    createdAt!: Date;
+    created_at!: Date;
 
     @UpdateDateColumn({ name: "updated_at" })
-    updatedAt!: Date;
+    updated_at!: Date;
 
     @OneToOne(() => Profile, (profile) => profile.user)
     profile!: Profile;

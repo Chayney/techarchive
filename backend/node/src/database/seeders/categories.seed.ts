@@ -39,8 +39,8 @@ export const CategoryData = async (dataSource: DataSource) => {
     const entities = categoryRepository.create(categories);
     await categoryRepository.save(entities);
 
-    console.log(
-        "Category seed complete:",
-        await categoryRepository.find({ relations: { profile: true } })
-    );
+    // console.log(
+    //     "Category seed complete:",
+    //     await categoryRepository.find({ relations: { profile: true } })
+    // );
 };
