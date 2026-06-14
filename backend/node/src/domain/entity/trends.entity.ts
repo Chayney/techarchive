@@ -15,11 +15,11 @@ export class Trend {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "platform_id", nullable: true })
-    platform_id!: number | null;
+    @Column({ name: "platform_id" })
+    platform_id!: number;
 
-    @Column({ name: "article_id", nullable: true })
-    article_id!: number | null;
+    @Column({ name: "article_id" })
+    article_id!: number;
 
     @Column({ name: "like_count", default: 0 })
     like_count!: number;

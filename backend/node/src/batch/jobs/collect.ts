@@ -1,17 +1,15 @@
 import { DataSource } from "typeorm";
 import { qiitaArticleCrawler } from "./trend/qiita";
 import { rssRepository } from "../infrastructure/rss";
-import { qiitaApiRepository } from "../infrastructure/api";
+import { qiitaApiRepository, zennApiRepository } from "../infrastructure/api";
 import { Feed } from "../../domain/entity/feeds.entity";
-import { Platform } from "../../domain/entity/platforms.entity";
+import { zennArticleCrawler } from "./trend/zenn";
 
 export async function collectJob(dataSource: DataSource): Promise<void> {
     console.log("collect start");
 
     try {
         const feedRepo = dataSource.getRepository(Feed);
-        const platformRepo = dataSource.getRepository(Platform);
-
         const feeds = await feedRepo.find({
             relations: {
                 platform: true,
@@ -21,18 +19,31 @@ export async function collectJob(dataSource: DataSource): Promise<void> {
         for (const feed of feeds) {
             const platform = feed.platform;
 
-            await qiitaArticleCrawler(
-                dataSource,
-                rssRepository,
-                qiitaApiRepository,
-                {
-                    feed_id: feed.id,
-                    platform_id: platform.id,
-                    feed_name: feed.name,
-                    rss_url: feed.rss_url,
-                    is_eng: platform.is_eng ?? false,
-                }
-            );
+            if (platform.name === "Qiita") {
+                await qiitaArticleCrawler(
+                    dataSource,
+                    rssRepository,
+                    qiitaApiRepository,
+                    {
+                        feed_id: feed.id,
+                        platform_id: feed.platform.id,
+                        rss_url: feed.rss_url,
+                    }
+                );
+            }
+
+            if (platform.name === "Zenn") {
+                await zennArticleCrawler(
+                    dataSource,
+                    rssRepository,
+                    zennApiRepository,
+                    {
+                        feed_id: feed.id,
+                        platform_id: feed.platform.id,
+                        rss_url: feed.rss_url,
+                    }
+                );
+            }
         }
 
         console.log("collect success");

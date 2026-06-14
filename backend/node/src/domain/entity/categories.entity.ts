@@ -4,8 +4,6 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToOne,
-    JoinColumn,
     OneToMany,
 } from "typeorm";
 import { Feed } from "./feeds.entity";
@@ -20,6 +18,12 @@ export class Category {
 
     @Column()
     type!: number;
+
+    @CreateDateColumn({ name: "created_at" })
+    created_at!: Date;
+
+    @UpdateDateColumn({ name: "updated_at" })
+    updated_at!: Date;
 
     @OneToMany(() => Feed, (feed) => feed.category)
     feeds!: Feed[];

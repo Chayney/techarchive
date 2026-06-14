@@ -10,25 +10,29 @@ export const RSSClient = {
 
         const items: any[] = [];
 
-        const itemBlocks = xml.split("<item>").slice(1);
+        const entryBlocks = xml.split("<entry>").slice(1);
 
-        for (const block of itemBlocks) {
-            const itemXml = block.split("</item>")[0];
+        for (const block of entryBlocks) {
+            const entryXml = block.split("</entry>")[0];
 
-            const link = matchTag(itemXml, "link");
-            const title = matchTag(itemXml, "title");
-            const pubDate = matchTag(itemXml, "pubDate");
-            const creator = matchTag(itemXml, "dc:creator");
-            const category = matchAllTags(itemXml, "category");
-            const enclosure = matchEnclosure(itemXml);
+            const link =
+                entryXml.match(/<link[^>]+href="([^"]+)"/)?.[1] ?? "";
+
+            const title = matchTag(entryXml, "title") ?? "";
+
+            const updated = matchTag(entryXml, "updated");
+
+            const author = matchTag(entryXml, "name");
 
             items.push({
-                link: link ?? "",
-                title: title ?? "",
-                publishedAt: pubDate ? new Date(pubDate).getTime() : 0,
-                authorName: creator ?? null,
-                tags: category.length > 0 ? category.join(",") : null,
-                imageUrl: enclosure ?? "",
+                link,
+                title,
+                publishedAt: updated
+                    ? new Date(updated).getTime()
+                    : Date.now(),
+                authorName: author,
+                tags: null,
+                imageUrl: "",
             });
         }
 
@@ -36,21 +40,10 @@ export const RSSClient = {
     },
 };
 
-// =======================
-// helper functions
-// =======================
-
 function matchTag(xml: string, tag: string): string | null {
-    const match = xml.match(new RegExp(`<${tag}>(.*?)</${tag}>`));
-    return match ? match[1] : null;
-}
+    const match = xml.match(
+        new RegExp(`<${tag}>(.*?)</${tag}>`, "s")
+    );
 
-function matchAllTags(xml: string, tag: string): string[] {
-    const matches = [...xml.matchAll(new RegExp(`<${tag}>(.*?)</${tag}>`, "g"))];
-    return matches.map((m) => m[1]);
-}
-
-function matchEnclosure(xml: string): string | null {
-    const match = xml.match(/enclosure[^>]+url="([^"]+)"/);
-    return match ? match[1] : null;
+    return match ? match[1].trim() : null;
 }

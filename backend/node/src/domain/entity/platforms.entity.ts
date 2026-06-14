@@ -16,22 +16,22 @@ export class Platform {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    // Qiita、Zenn
     @Column()
     name!: string;
 
+    // qiita.com、zenn.dev
     @Column({ name: "site_url" })
     site_url!: string;
 
+    // 1: Qiita、2: Zenn
     @Column({ name: "platform_site_type" })
     platform_site_type!: number;
 
     @Column({ name: "favicon_url" })
     favicon_url!: string;
 
-    @Column({
-        name: "is_eng",
-        default: false,
-    })
+    @Column({ name: "is_eng", default: false })
     is_eng!: boolean;
 
     @CreateDateColumn({ name: "created_at" })

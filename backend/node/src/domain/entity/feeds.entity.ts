@@ -18,12 +18,15 @@ export class Feed {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    name!: string;
+    // Qiitaのトレンド、Zennのトレンド
+    @Column({ name: "name", type: "text", nullable: true })
+    name!: string | null;
 
-    @Column("text")
-    description!: string;
+    // 各プラットフォームの概要欄
+    @Column({ name: "description", type: "text", nullable: true })
+    description!: string | null;
 
+    // 各プラットフォームのロゴ
     @Column({ name: "thumbnail_url", type: "text", nullable: true })
     thumbnail_url!: string | null;
 
@@ -36,14 +39,17 @@ export class Feed {
     @Column({ name: "site_url" })
     site_url!: string;
 
-    @Column({ name: "rss_url" })
-    rss_url!: string;
+    // API取得ならNULL
+    @Column({ name: "rss_url", type: "text", nullable: true })
+    rss_url!: string | null;
 
-    @Column({ name: "api_query_param", type: "text", nullable: true })
-    api_query_param!: string | null;
-
+    // デフォルト:RSSベース、APIベース、クローリング、外部ランキング
     @Column({ name: "trend_platform_type", default: 0 })
     trend_platform_type!: number;
+
+    // RSS取得ならNULL
+    @Column({ name: "api_query_param", type: "text", nullable: true })
+    api_query_param!: string | null;
 
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
