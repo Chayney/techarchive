@@ -16,16 +16,14 @@ type RSSReader = {
 };
 
 type QiitaArticle = {
-    likesCount: number;
+    id: string;
+    likes_count: number;
 };
 
 type QiitaAPIReader = {
-    getQiitaArticles(articleId: string): Promise<QiitaArticle>;
+    getQiitaArticles(): Promise<QiitaArticle[]>;
 };
 
-// ==================================================
-// Feedから必要最小限だけ渡す
-// ==================================================
 type QiitaArticleCrawlerArg = {
     feed_id: number;
     platform_id: number;
@@ -38,114 +36,226 @@ export const qiitaArticleCrawler = async (
     air: QiitaAPIReader,
     arg: QiitaArticleCrawlerArg
 ): Promise<void> => {
+
     console.log("\n🚀 START QIITA CRAWLER");
 
     let rss: RSSItem[];
 
-    // ==================================================
-    // ① RSS取得
-    // ==================================================
+    // ==========================================
+    // RSS取得
+    // ==========================================
     try {
         console.log("📡 fetching RSS...");
-        if (!arg.rss_url) return;
+
+        if (!arg.rss_url) {
+            console.warn("rss_url is null");
+            return;
+        }
+
         rss = await rr.getRSS(arg.rss_url);
+
         console.log(`✅ RSS fetched: ${rss.length}`);
+
     } catch (err) {
         console.error("❌ RSS ERROR", err);
         return;
     }
 
-    // ==================================================
-    // ② RSSループ
-    // ==================================================
+    // ==========================================
+    // Qiita API一括取得
+    // ==========================================
+    let likeMap = new Map<string, number>();
+
+    try {
+
+        console.log("📡 fetching Qiita API...");
+
+        const apiItems = await air.getQiitaArticles();
+
+        likeMap = new Map(
+            apiItems.map((item) => [
+                item.id,
+                item.likes_count,
+            ])
+        );
+
+        console.log(
+            `✅ Qiita API fetched: ${apiItems.length}`
+        );
+
+    } catch (err) {
+        console.error("❌ Qiita API ERROR", err);
+        return;
+    }
+
+    let matchedCount = 0;
+    let notMatchedCount = 0;
+
+    // ==========================================
+    // RSSループ
+    // ==========================================
     for (const item of rss) {
-        const queryRunner = dataSource.createQueryRunner();
+
+        const queryRunner =
+            dataSource.createQueryRunner();
+
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
 
-            // ==================================================
-            // ③ article_id抽出
-            // ==================================================
-            const path = internal.getURLPath(item.link);
-            const parts = path.split("/items/");
-
-            if (parts.length < 2 || !parts[1]) {
-                console.warn("❌ invalid qiita url:", item.link);
-                await queryRunner.rollbackTransaction();
-                continue;
-            }
-
-            const articleId = parts[1];
-
-            // ==================================================
-            // ④ Qiita API（like取得）
-            // ==================================================
-            let api: QiitaArticle;
+            // ==========================================
+            // article id抽出
+            // ==========================================
+            let articleId: string;
 
             try {
-                api = await air.getQiitaArticles(articleId);
-            } catch (err) {
-                console.error("❌ API ERROR:", articleId, err);
-                await queryRunner.rollbackTransaction();
-                continue;
-            }
 
-            if (!api || typeof api.likesCount === "undefined") {
-                console.error("❌ invalid API response:", api);
-                await queryRunner.rollbackTransaction();
-                continue;
-            }
+                const url = new URL(item.link);
 
-            // ==================================================
-            // ⑤ DB処理（Article + Trend）
-            // ==================================================
-            const res = await crawler.trendArticleContentsCrawler(
-                queryRunner,
-                {
-                    feed_id: arg.feed_id,
-                    platform_id: arg.platform_id,
-                    article_url: item.link,
-                    article_title: item.title,
-                    article_like_count: api.likesCount,
-                    article_published_at: item.publishedAt,
-                    article_author_name: item.authorName ?? null,
-                    article_tags: item.tags ?? null,
-                    article_ogp_image_url: item.imageUrl,
+                const parts =
+                    url.pathname.split("/items/");
+
+                if (
+                    parts.length < 2 ||
+                    !parts[1]
+                ) {
+                    console.warn(
+                        "❌ invalid qiita url:",
+                        item.link
+                    );
+
+                    await queryRunner.rollbackTransaction();
+                    continue;
                 }
-            );
 
-            // ==================================================
-            // ⑥ rollback
-            // ==================================================
-            if (res.is_rollback) {
-                console.warn("↩️ rollback triggered");
+                articleId = parts[1];
+
+            } catch {
+
+                console.warn(
+                    "❌ invalid url:",
+                    item.link
+                );
+
                 await queryRunner.rollbackTransaction();
                 continue;
             }
 
-            // ==================================================
-            // ⑦ commit
-            // ==================================================
-            if (res.is_commit) {
-                await queryRunner.commitTransaction();
+            // ==========================================
+            // Map照合
+            // ==========================================
+            const likesCount =
+                likeMap.get(articleId);
+
+            if (likesCount === undefined) {
+
+                notMatchedCount++;
+
+                console.warn(
+                    `⚠️ NOT FOUND IN API: ${articleId}`
+                );
+
             } else {
-                console.warn("⚠️ no commit flag");
+
+                matchedCount++;
+
+            }
+
+            // ==========================================
+            // DB保存
+            // ==========================================
+            const res =
+                await crawler.trendArticleContentsCrawler(
+                    queryRunner,
+                    {
+                        feed_id: arg.feed_id,
+                        platform_id: arg.platform_id,
+
+                        article_url: item.link,
+                        article_title: item.title,
+
+                        article_like_count:
+                            likesCount ?? 0,
+
+                        article_published_at:
+                            item.publishedAt,
+
+                        article_author_name:
+                            item.authorName ?? null,
+
+                        article_tags:
+                            item.tags ?? null,
+
+                        article_ogp_image_url:
+                            item.imageUrl,
+                    }
+                );
+
+            if (res.is_rollback) {
+
+                console.warn(
+                    "↩️ rollback triggered"
+                );
+
                 await queryRunner.rollbackTransaction();
+
+                continue;
+            }
+
+            if (res.is_commit) {
+
+                await queryRunner.commitTransaction();
+
+            } else {
+
+                await queryRunner.rollbackTransaction();
+
             }
 
         } catch (err) {
-            console.error("💥 ITEM ERROR:", err);
+
+            console.error(
+                "💥 ITEM ERROR:",
+                err
+            );
 
             try {
                 await queryRunner.rollbackTransaction();
             } catch { }
 
         } finally {
+
             await queryRunner.release();
+
         }
     }
+
+    // ==========================================
+    // 集計結果
+    // ==========================================
+    const total =
+        matchedCount + notMatchedCount;
+
+    console.log("\n📊 MATCH RESULT");
+
+    console.log(
+        `matched     : ${matchedCount}`
+    );
+
+    console.log(
+        `not matched : ${notMatchedCount}`
+    );
+
+    console.log(
+        `match rate  : ${total === 0
+            ? 0
+            : (
+                matchedCount /
+                total
+            ) * 100
+        }%`
+    );
 
     console.log("🏁 END QIITA CRAWLER");
 };

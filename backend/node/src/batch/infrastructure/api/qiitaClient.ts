@@ -1,25 +1,32 @@
+export type QiitaArticle = {
+    id: string;
+    likes_count: number;
+};
+
+type QiitaItemResponse = {
+    id: string;
+    likes_count: number;
+};
+
 export const QiitaClient = {
-    async fetch(articleId: string) {
+    async getQiitaArticles(): Promise<QiitaArticle[]> {
+
         const res = await fetch(
-            `https://qiita.com/api/v2/items/${articleId}`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
+            "https://qiita.com/api/v2/items?page=1&per_page=100"
         );
 
         if (!res.ok) {
             throw new Error(
-                `Qiita API error: ${res.status} ${res.statusText}`
+                `Qiita API Error: ${res.status}`
             );
         }
 
-        const data = await res.json();
+        const json: QiitaItemResponse[] =
+            await res.json();
 
-        return {
-            likesCount: data.likes_count,
-        };
+        return json.map((item) => ({
+            id: item.id,
+            likes_count: item.likes_count,
+        }));
     },
 };

@@ -15,32 +15,27 @@ export const CategoryData = async (dataSource: DataSource) => {
 
     const categories = [
         {
-            name: "React",
-            profile: profiles[0],
+            name: "JavaScript",
+            profile_id: profiles[0].id,
         },
         {
             name: "Node.js",
-            profile: profiles[0],
+            profile_id: profiles[0].id,
         },
         {
-            name: "TypeORM",
-            profile: profiles[1] ?? profiles[0],
+            name: "TypeScript",
+            profile_id: profiles[0].id,
         },
         {
-            name: "AI",
-            profile: profiles[1] ?? profiles[0],
+            name: "AWS",
+            profile_id: profiles[1].id,
         },
         {
-            name: "Architecture",
-            profile: profiles[0],
+            name: "GCP",
+            profile_id: profiles[1].id,
         },
     ];
 
     const entities = categoryRepository.create(categories);
     await categoryRepository.save(entities);
-
-    // console.log(
-    //     "Category seed complete:",
-    //     await categoryRepository.find({ relations: { profile: true } })
-    // );
 };

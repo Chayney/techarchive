@@ -6,8 +6,8 @@ type RSSItem = {
     link: string;
     title: string;
     publishedAt: number;
-    authorName?: string | null;
-    tags?: string | null;
+    authorName: string;
+    tags: string;
     imageUrl: string;
 };
 
@@ -40,15 +40,24 @@ export const zennArticleCrawler = async (
 ): Promise<void> => {
     console.log("\n🚀 START Zenn CRAWLER");
 
-    let rss: RSSItem[];
+    if (!arg.rss_url) {
+        console.warn("⚠️ rss_url is null");
+        return;
+    }
+
+    let rss: RSSItem[] = [];
 
     // ==================================================
     // ① RSS取得
     // ==================================================
     try {
         console.log("📡 fetching RSS...");
-        if (!arg.rss_url) return;
         rss = await rr.getRSS(arg.rss_url);
+
+        if (!Array.isArray(rss)) {
+            throw new Error("RSS is not array");
+        }
+
         console.log(`✅ RSS fetched: ${rss.length}`);
     } catch (err) {
         console.error("❌ RSS ERROR", err);
@@ -63,28 +72,85 @@ export const zennArticleCrawler = async (
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
+        console.log("\n==============================");
+        console.log("📄 NEW ITEM START");
+
+        // ==================================================
+        // 🔥 1. item全体（最重要）
+        // ==================================================
+        console.log("📦 ITEM RAW (FULL):");
+        console.dir(item, {
+            depth: null,   // ネスト全部表示
+            colors: true,  // 見やすく
+        });
+
+        // JSON版（ログ保存用）
+        console.log("📦 ITEM JSON:");
+        console.log(JSON.stringify(item, null, 2));
+
+        // ==================================================
+        // 🔥 2. key一覧（構造把握）
+        // ==================================================
+        console.log("🔑 ITEM KEYS:", Object.keys(item));
+
+        // ==================================================
+        // 🔥 3. よく使う候補フィールド
+        // ==================================================
+        
+      
+
+        console.log("📝 title:", item.title);
+       
+        console.log("📅 publishedAt:", item.publishedAt);
+
+        const rawUrl = item.link;
+
+        console.log("RAW URL:", rawUrl);
+        console.log("TITLE:", item.title);
+
         try {
-
             // ==================================================
-            // ③ article_id抽出
+            // ① URLチェック
             // ==================================================
-            const path = internal.getURLPath(item.link);
-            const parts = path.split("/items/");
-
-            if (parts.length < 2 || !parts[1]) {
-                console.warn("❌ invalid zenn url:", item.link);
+            if (!rawUrl) {
+                console.warn("⚠️ SKIP: missing url");
                 await queryRunner.rollbackTransaction();
                 continue;
             }
 
-            const articleId = parts[1];
+            let path: string;
+
+            try {
+                const url = new URL(rawUrl);
+                path = url.pathname;
+            } catch (e) {
+                console.error("❌ invalid URL format:", rawUrl, e);
+                await queryRunner.rollbackTransaction();
+                continue;
+            }
 
             // ==================================================
-            // ④ Zenn API（like取得）
+            // ② Zenn slug extract
+            // ==================================================
+            const match = path.match(/\/articles\/([^\/]+)/);
+
+            if (!match) {
+                console.warn("❌ NOT ZENN ARTICLE URL");
+                console.warn("path:", path);
+                await queryRunner.rollbackTransaction();
+                continue;
+            }
+
+            const articleId = match[1];
+            console.log("🧩 articleId:", articleId);
+
+            // ==================================================
+            // ③ Zenn API
             // ==================================================
             let api: ZennArticle;
 
             try {
+                console.log("🌐 calling Zenn API...");
                 api = await air.getZennArticles(articleId);
             } catch (err) {
                 console.error("❌ API ERROR:", articleId, err);
@@ -92,35 +158,45 @@ export const zennArticleCrawler = async (
                 continue;
             }
 
-            if (!api || typeof api.likesCount === "undefined") {
-                console.error("❌ invalid API response:", api);
+            // ==================================================
+            // ④ API validation
+            // ==================================================
+            const likeCount = api?.likesCount ?? api?.likesCount;
+
+            if (likeCount == null) {
+                console.error("❌ invalid API response shape");
                 await queryRunner.rollbackTransaction();
                 continue;
             }
 
+            console.log("❤️ likeCount:", likeCount);
+
             // ==================================================
-            // ⑤ DB処理（Article + Trend）
+            // ⑤ DB処理
             // ==================================================
             const res = await crawler.trendArticleContentsCrawler(
                 queryRunner,
                 {
                     feed_id: arg.feed_id,
                     platform_id: arg.platform_id,
-                    article_url: item.link,
+
+                    article_url: rawUrl,
                     article_title: item.title,
-                    article_like_count: api.likesCount,
+
+                    article_like_count: likeCount,
                     article_published_at: item.publishedAt,
-                    article_author_name: item.authorName ?? null,
-                    article_tags: item.tags ?? null,
+                    article_author_name: item.authorName,
+                    article_tags: item.tags,
                     article_ogp_image_url: item.imageUrl,
                 }
             );
+
+            console.log("📦 crawler result:", JSON.stringify(res, null, 2));
 
             // ==================================================
             // ⑥ rollback
             // ==================================================
             if (res.is_rollback) {
-                console.warn("↩️ rollback triggered");
                 await queryRunner.rollbackTransaction();
                 continue;
             }
@@ -131,12 +207,11 @@ export const zennArticleCrawler = async (
             if (res.is_commit) {
                 await queryRunner.commitTransaction();
             } else {
-                console.warn("⚠️ no commit flag");
                 await queryRunner.rollbackTransaction();
             }
 
         } catch (err) {
-            console.error("💥 ITEM ERROR:", err);
+            console.error("💥 ITEM FATAL ERROR:", err);
 
             try {
                 await queryRunner.rollbackTransaction();

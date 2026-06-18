@@ -33,8 +33,8 @@ export class Profile {
     @JoinColumn({ name: "user_id" })
     user!: User;
 
-    // @OneToMany(() => Category, (category) => category.profile)
-    // categories!: Category[];
+    @OneToMany(() => Category, (category) => category.profile)
+    categories!: Category[];
 
     @OneToMany(() => Bookmark, (bookmark) => bookmark.profile)
     bookmarks!: Bookmark[];

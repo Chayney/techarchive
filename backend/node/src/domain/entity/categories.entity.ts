@@ -5,8 +5,13 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
+    OneToOne,
+    JoinColumn,
+    ManyToOne,
 } from "typeorm";
 import { Feed } from "./feeds.entity";
+import { Profile } from "./profiles.entity";
+import { Favorite } from "./favorites.entity";
 
 @Entity("categories")
 export class Category {
@@ -16,15 +21,16 @@ export class Category {
     @Column()
     name!: string;
 
-    @Column()
-    type!: number;
-
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
 
     @UpdateDateColumn({ name: "updated_at" })
     updated_at!: Date;
 
-    @OneToMany(() => Feed, (feed) => feed.category)
-    feeds!: Feed[];
+    @ManyToOne(() => Profile, (profile) => profile.categories, { onDelete: "CASCADE" })
+    @JoinColumn({ name: "profile_id" })
+    profile!: Profile;
+
+    @OneToMany(() => Favorite, (favorite) => favorite.article)
+    favorites!: Favorite[];
 }

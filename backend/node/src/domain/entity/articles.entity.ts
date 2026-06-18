@@ -11,6 +11,8 @@ import {
 import { Platform } from "./platforms.entity";
 import { Trend } from "./trends.entity";
 import { Feed } from "./feeds.entity";
+import { Favorite } from "./favorites.entity";
+import { Bookmark } from "./bookmarks.entity";
 
 @Entity("articles")
 export class Article {
@@ -19,9 +21,6 @@ export class Article {
 
     @Column({ name: "platform_id" })
     platform_id!: number;
-
-    @Column({ name: "feed_id" })
-    feed_id!: number;
 
     @Column()
     title!: string;
@@ -48,10 +47,12 @@ export class Article {
     @JoinColumn({ name: "platform_id" })
     platform!: Platform;
 
-    @ManyToOne(() => Feed, (feed) => feed.articles)
-    @JoinColumn({ name: "feed_id" })
-    feed!: Feed;
-
     @OneToMany(() => Trend, (trend) => trend.article)
     trends!: Trend[];
+
+    @OneToMany(() => Favorite, (favorite) => favorite.article)
+    favorites!: Favorite[];
+
+    @OneToMany(() => Bookmark, (bookmark) => bookmark.article)
+    bookmarks!: Bookmark[];
 }

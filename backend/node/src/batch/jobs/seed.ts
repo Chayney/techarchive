@@ -2,7 +2,7 @@ import { MigrationDataSource } from "../../config/migrationDataSource";
 import { Platform } from "../../domain/entity/platforms.entity";
 import { Feed } from "../../domain/entity/feeds.entity";
 import { Category } from "../../domain/entity/categories.entity";
-import { TrendPlatformType } from "../../constant/trendPlatformType";
+import { TrendPlatformType } from "../../constant/article";
 
 const seedJob = async () => {
     const dataSource = await MigrationDataSource.initialize();

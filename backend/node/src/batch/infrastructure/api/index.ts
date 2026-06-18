@@ -2,8 +2,8 @@ import { QiitaClient } from "./qiitaClient";
 import { ZennClient } from "./zennClient";
 
 export const qiitaApiRepository = {
-    async getQiitaArticles(articleId: string) {
-        return QiitaClient.fetch(articleId);
+    async getQiitaArticles() {
+        return QiitaClient.getQiitaArticles();
     }
 };
 

@@ -22,7 +22,7 @@ export class Trend {
     article_id!: number;
 
     @Column({ name: "like_count", default: 0 })
-    like_count!: number;
+    likes_count!: number;
 
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
