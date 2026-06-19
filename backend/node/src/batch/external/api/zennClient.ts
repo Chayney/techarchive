@@ -2,7 +2,7 @@ export const fetchZennApiArticles = async () => {
     console.log("[Zenn] fetch start");
 
     const response = await fetch(
-        "https://zenn.dev/api/articles?count=1&order=latest&page=1"
+        "https://zenn.dev/api/articles?count=2&order=latest&page=1"
     );
 
     console.log("[Zenn] response status:", response.status);

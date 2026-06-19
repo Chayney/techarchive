@@ -1,19 +1,44 @@
-import { articles } from "../service/articles.service";
 import { AppDataSource } from "../../config/appDataSource";
 import { Article } from "../../domain/entity/articles.entity";
 
-// articlesテーブルから記事タイトルかIDを取得する
+type ArticleCreateInput = {
+    platform_id: number;
+    source_type: number;
+    title: string;
+    article_url: string;
+    tags: string | null;
+    thumbnail_url: string | null;
+    is_private: boolean;
+};
 
-// 重複記事は保存しない処理を加える
-export const saveArticles = async () => {
+export const saveArticles = async (
+    data: ArticleCreateInput[]
+): Promise<Article[]> => {
+
     const db = AppDataSource.getInstance();
+
     const repo = db.getRepository(Article);
 
-    try {
-        const data = await articles();
-        return await repo.save(data);
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Failed to save article: ${error}`);
+    const urls = data.map(item => item.article_url);
+
+    // 既存記事取得
+    const existingArticles = await repo
+        .createQueryBuilder("article")
+        .where("article.article_url IN (:...urls)", { urls })
+        .getMany();
+
+    const existingUrlSet = new Set(
+        existingArticles.map(article => article.article_url)
+    );
+
+    // 新規記事のみ抽出
+    const newArticles = data.filter(
+        item => !existingUrlSet.has(item.article_url)
+    );
+
+    if (!newArticles.length) {
+        return [];
     }
+
+    return await repo.save(newArticles);
 };

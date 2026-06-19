@@ -9,7 +9,6 @@ import {
     JoinColumn,
     ManyToOne,
 } from "typeorm";
-import { Feed } from "./feeds.entity";
 import { Profile } from "./profiles.entity";
 import { Favorite } from "./favorites.entity";
 

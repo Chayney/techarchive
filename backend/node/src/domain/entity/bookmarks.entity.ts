@@ -8,7 +8,6 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Article } from "./articles.entity";
-import { Platform } from "./platforms.entity";
 import { Profile } from "./profiles.entity";
 
 @Entity("bookmarks")

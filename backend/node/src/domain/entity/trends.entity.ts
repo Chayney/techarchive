@@ -21,8 +21,11 @@ export class Trend {
     @Column({ name: "article_id" })
     article_id!: number;
 
-    @Column({ name: "like_count", default: 0 })
+    @Column({ name: "likes_count", default: 0 })
     likes_count!: number;
+
+    @Column({ type: "text", nullable: true })
+    tags!: string | null;
 
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;

@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { Platform } from "./platforms.entity";
 import { Trend } from "./trends.entity";
-import { Feed } from "./feeds.entity";
 import { Favorite } from "./favorites.entity";
 import { Bookmark } from "./bookmarks.entity";
 

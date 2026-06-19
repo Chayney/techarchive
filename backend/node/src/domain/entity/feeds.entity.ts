@@ -5,7 +5,6 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     ManyToOne,
-    OneToMany,
     JoinColumn,
     PrimaryGeneratedColumn,
 } from "typeorm";
@@ -25,10 +24,6 @@ export class Feed {
 
     @Column({ type: "text", nullable: true })
     tags!: string | null;
-
-    // 各プラットフォームのロゴ
-    @Column({ type: "text", nullable: true })
-    thumbnail_url!: string | null;
 
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;

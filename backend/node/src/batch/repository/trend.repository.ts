@@ -1,49 +1,59 @@
 import { AppDataSource } from "../../config/appDataSource";
 import { Trend } from "../../domain/entity/trends.entity";
 
-export const upsertTrend = async (
-    platformId: number,
-    articleId: number,
-    likeCount: number
-) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Trend);
-
-    try {
-        const existing = await repo.findOne({
-            where: { platform_id: platformId, article_id: articleId },
-        });
-
-        if (existing) {
-            existing.like_count = likeCount;
-            return await repo.save(existing);
-        }
-
-        return await repo.save({
-            platform_id: platformId,
-            article_id: articleId,
-            like_count: likeCount,
-        });
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Failed to upsert trend: ${error}`);
-    }
+type TrendInput = {
+    id: number;
+    platform_id: number;
+    likes_count: number;
+    tags: string | null;
 };
 
-export const findTopTrends = async (limit = 20) => {
+export const saveTrends = async (articles: TrendInput[]) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Trend);
+    const articleIds = articles.map(item => item.id);
+    const existing = await repo
+        .createQueryBuilder("trend")
+        .where(
+            "trend.article_id IN (:...articleIds)",
+            { articleIds }
+        )
+        .getMany();
 
-    try {
-        return await repo.find({
-            relations: {
-                article: true
-            },
-            order: { like_count: "DESC" },
-            take: limit,
-        });
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Failed to get trends: ${error}`);
+    const trendMap = new Map(
+        existing.map(trend => [
+            trend.article_id,
+            trend
+        ])
+    );
+
+    const insertData: Trend[] = [];
+    const updateData: Trend[] = [];
+
+    for (const article of articles) {
+        const trend = trendMap.get(article.id);
+        if (trend) {
+            if (trend.likes_count !== article.likes_count) {
+                trend.likes_count = article.likes_count;
+                updateData.push(trend);
+            }
+        } else {
+            insertData.push(
+                repo.create({
+                    article_id: article.id,
+                    platform_id: article.platform_id,
+                    likes_count: article.likes_count,
+                    tags: article.tags,
+                })
+            );
+        }
+    }
+
+    if (insertData.length) {
+        await repo.insert(insertData);
+    }
+
+    if (updateData.length) {
+        await repo.save(updateData);
     }
 };
