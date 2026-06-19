@@ -23,13 +23,13 @@ export class Article {
     platform_id!: number;
 
     @Column()
+    source_type!: number;
+
+    @Column()
     title!: string;
 
     @Column()
     article_url!: string;
-
-    @Column({ type: "text", nullable: true })
-    tags!: string | null;
 
     @Column({ name: "thumbnail_url", type: "text", nullable: true })
     thumbnail_url!: string | null;

@@ -1,8 +1,8 @@
-export const fetchZennArticles = async () => {
+export const fetchZennRssArticles = async () => {
     console.log("[Zenn] fetch start");
 
     const response = await fetch(
-        "https://zenn.dev/api/articles?count=1&order=latest&page=1"
+        "https://zenn.dev/feed"
     );
 
     console.log("[Zenn] response status:", response.status);
@@ -12,9 +12,9 @@ export const fetchZennArticles = async () => {
         throw new Error(`Zenn API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.text();
 
     console.log("[Zenn] fetched data:", data);
 
-    return data.articles;
+    return data;
 };

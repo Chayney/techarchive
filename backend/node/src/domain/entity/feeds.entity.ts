@@ -10,22 +10,25 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Platform } from "./platforms.entity";
+import { Article } from "./articles.entity";
 
 @Entity("feeds")
 export class Feed {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    // Qiitaのトレンド、Zennのトレンド
-    @Column({ name: "name", type: "text", nullable: true })
-    name!: string | null;
-
-    // 各プラットフォームのロゴ
-    @Column({ name: "thumbnail_url", type: "text", nullable: true })
-    thumbnail_url!: string | null;
-
     @Column({ name: "platform_id" })
     platform_id!: number;
+
+    @Column({ name: "article_id" })
+    article_id!: number;
+
+    @Column({ type: "text", nullable: true })
+    tags!: string | null;
+
+    // 各プラットフォームのロゴ
+    @Column({ type: "text", nullable: true })
+    thumbnail_url!: string | null;
 
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
@@ -39,4 +42,8 @@ export class Feed {
     @ManyToOne(() => Platform, (platform) => platform.feeds)
     @JoinColumn({ name: "platform_id" })
     platform!: Platform;
+
+    @ManyToOne(() => Article, (article) => article.trends)
+    @JoinColumn({ name: "article_id" })
+    article!: Article;
 }

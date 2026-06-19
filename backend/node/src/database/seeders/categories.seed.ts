@@ -15,11 +15,11 @@ export const CategoryData = async (dataSource: DataSource) => {
 
     const categories = [
         {
-            name: "JavaScript",
+            name: "React",
             profile_id: profiles[0].id,
         },
         {
-            name: "Node.js",
+            name: "Next.js",
             profile_id: profiles[0].id,
         },
         {

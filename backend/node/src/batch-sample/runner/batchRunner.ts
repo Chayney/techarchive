@@ -1,6 +1,6 @@
 import { AppDataSource } from "../../config/appDataSource";
-import { ogpJob } from "../../batch/jobs/ogp";
-import { collectJob } from "../../batch/jobs/collect";
+import { ogpJob } from "../jobs/ogp";
+import { collectJob } from "../jobs/collect";
 
 export async function runBatch() {
     console.log("batch start");

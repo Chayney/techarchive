@@ -1,5 +1,5 @@
-import { AppDataSource } from "../config/appDataSource";
-import { Trend } from "../domain/entity/trends.entity";
+import { AppDataSource } from "../../config/appDataSource";
+import { Trend } from "../../domain/entity/trends.entity";
 
 export const upsertTrend = async (
     platformId: number,

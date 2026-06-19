@@ -1,8 +1,8 @@
-export const fetchQiitaArticles = async () => {
+export const fetchQiitaRssArticles = async () => {
     console.log("[Qiita] fetch start");
 
     const response = await fetch(
-        "https://qiita.com/api/v2/items?page=1&per_page=1"
+        "https://qiita.com/popular-items/feed.atom"
     );
 
     console.log("[Qiita] response status:", response.status);
@@ -12,7 +12,7 @@ export const fetchQiitaArticles = async () => {
         throw new Error(`Qiita API Error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.text();
 
     console.log("[Qiita] fetched data:", data);
 
