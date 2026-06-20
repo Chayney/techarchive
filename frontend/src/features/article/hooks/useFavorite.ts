@@ -1,47 +1,78 @@
-import { useEffect, useState } from "react";
-import type { Article, Category } from "../types/article";
+import { useState } from "react";
 
-type FavoriteArticle = {
-    category: Category;
-    likesCount: number;
-    article: Article;
-    articleId: number;
-    category_id: number;
-};
+export const useFavorite = (profileId?: number) => {
+    const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
 
-type FavoriteResponse = {
-    categories: Category[];
-    favoriteArticles: FavoriteArticle[];
-};
+    const [favoriteArticleMap, setFavoriteArticleMap] = useState<Record<number, boolean>>({});
 
-export const useFavorite = () => {
-    const [favoriteResponse, setFavoriteResponse] = useState<FavoriteResponse>({
-        categories: [],
-        favoriteArticles: []
-    });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch(
-                    "http://localhost:3000/api/favorites"
-                );
+    /**
+     * Favorite ON/OFF
+     */
+    const toggleFavorite = async (
+        articleId: number,
+        categoryId: number
+    ) => {
+        // if (!profileId) return;
 
-                const data: FavoriteResponse = await res.json();
-                setFavoriteResponse(data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
+        setLoading(true);
+
+        try {
+            const key = `${articleId}-${categoryId}`;
+            const isFavorite = favoriteCategoryMap[key] ?? false;
+
+            if (isFavorite) {
+                setFavoriteCategoryMap(prev => ({
+                    ...prev,
+                    [key]: false
+                }));
+
+                setFavoriteArticleMap(prev => ({
+                    ...prev,
+                    [articleId]: false
+                }));
+
+            } else {
+                setFavoriteCategoryMap(prev => ({
+                    ...prev,
+                    [key]: true
+                }));
+
+                setFavoriteArticleMap(prev => ({
+                    ...prev,
+                    [articleId]: true
+                }));
             }
-        };
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchData();
-    }, []);
+    /**
+     * 判定
+     */
+    const isFavorited = (articleId: number) => {
+        return favoriteArticleMap[articleId] ?? false;
+    };
+
+    const isCategoryFavorited = (
+        articleId: number,
+        categoryId: number
+    ) => {
+        const key = `${articleId}-${categoryId}`;
+
+        return (favoriteCategoryMap[key] ?? false);
+    };
 
     return {
-        favoriteResponse,
-        loading
+        loading,
+        favoriteCategoryMap,
+        favoriteArticleMap,
+        toggleFavorite,
+        isFavorited,
+        isCategoryFavorited
     };
 };

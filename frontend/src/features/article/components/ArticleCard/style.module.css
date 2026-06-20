@@ -171,6 +171,23 @@
     animation: fadeIn 0.2s ease;
 }
 
+.dropdown {
+    width: 240px;
+    max-height: 350px;
+    overflow: hidden;
+}
+
+.categoryList {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.dropdownItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .wrapper {
         display: block;

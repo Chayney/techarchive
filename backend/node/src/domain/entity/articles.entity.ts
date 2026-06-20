@@ -18,7 +18,7 @@ export class Article {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "platform_id" })
+    @Column()
     platform_id!: number;
 
     @Column()
@@ -30,10 +30,11 @@ export class Article {
     @Column()
     article_url!: string;
 
-    @Column({ name: "thumbnail_url", type: "text", nullable: true })
+    // NULL許容する場合object扱いになるためtypeを指定
+    @Column({ type: "text", nullable: true })
     thumbnail_url!: string | null;
 
-    @Column({ name: "is_private", default: false })
+    @Column({ default: false })
     is_private!: boolean;
 
     @CreateDateColumn({ name: "created_at" })

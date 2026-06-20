@@ -16,10 +16,10 @@ export class Favorite {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "categpry_id" })
+    @Column()
     category_id!: number;
 
-    @Column({ name: "article_id" })
+    @Column()
     article_id!: number;
 
     @CreateDateColumn({ name: "created_at" })

@@ -15,15 +15,16 @@ export class Trend {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "platform_id" })
+    @Column()
     platform_id!: number;
 
-    @Column({ name: "article_id" })
+    @Column()
     article_id!: number;
 
-    @Column({ name: "likes_count", default: 0 })
+    @Column({ default: 0 })
     likes_count!: number;
 
+    // NULL許容する場合object扱いになるためtypeを指定
     @Column({ type: "text", nullable: true })
     tags!: string | null;
 

@@ -15,10 +15,10 @@ export class Bookmark {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "profile_id" })
+    @Column()
     profile_id!: number;
 
-    @Column({ name: "article_id" })
+    @Column()
     article_id!: number;
 
     @CreateDateColumn({ name: "created_at" })

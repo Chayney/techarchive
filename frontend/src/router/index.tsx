@@ -1,10 +1,13 @@
 import { BrowserRouter } from "react-router-dom"
-import { ArticleRouter } from "../features/article/router"
+import { FavoriteCategoryProvider } from "../features/favorite/context/FavoriteCategoryContext"
+import { MainContentRouter } from "../features/main/router"
 
 export const Router = () => {
     return (
         <BrowserRouter>
-            <ArticleRouter />
+            <FavoriteCategoryProvider>
+                <MainContentRouter />
+            </FavoriteCategoryProvider>
         </BrowserRouter>
     )
 }

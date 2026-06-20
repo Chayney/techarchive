@@ -16,12 +16,13 @@ export class Feed {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: "platform_id" })
+    @Column()
     platform_id!: number;
 
-    @Column({ name: "article_id" })
+    @Column()
     article_id!: number;
 
+    // NULL許容する場合object扱いになるためtypeを指定
     @Column({ type: "text", nullable: true })
     tags!: string | null;
 

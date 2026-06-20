@@ -18,6 +18,9 @@ export class Category {
     id!: number;
 
     @Column()
+    profile_id!: number;
+
+    @Column()
     name!: string;
 
     @CreateDateColumn({ name: "created_at" })

@@ -1,18 +1,12 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { NAVIGATION_PATH } from "../../../const/navigation";
 import { Bookmark, Heart, Rss, Star, Building2 } from "lucide-react";
+import { useFavoriteCategoryContext } from "../../../../features/favorite/hooks/FavoriteCategoryContext";
 
 export type Category = {
     id: number;
-    profile_id: number | null;
     name: string;
-    createdAt: string;
-    updatedAt: string;
 };
-
-export type ApiResponse = {
-    categories: Category[];
-}
 
 export const useSidebar = () => {
     const mainItems = [
@@ -22,14 +16,15 @@ export const useSidebar = () => {
         { title: "Bookmark", url: NAVIGATION_PATH.BOOKMARK, icon: Bookmark }
     ];
 
-    const [categories, setCategories] = useState<Category[]>([]);
+    const { categories, setCategories} = useFavoriteCategoryContext();
 
     useEffect(() => {
         const fetchData = async () => {
             const res = await fetch("http://localhost:3000/api/categories");
-            const data: ApiResponse = await res.json();
-            setCategories(data.categories)
-        }
+            const data = await res.json();
+            setCategories(data);
+        };
+
         fetchData();
     }, []);
 

@@ -25,10 +25,10 @@ export class User {
     @Column({ default: true })
     is_active!: boolean;
 
-    @Column({ type: "timestamp", nullable: true  })
+    @Column({ nullable: true  })
     email_verified_at?: Date;
 
-    @Column({ type: "timestamp", nullable: true  })
+    @Column({ nullable: true  })
     last_login_at?: Date;
 
     @CreateDateColumn({ name: "created_at" })

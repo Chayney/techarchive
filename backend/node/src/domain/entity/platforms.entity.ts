@@ -21,17 +21,17 @@ export class Platform {
     name!: string;
 
     // qiita.com、zenn.dev
-    @Column({ name: "site_url" })
+    @Column()
     site_url!: string;
 
     // 1: Qiita、2: Zenn
-    @Column({ name: "platform_site_type" })
+    @Column()
     platform_site_type!: number;
 
-    @Column({ name: "favicon_url" })
+    @Column()
     favicon_url!: string;
 
-    @Column({ name: "is_eng", default: false })
+    @Column({ default: false })
     is_eng!: boolean;
 
     @CreateDateColumn({ name: "created_at" })

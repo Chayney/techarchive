@@ -13,6 +13,8 @@ import {
     DialogTitle,
 } from "../shared/components/ui/dialog";
 
+import { useFavoriteCategoryContext } from "../features/favorite/hooks/FavoriteCategoryContext";
+
 export type Profile = {
     id: number;
     user_id: number | null;
@@ -23,36 +25,33 @@ export type Profile = {
 
 export type Category = {
     id: number;
-    profile_id: number | null;
     name: string;
-    createdAt: string;
-    updatedAt: string;
 };
+
+export type Platform = {
+    favicon_url: string;
+}
 
 export type Article = {
-    id: number;
-    platform_id: number | null;
     title: string;
-    description: string;
     article_url: string;
-    published_at: string | null;
-    author_name: string | null;
-    tags: string | null;
-    thumbnail_url: string;
-    is_eng: boolean;
-    is_private: boolean;
-    createdAt: string;
-    updatedAt: string;
-};
+    thumbnail_url: string | null;
+}
 
-export type InitDataResponse = {
-    users: Profile;
-    categories: Category[];
-    articles: Article[];
+export type TrendArticle = {
+    id: number;
+    platform_id: number;
+    article_id: number;
+    likes_count: number;
+    tags: string;
+    article: Article;
+    platform: Platform;
 };
 
 export const ArticlePage = () => {
-    const [data, setData] = useState<InitDataResponse | null>(null);
+    const { categories } = useFavoriteCategoryContext();
+    console.log(categories)
+    const [trendArticles, setTrendArticle] = useState<TrendArticle[]>([]);
 
     const [openArticleId, setOpenArticleId] = useState<number | null>(null);
 
@@ -63,9 +62,6 @@ export const ArticlePage = () => {
         useState<Record<number, boolean>>({});
 
     const [open, setOpen] = useState(false);
-    const [categoryName, setCategoryName] = useState("");
-
-    // const profileId = data?.users.id;
 
     const toggleDropdown = (id: number) => {
         setOpenArticleId((prev) => (prev === id ? null : id));
@@ -138,136 +134,77 @@ export const ArticlePage = () => {
         }
     };
 
-    const handleAddCategory = async () => {
-        if (!data) return;
-
-        try {
-            const res = await fetch(
-                "http://localhost:3000/api/categories",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        profile_id: data.users.id,
-                        name: categoryName,
-                    }),
-                }
-            );
-
-            if (!res.ok) {
-                throw new Error("カテゴリ作成失敗");
-            }
-
-            const newCategory: Category =
-                await res.json();
-
-            setData((prev) => {
-                if (!prev) return prev;
-
-                return {
-                    ...prev,
-                    categories: [
-                        ...prev.categories,
-                        newCategory,
-                    ],
-                };
-            });
-
-            setCategoryName("");
-            setOpen(false);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             const res = await fetch(
-                "http://localhost:3000/api/init-data"
+                "http://localhost:3000/api/trend/articles"
             );
 
-            const json: InitDataResponse =
+            const json: TrendArticle[] =
                 await res.json();
 
-            setData(json);
+            setTrendArticle(json);
         };
 
         fetchData();
     }, []);
 
-    if (!data || data.articles.length === 0) {
-        return <div>Loading...</div>;
-    }
-
-    const article = data.articles[0];
+    // if (!data || data.articles.length === 0) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <Layout>
-            <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                    <div className={styles.left}></div>
+            {trendArticles.map((article) => (
+                <div key={article.id} className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.left}></div>
 
-                    <div className={styles.right}>
-                        <a
-                            href={article.article_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className={styles.icon}
-                        >
-                            <BookOpen size={30} />
-                        </a>
+                        <div className={styles.right}>
+                            <a
+                                href={article.article.article_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className={styles.icon}
+                            >
+                                <BookOpen size={30} />
+                            </a>
 
-                        <Bookmark size={30} />
+                            <Bookmark size={30} />
 
-                        <div className="relative">
-                            <Heart
-                                size={24}
-                                fill={
-                                    favoriteArticleMap[
-                                        article.id
-                                    ]
-                                        ? "currentColor"
-                                        : "none"
-                                }
-                                onClick={() =>
-                                    toggleDropdown(
-                                        article.id
-                                    )
-                                }
-                            />
+                            <div className="relative">
+                                <Heart
+                                    size={24}
+                                    fill={
+                                        favoriteArticleMap[article.id]
+                                            ? "currentColor"
+                                            : "none"
+                                    }
+                                    onClick={() =>
+                                        toggleDropdown(article.id)
+                                    }
+                                />
 
-                            {openArticleId ===
-                                article.id && (
+                                {openArticleId === article.id && (
                                     <div
-                                        data-dropdown={
-                                            article.id
-                                        }
+                                        data-dropdown={article.id}
                                         onClick={(e) =>
                                             e.stopPropagation()
                                         }
-                                        className={
-                                            styles.dropdown
-                                        }
+                                        className={styles.dropdown}
                                     >
-                                        {data.categories.map(
-                                            (
-                                                category
-                                            ) => {
-                                                const key = `${article.id}-${category.id}`;
+                                        {categories.map(
+                                            (category) => {
+                                                const key =
+                                                    `${article.id}-${category.id}`;
 
                                                 const isFav =
-                                                    favoriteCategoryMap[
-                                                    key
-                                                    ] ??
+                                                    favoriteCategoryMap[key] ??
                                                     false;
 
                                                 return (
                                                     <div
-                                                        key={
-                                                            category.id
-                                                        }
+                                                        key={category.id}
                                                         className={
                                                             styles.dropdownItem
                                                         }
@@ -291,9 +228,7 @@ export const ArticlePage = () => {
                                                                 )
                                                             }
                                                         >
-                                                            {isFav
-                                                                ? "★"
-                                                                : "☆"}
+                                                            {isFav ? "★" : "☆"}
                                                         </Button>
                                                     </div>
                                                 );
@@ -305,16 +240,10 @@ export const ArticlePage = () => {
                                                 variant="outline"
                                                 className="w-full"
                                                 onClick={() =>
-                                                    setOpen(
-                                                        true
-                                                    )
+                                                    setOpen(true)
                                                 }
                                             >
-                                                <Plus
-                                                    size={
-                                                        16
-                                                    }
-                                                />
+                                                <Plus size={16} />
                                                 <span className="ml-2">
                                                     カテゴリ追加
                                                 </span>
@@ -322,53 +251,33 @@ export const ArticlePage = () => {
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div className={styles.cardBody}>
+                        <div className={styles.avatarHeader}>
+                            <img
+                                alt=""
+                                className={styles.avatar}
+                            />
+                        </div>
+
+                        <div className={styles.contentArea}>
+                            <h2>{article.article.title}</h2>
+
+                            <div className={styles.meta}></div>
+
+                            <div className={styles.tags}></div>
                         </div>
                     </div>
                 </div>
+            ))}
 
-                <div className={styles.cardBody}>
-                    <div
-                        className={
-                            styles.avatarHeader
-                        }
-                    >
-                        <img
-                            alt=""
-                            className={
-                                styles.avatar
-                            }
-                        />
-                    </div>
 
-                    <div
-                        className={
-                            styles.contentArea
-                        }
-                    >
-                        <h2>{article.title}</h2>
-
-                        <p>
-                            {
-                                article.description
-                            }
-                        </p>
-
-                        <div
-                            className={
-                                styles.meta
-                            }
-                        ></div>
-
-                        <div
-                            className={
-                                styles.tags
-                            }
-                        ></div>
-                    </div>
-                </div>
-            </div>
-
-            <Dialog
+            {/* mapの外に出す */}
+            {/* <Dialog
                 open={open}
                 onOpenChange={setOpen}
             >
@@ -382,22 +291,17 @@ export const ArticlePage = () => {
                     <Input
                         value={categoryName}
                         onChange={(e) =>
-                            setCategoryName(
-                                e.target.value
-                            )
+                            setCategoryName(e.target.value)
                         }
                         placeholder="カテゴリ名を入力"
                     />
 
-                    <Button
-                        onClick={
-                            handleAddCategory
-                        }
-                    >
+                    <Button onClick={handleAddCategory}>
                         追加
                     </Button>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
+
         </Layout>
     );
 };

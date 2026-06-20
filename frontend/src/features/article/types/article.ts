@@ -1,17 +1,20 @@
 export type Category = {
     id: number;
-    profileId: number;
     name: string;
 };
+
+export type Platform = {
+    favicon_url: string;
+}
 
 export type Article = {
     id: number;
     title: string;
-    articleUrl: string;
-    thumbnailUrl: string;
-    faviconUrl: string;
+    article_url: string;
+    thumbnail_url: string;
+    favicon_url: Platform;
     tags: string;
-    likesCount: number;
-    createdAt: string;
-    updatedAt: string;
+    likes_count: number;
+    created_at: string;
+    updated_at: string;
 };

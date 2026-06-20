@@ -6,7 +6,6 @@
         "esModuleInterop": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "baseUrl": "./src",
         "outDir": "./dist",
         // ★追加① Node型を明示
         "types": [
