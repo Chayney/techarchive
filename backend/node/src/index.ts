@@ -2,11 +2,17 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { AppDataSource } from "./config/appDataSource";
-import { trendArticles } from "./batch/service/trend.service";
-import { feedArticles } from "./batch/service/feed.service";
+import { trendArticles } from "./batch/crawler/service/trend.service";
+import { feedArticles } from "./batch/crawler/service/feed.service";
 import { articleRouter } from "./routes/article.route";
 import { categoryRouter } from "./routes/category.route";
-import { fetchQiitaRssOGP } from "./batch/external/ogp/qiitaRssClient";
+import { transformQiitaRssOgp } from "./batch/ogp/transform/rss/qiitaClient";
+import { transformZennRssOgp } from "./batch/ogp/transform/rss/zennClient";
+import { transformQiitaApiOgp } from "./batch/ogp/transform/api/qiitaClient";
+import { transformZennApiOgp } from "./batch/ogp/transform/api/zennClient";
+import { saveOgps } from "./batch/ogp/repository/article.repository";
+import { saveArticles } from "./batch/crawler/repository/article.repository";
+import { ogps } from "./batch/ogp/service/articles.service";
 
 dotenv.config();
 
@@ -20,16 +26,16 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // DBからデータ取得処理
-// app.use("/api", articleRouter);
-// app.use("/api", categoryRouter);
+app.use("/api", articleRouter);
+app.use("/api", categoryRouter);
 
-// AppDataSource.initialize()
-//     .then(() => {
-//         app.listen(PORT, () => {
-//             console.log(`[SERVER] running on ${PORT}`);
-//         });
-//     })
-//     .catch(console.error);
+AppDataSource.initialize()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`[SERVER] running on ${PORT}`);
+        });
+    })
+    .catch(console.error);
 
 // バッチ処理
 const startServer = async () => {
@@ -44,15 +50,15 @@ const startServer = async () => {
         // 記事取得処理
         // OGP取得処理
         // いいね数更新処理
-       
+
         // console.log("start get articles");
         // await trendArticles();
-        // await feedArticles();
+        // await feedArticles()
         // console.log("Articles save completed");
 
-        console.log("start get ogps");
-        await fetchQiitaRssOGP();
-        console.log("Ogps save completed");
+        // console.log("start get ogps");
+        // await saveOgps();
+        // console.log("Ogps save completed");
 
         // ③ サーバー起動
         app.listen(PORT, () => {
