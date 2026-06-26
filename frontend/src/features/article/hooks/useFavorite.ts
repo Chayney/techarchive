@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-export const useFavorite = (profileId?: number) => {
+export const useFavorite = (
+    profileId: number,
+    categoryId: number
+) => {
     const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
 
     const [favoriteArticleMap, setFavoriteArticleMap] = useState<Record<number, boolean>>({});
@@ -66,6 +69,15 @@ export const useFavorite = (profileId?: number) => {
 
         return (favoriteCategoryMap[key] ?? false);
     };
+
+    // favoritesにcategory_id
+    // categoriesにprofile_id
+    const handleAddFavorite = async (
+        profileId: number,
+        categoryId: number
+    ) => {
+
+    }
 
     return {
         loading,

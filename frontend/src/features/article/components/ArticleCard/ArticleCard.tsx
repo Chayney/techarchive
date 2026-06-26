@@ -31,6 +31,12 @@ type ArticleCardProps = {
 
 export const ArticleCard = (article: ArticleCardProps) => {
     const { categories, setCategories } = useFavoriteCategoryContext();
+    const [openArticleId, setOpenArticleId] = useState<number | null>(null);
+
+    // 仮置き
+    const profileId = 1;
+    const categoryId = 1;
+
     const { 
         bookmarkMap,
         toggleBookmark,
@@ -43,10 +49,9 @@ export const ArticleCard = (article: ArticleCardProps) => {
         toggleFavorite,
         isFavorited,
         isCategoryFavorited
-    } = useFavorite();
+    } = useFavorite(profileId, categoryId);
 
     const {
-        openArticleId,
         tooltip,
         toggleDropdown,
         showTooltip,
@@ -63,9 +68,6 @@ export const ArticleCard = (article: ArticleCardProps) => {
         .toLowerCase()
         .includes(categorySearch.toLowerCase())
     );
-    
-    // 仮置き
-    const profileId = 1;
 
     const onAddCategory = async () => {
         if (!profileId) return;
@@ -163,6 +165,9 @@ export const ArticleCard = (article: ArticleCardProps) => {
                                                     //         : "tertiary"
                                                     // }
                                                     onClick={() => {
+                                                        setOpenArticleId(article.article.id)
+                                                        console.log("articleId:", article.article.id);
+                                                        console.log("categoryId:", category.id);
 
                                                         // toggleFavorite(
                                                         //     article.id,
