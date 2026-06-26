@@ -5,6 +5,7 @@ type ZennArticle = {
     title: string;
     path: string;
     liked_count: number;
+    published_at: Date;
     og_image: string | null;
     topics: string;
 };
@@ -20,6 +21,7 @@ type ArticleCreateInput = {
     thumbnail_url: string | null;
     is_private: boolean;
     likes_count: number;
+    published_at: Date;
 };
 
 export const transformZennApiArticles = async (): Promise<ArticleCreateInput[]> => {
@@ -39,6 +41,7 @@ export const transformZennApiArticles = async (): Promise<ArticleCreateInput[]> 
         thumbnail_url: article.og_image ?? null,
         is_private: false,
         likes_count: article.liked_count,
+        published_at: new Date(article.published_at)
     }));
 
     console.log("[Zenn Transform] result:", transformed);

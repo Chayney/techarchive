@@ -5,7 +5,7 @@ type QiitaArticle = {
     title: string;
     url: string;
     likes_count: number;
-    created_at: string;
+    created_at: Date;
     tags: string;
     og_image_url: string | null;
 }
@@ -21,6 +21,7 @@ type ArticleCreateInput = {
     thumbnail_url: string | null;
     is_private: boolean;
     likes_count: number;
+    published_at: Date;
 }
 
 export const transformQiitaApiArticles = async (): Promise<ArticleCreateInput[]> => {
@@ -41,6 +42,7 @@ export const transformQiitaApiArticles = async (): Promise<ArticleCreateInput[]>
         thumbnail_url: item.og_image_url ?? null,
         is_private: false,
         likes_count: item.likes_count,
+        published_at: new Date(item.created_at)
     }));
 
     console.log("[Qiita Transform] result:", transformed);

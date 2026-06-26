@@ -37,6 +37,9 @@ export class Article {
     @Column({ default: false })
     is_private!: boolean;
 
+    @Column()
+    published_at!: Date;
+
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
 

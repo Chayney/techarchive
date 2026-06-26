@@ -13,6 +13,9 @@ import { transformZennApiOgp } from "./batch/ogp/transform/api/zennClient";
 import { saveOgps } from "./batch/ogp/repository/article.repository";
 import { saveArticles } from "./batch/crawler/repository/article.repository";
 import { ogps } from "./batch/ogp/service/articles.service";
+import { filteredArticles } from "./batch/likes/service/articles.service";
+import { upsertLikesCount } from "./batch/likes/repository/trend.repository";
+import { deleteArticles } from "./batch/delete/article";
 
 dotenv.config();
 
@@ -26,16 +29,16 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // DBからデータ取得処理
-app.use("/api", articleRouter);
-app.use("/api", categoryRouter);
+// app.use("/api", articleRouter);
+// app.use("/api", categoryRouter);
 
-AppDataSource.initialize()
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`[SERVER] running on ${PORT}`);
-        });
-    })
-    .catch(console.error);
+// AppDataSource.initialize()
+//     .then(() => {
+//         app.listen(PORT, () => {
+//             console.log(`[SERVER] running on ${PORT}`);
+//         });
+//     })
+//     .catch(console.error);
 
 // バッチ処理
 const startServer = async () => {
@@ -53,12 +56,20 @@ const startServer = async () => {
 
         // console.log("start get articles");
         // await trendArticles();
-        // await feedArticles()
+        // await feedArticles();
         // console.log("Articles save completed");
 
         // console.log("start get ogps");
         // await saveOgps();
         // console.log("Ogps save completed");
+
+        // console.log("start get likes");
+        // await upsertLikesCount();
+        // console.log("Likes save completed");
+
+        // console.log("start delete articles");
+        // await deleteArticles();
+        // console.log("Articles delete completed");
 
         // ③ サーバー起動
         app.listen(PORT, () => {

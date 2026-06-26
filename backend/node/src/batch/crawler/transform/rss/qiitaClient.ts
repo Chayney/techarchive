@@ -9,6 +9,7 @@ type ArticleCreateInput = {
     tags: string | null;
     thumbnail_url: string | null;
     is_private: boolean;
+    published_at: Date;
 };
 
 export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]> => {
@@ -34,6 +35,8 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
 
             const title = matchTag(itemXml, "title") ?? "";
 
+            const published = matchTag(itemXml, "published") ?? "";
+
             items.push({
                 platform_id: PlatformId.QIITA,
                 source_type: SourceType.QIITARSS,
@@ -42,6 +45,7 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
                 tags: "Qiitaのフィード",
                 thumbnail_url: null,
                 is_private: false,
+                published_at: new Date(published)
             });
         }
 

@@ -9,6 +9,7 @@ type ArticleCreateInput = {
     tags: string | null;
     thumbnail_url: string | null;
     is_private: boolean;
+    published_at: Date;
 };
 
 export const transformZennRssArticles = async (): Promise<ArticleCreateInput[]> => {
@@ -40,6 +41,8 @@ export const transformZennRssArticles = async (): Promise<ArticleCreateInput[]> 
 
             const title = matchTag(itemXml, "title") ?? "";
 
+            const pubDate = matchTag(itemXml, "pubDate") ?? "";
+
             if (!link) {
                 console.warn("[Zenn Transform] skip article", {
                     reason: "missing url",
@@ -58,6 +61,7 @@ export const transformZennRssArticles = async (): Promise<ArticleCreateInput[]> 
                 tags: "Zennのフィード",
                 thumbnail_url: null,
                 is_private: false,
+                published_at: new Date(pubDate)
             });
         }
 

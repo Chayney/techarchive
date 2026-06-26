@@ -16,29 +16,37 @@ export const transformZennRssOgp = async (): Promise<ZennOgp[]> => {
         articles.length
     );
 
-    const result = await Promise.all(
-        articles.map(async (article) => {
-            console.log(
-                "[Zenn] fetch ogp:",
-                article.article_url
-            );
+    const result = [];
 
-            const image =
-                await fetchZennOgpImage(
+    for (let i = 0; i < articles.length; i += 10) {
+        const chunk = articles.slice(i, i + 10);
+
+        const chunkResult = await Promise.all(
+            chunk.map(async (article) => {
+                console.log(
+                    "[Zenn] fetch ogp:",
                     article.article_url
                 );
 
-            console.log(
-                "[Zenn] og:image:",
-                image
-            );
+                const image =
+                    await fetchZennOgpImage(
+                        article.article_url
+                    );
 
-            return {
-                url: article.article_url,
-                image,
-            };
-        })
-    );
+                console.log(
+                    "[Zenn] og:image:",
+                    image
+                );
+
+                return {
+                    url: article.article_url,
+                    image,
+                };
+            })
+        );
+
+        result.push(...chunkResult);
+    }
 
     console.log(
         "[Zenn] transform finished:",

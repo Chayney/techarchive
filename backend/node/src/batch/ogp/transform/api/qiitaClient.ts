@@ -18,43 +18,51 @@ export const transformQiitaApiOgp = async (): Promise<
         articles.length
     );
 
-    const result = await Promise.all(
-        articles.map(
-            async (
-                article: {
-                    article_url: string;
-                }
-            ) => {
-                console.log(
-                    "[Qiita API] --------------------"
-                );
+    const result = [];
 
-                console.log(
-                    "[Qiita API] article_url:",
-                    article.article_url
-                );
+    for (let i = 0; i < articles.length; i += 10) {
+        const chunk = articles.slice(i, i + 10);
 
-                const image =
-                    await fetchQiitaOgpImage(
+        const chunkResult = await Promise.all(
+            chunk.map(
+                async (
+                    article: {
+                        article_url: string;
+                    }
+                ) => {
+                    console.log(
+                        "[Qiita API] --------------------"
+                    );
+
+                    console.log(
+                        "[Qiita API] article_url:",
                         article.article_url
                     );
 
-                console.log(
-                    "[Qiita API] final result:"
-                );
+                    const image =
+                        await fetchQiitaOgpImage(
+                            article.article_url
+                        );
 
-                console.log({
-                    url: article.article_url,
-                    image
-                });
+                    console.log(
+                        "[Qiita API] final result:"
+                    );
 
-                return {
-                    url: article.article_url,
-                    image
-                };
-            }
-        )
-    );
+                    console.log({
+                        url: article.article_url,
+                        image
+                    });
+
+                    return {
+                        url: article.article_url,
+                        image
+                    };
+                }
+            )
+        );
+
+        result.push(...chunkResult);
+    }
 
     console.log(
         "[Qiita API] transform finished:",

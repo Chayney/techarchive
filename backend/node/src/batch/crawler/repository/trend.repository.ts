@@ -33,6 +33,8 @@ export const saveTrends = async (articles: TrendInput[]) => {
     for (const article of articles) {
         const trend = trendMap.get(article.id);
         if (trend) {
+            // いいね数の差分チェック
+            // 差分があればDB更新処理
             if (trend.likes_count !== article.likes_count) {
                 trend.likes_count = article.likes_count;
                 updateData.push(trend);
