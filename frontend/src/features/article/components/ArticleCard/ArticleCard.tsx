@@ -14,7 +14,7 @@ type ArticleCardProps = {
         article_url: string;
         thumbnail_url?: string | null;
         published_at: Date;
-        tags: string;
+        tags?: string | null;
     };
     likes_count?: number;
     profile_id?: number;
@@ -39,7 +39,6 @@ export const ArticleCard = ({
         toggleBookmark,
         toggleFavorite,
         toggleDropdown,
-        closeDropdown,
         showTooltip,
         setOpenArticleId,
         handleAddCategory
@@ -109,8 +108,8 @@ export const ArticleCard = ({
                     <div className="relative">
                         <Heart
                             size={24}
-                            onClick={(e) => {
-                                e.stopPropagation();
+                            data-dropdown-trigger
+                            onClick={() => {
                                 toggleDropdown(article.id);
                             }}
                             className={
@@ -130,8 +129,7 @@ export const ArticleCard = ({
                         {/* Dropdown */}
                         {openArticleId === article.id && (
                             <div
-                                data-dropdown={article.id}
-                                onClick={(e) => e.stopPropagation()}
+                                data-dropdown={article.id}                             
                                 className={styles.dropdown}
                             >
                                 <Input
@@ -249,7 +247,7 @@ export const ArticleCard = ({
                     </div>
 
                     <div className={styles.tags}>
-                        <span>
+                        <span className={styles.tag}>
                             {article.tags}
                         </span>
                     </div>

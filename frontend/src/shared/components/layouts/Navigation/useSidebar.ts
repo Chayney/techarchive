@@ -19,6 +19,7 @@ export const useSidebar = () => {
     const feedItems = [
         {
             title: "All",
+            url: NAVIGATION_PATH.MYFEED,
             icon: Newspaper
         },
         {

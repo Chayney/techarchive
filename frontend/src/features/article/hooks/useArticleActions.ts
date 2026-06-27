@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../shared/lib/supabaseClient";
 import type { Category } from "../types/article";
+import { useFavorite } from "./useFavorite";
 
 export const useArticleActions = (profileId?: number) => {
+    const { 
+        favoriteCategoryMap,
+        favoriteArticleMap,
+        toggleFavorite
+    } = useFavorite();
     const [bookmarkMap, setBookmarkMap] = useState<Record<number, boolean>>({});
-    const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
-    const [favoriteArticleMap, setFavoriteArticleMap] = useState<Record<number, boolean>>({});
 
     const [tooltip, setTooltip] = useState<{
         articleId: number;
@@ -28,8 +32,6 @@ export const useArticleActions = (profileId?: number) => {
         setOpenArticleId((prev) => (prev === id ? null : id));
     };
 
-    const closeDropdown = () => setOpenArticleId(null);
-
     // ハートアイコン以外をクリックしてドロップダウンリストを閉じれるようにする
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -42,7 +44,13 @@ export const useArticleActions = (profileId?: number) => {
                 `[data-dropdown="${openArticleId}"]`
             );
 
+            const trigger = document.querySelector(
+                `[data-dropdown-trigger]`
+            );
+
             if (!dropdown) return;
+
+            if (trigger?.contains(target)) return;
 
             if (!dropdown.contains(target)) {
                 setOpenArticleId(null);
@@ -102,72 +110,6 @@ export const useArticleActions = (profileId?: number) => {
         }
     };
 
-    // お気に入り済みか否かの判定
-    const toggleFavorite = async (
-        articleId: number,
-        categoryId: number
-    ) => {
-        if (!profileId) return;
-
-        const key = `${articleId}-${categoryId}`;
-        const isFavorite = favoriteCategoryMap[key];
-
-        if (isFavorite) {
-            const { error } = await supabase
-                .from("favorites")
-                .delete()
-                .eq("profile_id", profileId)
-                .eq("article_id", articleId)
-                .eq("category_id", categoryId);
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            setFavoriteCategoryMap((prev) => ({
-                ...prev,
-                [key]: false
-            }));
-
-            // article単位の状態再計算
-            const hasAnyFavorite = Object.entries({
-                ...favoriteCategoryMap,
-                [key]: false
-            }).some(([k, v]) => {
-                return k.startsWith(`${articleId}-`) && v;
-            });
-
-            setFavoriteArticleMap((prev) => ({
-                ...prev,
-                [articleId]: hasAnyFavorite
-            }));
-        } else {
-            const { error } = await supabase
-                .from("favorites")
-                .insert({
-                    profile_id: profileId,
-                    article_id: articleId,
-                    category_id: categoryId
-                });
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            setFavoriteCategoryMap((prev) => ({
-                ...prev,
-                [key]: true
-            }));
-
-            setFavoriteArticleMap((prev) => ({
-                ...prev,
-                [articleId]: true
-            }));
-        }
-    };
-
     // ブックマーク記事の取得
     useEffect(() => {
         if (!profileId) return;
@@ -196,35 +138,35 @@ export const useArticleActions = (profileId?: number) => {
     }, [profileId]);
 
     // お気に入り記事の取得
-    useEffect(() => {
-        if (!profileId) return;
+    // useEffect(() => {
+    //     if (!profileId) return;
 
-        const fetchFavorites = async () => {
-            const { data, error } = await supabase
-                .from("favorites")
-                .select("article_id, category_id")
-                .eq("profile_id", profileId);
+    //     const fetchFavorites = async () => {
+    //         const { data, error } = await supabase
+    //             .from("favorites")
+    //             .select("article_id, category_id")
+    //             .eq("profile_id", profileId);
 
-            if (error) {
-                console.error(error);
-                return;
-            }
+    //         if (error) {
+    //             console.error(error);
+    //             return;
+    //         }
 
-            const categoryMap: Record<string, boolean> = {};
-            const articleMap: Record<number, boolean> = {};
+    //         const categoryMap: Record<string, boolean> = {};
+    //         const articleMap: Record<number, boolean> = {};
 
-            data?.forEach((row) => {
-                const key = `${row.article_id}-${row.category_id}`;
-                categoryMap[key] = true;
-                articleMap[row.article_id] = true;
-            });
+    //         data?.forEach((row) => {
+    //             const key = `${row.article_id}-${row.category_id}`;
+    //             categoryMap[key] = true;
+    //             articleMap[row.article_id] = true;
+    //         });
 
-            setFavoriteCategoryMap(categoryMap);
-            setFavoriteArticleMap(articleMap);
-        };
+    //         setFavoriteCategoryMap(categoryMap);
+    //         setFavoriteArticleMap(articleMap);
+    //     };
 
-        fetchFavorites();
-    }, [profileId]);
+    //     fetchFavorites();
+    // }, [profileId]);
 
     // カテゴリー名の追加
     const handleAddCategory = async (
@@ -263,7 +205,6 @@ export const useArticleActions = (profileId?: number) => {
         toggleBookmark,
         toggleFavorite,
         toggleDropdown,
-        closeDropdown,
         showTooltip,
         setOpenArticleId,
         handleAddCategory

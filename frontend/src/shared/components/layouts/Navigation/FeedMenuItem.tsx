@@ -17,6 +17,7 @@ type FeedChild = {
 type FeedItem = {
     title: string;
     category_id?: number;
+    url?: string;
     icon?: React.ElementType;
     children?: FeedChild[];
 };
@@ -32,23 +33,34 @@ export const FeedMenuItem = ({ item }: Props) => {
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
+                asChild={!!item.url}
                 onClick={() => hasChildren && setOpen((prev) => !prev)}
                 className="flex items-center justify-between"
             >
-                <div className="flex items-center gap-2">
-                    {item.icon && <item.icon className="h-4 w-4" />}
+                {item.url ? (
+                    <Link to={item.url}>
+                        <div className="flex items-center gap-2">
+                            {item.icon && <item.icon className="h-4 w-4" />}
 
-                    {hasChildren && (
-                        <ChevronRight
-                            className={cn(
-                                "transition-transform",
-                                open && "rotate-90"
-                            )}
-                        />
-                    )}
+                            <span>{item.title}</span>
+                        </div>
+                    </Link>
+                ) : (
+                    <div className="flex items-center gap-2">
+                        {item.icon && <item.icon className="h-4 w-4" />}
 
-                    <span>{item.title}</span>
-                </div>
+                        {hasChildren && (
+                            <ChevronRight
+                                className={cn(
+                                    "transition-transform",
+                                    open && "rotate-90"
+                                )}
+                            />
+                        )}
+
+                        <span>{item.title}</span>
+                    </div>
+                )}
             </SidebarMenuButton>
 
             {hasChildren && open && (

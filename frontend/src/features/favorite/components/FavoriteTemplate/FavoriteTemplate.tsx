@@ -1,28 +1,32 @@
 import { useState } from "react";
 import Layout from "../../../../shared/components/layouts/BaseLayout/BaseLayout";
 import styles from "./style.module.css";
-import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import { Loader2 } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
+import { useFavoriteTemplate } from "./useFavoriteTemplate";
 import { usePagination } from "../../../article/hooks/usePagination";
-import { useTrendTemplate } from "./useTrendTemplate";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
 
-export const TrendTemplate = () => {
-    // isAuthはcategory用に使用
-    const { isAuth } = useAuthContext();
+export const FavoriteTemplate = () => {
+    const { id } = useParams();
+    const categoryId = Number(id);
+    const { favoriteArticles, loading } = useFavoriteTemplate();
+    
+    const filteredArticles = favoriteArticles.filter((article) => article.category_id === categoryId)
+    
+    const pagination = usePagination(filteredArticles);
+    const categoryName = filteredArticles[0]?.category.name;
+
     const [keyword, setKeyword] = useState("");
     const [_searchKeyword, setSearchKeyword] = useState("");
-    const { trendArticles, loading } = useTrendTemplate();
-
-    const pagination = usePagination(trendArticles);
 
     return (
         <Layout
             header={
                 <Header
-                    title="Trend"
+                    title={categoryName}
                     keyword={keyword}
                     onKeywordChange={setKeyword}
                     onSearch={(value) => {
@@ -30,7 +34,6 @@ export const TrendTemplate = () => {
                         pagination.setPage(1);
                     }}
                 />
-
             }
         >
             <main className={styles.underContainer}>
@@ -49,16 +52,12 @@ export const TrendTemplate = () => {
                                     thumbnail_url:
                                         article.article.thumbnail_url,
                                     published_at: article.article.published_at,
-                                    tags:
-                                        article.tags
                                 }}
-                                likes_count={article.likes_count}
-                                
                             />
                         ))}
 
                         <Pagination
-                            totalItems={trendArticles.length}
+                            totalItems={favoriteArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
                             onPageChange={pagination.setPage}
@@ -68,4 +67,4 @@ export const TrendTemplate = () => {
             </main>
         </Layout>
     );
-};
+}

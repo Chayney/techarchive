@@ -3,8 +3,8 @@ import { NAVIGATION_LIST } from "../../../shared/const/navigation"
 import { FeedPage } from "../../../pages/FeedPage"
 import { TrendPage } from "../../../pages/TrendPage"
 import { BookmarkPage } from "../../../pages/BookmarkPage"
-
 import { FavoritePage } from "../../../pages/FavoritePage"
+import { CompanyPage } from "../../../pages/CompanyPage"
 
 export const ArticleRouter = () => {
     return (
@@ -12,7 +12,7 @@ export const ArticleRouter = () => {
             <Route path={NAVIGATION_LIST.FEED} element={<FeedPage />} />
             <Route path={NAVIGATION_LIST.TREND} element={<TrendPage />} />
             <Route path={NAVIGATION_LIST.BOOKMARK} element={<BookmarkPage />} />
-            
+            <Route path={NAVIGATION_LIST.COMPANY} element={<CompanyPage />} />
             <Route path={NAVIGATION_LIST.FAVORITE} element={<FavoritePage />} />
         </Routes>
     )

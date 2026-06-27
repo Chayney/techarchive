@@ -5,6 +5,7 @@ export const NAVIGATION_LIST = {
     TREND: '/trend',
     COMPANY: '/company',
     BOOKMARK: '/bookmark',
+    MYFEED: '/myfeed',
     TAG: '/tag/:id/:service',
     FAVORITE: '/favorite/:id'
 }
@@ -16,6 +17,7 @@ export const NAVIGATION_PATH = {
     TREND: '/trend',
     COMPANY: '/company',
     BOOKMARK: '/bookmark',
+    MYFEED: '/myfeed',
     TAG: '/tag',
     FAVORITE: '/favorite'
 }

@@ -21,7 +21,6 @@ type ArticleActionsContextType = {
     toggleBookmark: (articleId: number) => Promise<void>;
     toggleFavorite: (articleId: number, categoryId: number) => Promise<void>;
     toggleDropdown: (id: number) => void;
-    closeDropdown: () => void;
     showTooltip: (articleId: number, message: string) => void;
     setOpenArticleId: (id: number | null) => void;
 
@@ -44,7 +43,6 @@ export const ArticleActionsContext =
         toggleFavorite: async () => { },
 
         toggleDropdown: () => { },
-        closeDropdown: () => { },
         showTooltip: () => { },
         setOpenArticleId: () => { },
 
@@ -65,7 +63,6 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
         toggleBookmark,
         toggleFavorite,
         toggleDropdown,
-        closeDropdown,
         showTooltip,
         setOpenArticleId,
         handleAddCategory
@@ -82,7 +79,6 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
                 toggleBookmark,
                 toggleFavorite,
                 toggleDropdown,
-                closeDropdown,
                 showTooltip,
                 setOpenArticleId,
                 handleAddCategory

@@ -1,3 +1,4 @@
+// お気に入り記事の登録と削除
 import { useState } from "react";
 
 export const useFavorite = () => {
@@ -10,8 +11,7 @@ export const useFavorite = () => {
         categoryId: number
     ) => {
         const response = await fetch(
-            "http://localhost:3000/favorites",
-            {
+            "http://localhost:3000/api/favorite", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export const useFavorite = () => {
         categoryId: number
     ) => {
         const response = await fetch(
-            "http://localhost:3000/favorites",
+            "http://localhost:3000/api/favorite",
             {
                 method: "DELETE",
                 headers: {
