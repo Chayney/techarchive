@@ -28,11 +28,11 @@ export const CategoryData = async (dataSource: DataSource) => {
         },
         {
             name: "AWS",
-            profile_id: profiles[1].id,
+            profile_id: profiles[0].id,
         },
         {
             name: "GCP",
-            profile_id: profiles[1].id,
+            profile_id: profiles[0].id,
         },
     ];
 

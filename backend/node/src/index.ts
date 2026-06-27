@@ -7,6 +7,7 @@ import { feedArticles } from "./batch/crawler/service/feed.service";
 import { articleRouter } from "./routes/article.route";
 import { categoryRouter } from "./routes/category.route";
 import { saveOgps } from "./batch/ogp/repository/article.repository";
+import { favoriteRouter } from "./routes/favorite.route";
 
 
 dotenv.config();
@@ -23,6 +24,7 @@ const PORT = process.env.PORT || 3000;
 // DBからデータ取得処理
 app.use("/api", articleRouter);
 app.use("/api", categoryRouter);
+app.use("/api", favoriteRouter);
 
 AppDataSource.initialize()
     .then(() => {
