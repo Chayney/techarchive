@@ -5,11 +5,9 @@ import { Category } from "../domain/entity/categories.entity";
 export const getCategoriesHandler: RequestHandler = async (_req, res) => {
     try {
         const db = AppDataSource.getInstance();
-
         const repo = db.getRepository(Category);
-
         const categories = await repo.find();
-
+        
         res.json(categories);
 
     } catch (error) {

@@ -6,16 +6,8 @@ import { trendArticles } from "./batch/crawler/service/trend.service";
 import { feedArticles } from "./batch/crawler/service/feed.service";
 import { articleRouter } from "./routes/article.route";
 import { categoryRouter } from "./routes/category.route";
-import { transformQiitaRssOgp } from "./batch/ogp/transform/rss/qiitaClient";
-import { transformZennRssOgp } from "./batch/ogp/transform/rss/zennClient";
-import { transformQiitaApiOgp } from "./batch/ogp/transform/api/qiitaClient";
-import { transformZennApiOgp } from "./batch/ogp/transform/api/zennClient";
 import { saveOgps } from "./batch/ogp/repository/article.repository";
-import { saveArticles } from "./batch/crawler/repository/article.repository";
-import { ogps } from "./batch/ogp/service/articles.service";
-import { filteredArticles } from "./batch/likes/service/articles.service";
-import { upsertLikesCount } from "./batch/likes/repository/trend.repository";
-import { deleteArticles } from "./batch/delete/article";
+
 
 dotenv.config();
 
@@ -29,16 +21,16 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // DBからデータ取得処理
-// app.use("/api", articleRouter);
-// app.use("/api", categoryRouter);
+app.use("/api", articleRouter);
+app.use("/api", categoryRouter);
 
-// AppDataSource.initialize()
-//     .then(() => {
-//         app.listen(PORT, () => {
-//             console.log(`[SERVER] running on ${PORT}`);
-//         });
-//     })
-//     .catch(console.error);
+AppDataSource.initialize()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`[SERVER] running on ${PORT}`);
+        });
+    })
+    .catch(console.error);
 
 // バッチ処理
 const startServer = async () => {
