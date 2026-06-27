@@ -8,7 +8,7 @@
     flex-direction: column;
     gap: 16px;
     width: 95%;
-    margin-left: 250px;
+    margin: 0 auto;
 }
 
 .cardBody {
@@ -105,6 +105,8 @@
     top: 2.5rem;
     right: 0;
     width: 260px;
+    max-height: 320px;
+    overflow-y: auto;
     background-color: #fff;
     border: 1px solid #e5e7eb;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -169,23 +171,6 @@
 
     z-index: 100;
     animation: fadeIn 0.2s ease;
-}
-
-.dropdown {
-    width: 240px;
-    max-height: 350px;
-    overflow: hidden;
-}
-
-.categoryList {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-.dropdownItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 @media (max-width: 768px) {

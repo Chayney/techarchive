@@ -11,7 +11,7 @@ export type Article = {
     title: string;
     article_url: string;
     thumbnail_url: string | null;
-    updated_at: string;
+    published_at: Date;
 }
 
 export type TrendArticle = {

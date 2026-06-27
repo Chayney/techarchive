@@ -13,7 +13,7 @@ type FavoriteCategoryContextType = {
 
 export const FavoriteCategoryContext = createContext<FavoriteCategoryContextType>({
     categories: [],
-    setCategories: () => {}
+    setCategories: () => { }
 });
 
 export const FavoriteCategoryProvider: FC<ContextProps> = ({ children }) => {

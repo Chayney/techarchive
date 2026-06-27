@@ -1,21 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../ui/sidebar"
 import { useSidebar } from "./useSidebar"
 
-export const MainMenu = () => {
-    const { mainItems } = useSidebar();
+type Props = {
+    collapsed: boolean
+}
 
+export const MainMenu = ({ collapsed }: Props) => {
+    const { mainItems } = useSidebar();
     return (
         <SidebarMenu>
             {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                    {/* SidebarMenuButtonが内部でdisplay: flexを持っているこれで横並びにする */}
-                    <SidebarMenuButton asChild>
-                        <Link to={item.url}>
+                    <Link to={item.url}>
+                        <SidebarMenuButton>
                             <item.icon />
-                            <span>{item.title}</span>
-                        </Link>
-                    </SidebarMenuButton>
+                            {!collapsed && <span>{item.title}</span>}
+                        </SidebarMenuButton>
+                    </Link>
                 </SidebarMenuItem>
             ))}
         </SidebarMenu>

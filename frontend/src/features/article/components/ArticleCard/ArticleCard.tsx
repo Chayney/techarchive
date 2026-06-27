@@ -1,18 +1,11 @@
-import { Bookmark, BookOpen, Heart, Plus } from "lucide-react";
-import styles from "./style.module.css";
+import { BookOpen, Bookmark, Heart, Plus } from "lucide-react";
 import { Button } from "../../../../shared/components/ui/button";
-import { useFavoriteCategoryContext } from "../../../favorite/hooks/FavoriteCategoryContext";
-import { useArticleActions } from "../../hooks/useArticleActions";
-import { useBookmark } from "../../hooks/useBookmark";
-import { useFavorite } from "../../hooks/useFavorite";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle
- } from "../../../../shared/components/ui/dialog";
+import styles from "./style.module.css";
+import { useArticleCard } from "./useArticleCard";
 import { Input } from "../../../../shared/components/ui/input";
-import { useState } from "react";
+import { useFavoriteCategoryContext } from "../../../favorite/hooks/useFavoriteCategoryContext";
+import { useArticleActionsContext } from "../../hooks/useArticleActionsContext";
+import { Dialog, DialogContent, DialogTitle } from "../../../../shared/components/ui/dialog";
 
 type ArticleCardProps = {
     article: {
@@ -20,7 +13,7 @@ type ArticleCardProps = {
         title: string;
         article_url: string;
         thumbnail_url?: string | null;
-        updated_at: string;
+        published_at: Date;
         tags: string;
     };
     likes_count?: number;
@@ -29,45 +22,47 @@ type ArticleCardProps = {
     showFavorite?: boolean;
 };
 
-export const ArticleCard = (article: ArticleCardProps) => {
+export const ArticleCard = ({
+    article,
+    likes_count,
+    profile_id,
+    showBookmark,
+    showFavorite
+}: ArticleCardProps) => {
     const { categories, setCategories } = useFavoriteCategoryContext();
-    const [openArticleId, setOpenArticleId] = useState<number | null>(null);
-
-    // 仮置き
-    const profileId = 1;
-    const categoryId = 1;
-
     const { 
         bookmarkMap,
-        toggleBookmark,
-        isBookmarked
-    } = useBookmark();
-
-    const { 
         favoriteCategoryMap,
         favoriteArticleMap,
-        toggleFavorite,
-        isFavorited,
-        isCategoryFavorited
-    } = useFavorite(profileId, categoryId);
-
-    const {
         tooltip,
+        openArticleId,
+        toggleBookmark,
+        toggleFavorite,
         toggleDropdown,
+        closeDropdown,
         showTooltip,
+        setOpenArticleId,
         handleAddCategory
-    } = useArticleActions();
+    } = useArticleActionsContext();
+    
+    // 仮置き
+    const profileId = 1;
 
-    const [categoryName, setCategoryName] = useState("");
-    const [open, setOpen] = useState(false);
-    const [categorySearch, setCategorySearch] = useState("");
+    const { 
+        categoryName,
+        open,
+        categorySearch,
+        setCategoryName,
+        setOpen,
+        setCategorySearch
+    } = useArticleCard();
 
     const filteredCategories = categories
         .filter((category) => category
-        .name
-        .toLowerCase()
-        .includes(categorySearch.toLowerCase())
-    );
+            .name
+            .toLowerCase()
+            .includes(categorySearch.toLowerCase())
+        );
 
     const onAddCategory = async () => {
         if (!profileId) return;
@@ -79,20 +74,20 @@ export const ArticleCard = (article: ArticleCardProps) => {
         setCategoryName('');
         setOpen(false);
     };
-
+    
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>
                 <div className={styles.left}>
                     <span className={styles.count}>
-                        {article.likes_count}
+                        {likes_count}
                     </span>
                     <span className={styles.label}>likes</span>
                 </div>
 
                 <div className={styles.right}>
                     <a
-                        href={article.article.article_url}
+                        href={article.article_url}
                         rel="noreferrer"
                         className={styles.icon}
                     >
@@ -100,7 +95,7 @@ export const ArticleCard = (article: ArticleCardProps) => {
                     </a>
 
                     {/* Bookmark */}
-                    <Bookmark
+                    {/* <Bookmark
                         size={30}
                         onClick={() => toggleBookmark(article.article.id)}
                         className={
@@ -108,7 +103,7 @@ export const ArticleCard = (article: ArticleCardProps) => {
                                 ? styles.bookmarkActive
                                 : styles.bookmark
                         }
-                    />
+                    /> */}
 
                     {/* Favorite */}
                     <div className="relative">
@@ -116,31 +111,32 @@ export const ArticleCard = (article: ArticleCardProps) => {
                             size={24}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                toggleDropdown(article.article.id);
+                                toggleDropdown(article.id);
                             }}
                             className={
-                                favoriteArticleMap[article.article.id]
+                                favoriteArticleMap[article.id]
                                     ? styles.heartActive
                                     : styles.heart
                             }
                         />
 
                         {/* Tooltip */}
-                        {tooltip?.articleId === article.article.id && (
+                        {tooltip?.articleId === article.id && (
                             <div className={styles.tooltip}>
                                 {tooltip.message}
                             </div>
                         )}
 
                         {/* Dropdown */}
-                        {openArticleId === article.article.id && (
+                        {openArticleId === article.id && (
                             <div
-                                data-dropdown={article.article.id}
+                                data-dropdown={article.id}
                                 onClick={(e) => e.stopPropagation()}
                                 className={styles.dropdown}
                             >
                                 <Input
                                     value={categorySearch}
+                                    inputSize="xl"
                                     onChange={(e) =>
                                         setCategorySearch(e.target.value)
                                     }
@@ -148,43 +144,44 @@ export const ArticleCard = (article: ArticleCardProps) => {
                                     className={styles.searchInput}
                                 />
                                 <div className={styles.categoryList}>
-                                    {filteredCategories.map(category => {
+                                    {filteredCategories.map((category) => {
+                                        const key = `${article.id}-${category.id}`;
+
                                         return (
                                             <div
                                                 key={category.id}
                                                 className={styles.dropdownItem}
                                             >
-                                                <span>
+                                                <span className="truncate flex-1">
                                                     {category.name}
                                                 </span>
 
                                                 <Button
-                                                    // variant={
-                                                    //     saved
-                                                    //         ? "quaternary"
-                                                    //         : "tertiary"
-                                                    // }
+                                                    variant={
+                                                        favoriteCategoryMap[key]
+                                                            ? "quaternary"
+                                                            : "tertiary"
+                                                    }
                                                     onClick={() => {
-                                                        setOpenArticleId(article.article.id)
-                                                        console.log("articleId:", article.article.id);
-                                                        console.log("categoryId:", category.id);
+                                                        const isSaved =
+                                                            favoriteCategoryMap[key];
 
-                                                        // toggleFavorite(
-                                                        //     article.id,
-                                                        //     category.id
-                                                        // );
+                                                        toggleFavorite(
+                                                            article.id,
+                                                            category.id
+                                                        );
 
-                                                        // showTooltip(
-                                                        //     article.id,
-                                                        //     saved
-                                                        //         ? "Delete Favorite"
-                                                        //         : "Add Favorite"
-                                                        // );
+                                                        showTooltip(
+                                                            article.id,
+                                                            isSaved
+                                                                ? "Delete Favorite"
+                                                                : "Add Favorite"
+                                                        );
                                                     }}
                                                 >
-                                                    {/* {saved
+                                                    {favoriteCategoryMap[key]
                                                         ? "SAVED"
-                                                        : "SAVE"} */}
+                                                        : "SAVE"}
                                                 </Button>
                                             </div>
                                         );
@@ -196,63 +193,64 @@ export const ArticleCard = (article: ArticleCardProps) => {
                                 >
                                     カテゴリーを追加<Plus />
                                 </div>
-                                
-                                <Dialog
-                                    open={open}
-                                    onOpenChange={setOpen}
-                                >
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                カテゴリ追加
-                                            </DialogTitle>
-                                        </DialogHeader>
-
-                                        <Input
-                                            value={categoryName}
-                                            onChange={(e) =>
-                                                setCategoryName(e.target.value)
-                                            }
-                                            placeholder="カテゴリ名を入力"
-                                        />
-
-                                        <Button onClick={onAddCategory}>
-                                            追加
-                                        </Button>
-                                    </DialogContent>
-                                </Dialog>
                             </div>
                         )}
+                        <Dialog
+                            open={open}
+                            onOpenChange={setOpen}
+                        >
+                            <DialogContent>
+                                <DialogTitle>カテゴリーの追加</DialogTitle>
+                                <Input
+                                    value={categoryName}
+                                    variant="primary"
+                                    inputSize="xl"
+                                    onChange={(e) =>
+                                        setCategoryName(e.target.value)
+                                    }
+                                    placeholder="カテゴリー名を入力"
+                                />
+                                <Button
+                                    variant="secondary"       
+                                    onClick={onAddCategory}>
+                                    追加
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </div>
-            
+
             <div className={styles.cardBody}>
                 <div className={styles.avatarHeader}>
-                    <img
-                        src={article.article.thumbnail_url ?? ''}
-                        alt=""
-                        className={styles.avatar}
-                    />
+                    {article.thumbnail_url ? (
+                        <img
+                            src={article.thumbnail_url}
+                            alt=""
+                            className={styles.avatar}
+                        />
+                    ) : (
+                        <div className={styles.noImage}>
+                            No Image
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.contentArea}>
                     <h3 className={styles.title}>
-                        {article.article.title}
+                        {article.title}
                     </h3>
 
                     <div className={styles.meta}>
                         <span>
                             🕒{" "}
-                            {new Date(
-                                article.article.updated_at
-                            ).toLocaleDateString()}
+                            {new Date(article.published_at).toLocaleDateString()}
                         </span>
                     </div>
 
                     <div className={styles.tags}>
-                        <span className={styles.tag}>
-                            {article.article.tags}
+                        <span>
+                            {article.tags}
                         </span>
                     </div>
                 </div>
@@ -260,7 +258,3 @@ export const ArticleCard = (article: ArticleCardProps) => {
         </div>
     );
 };
-
-            
-
-    

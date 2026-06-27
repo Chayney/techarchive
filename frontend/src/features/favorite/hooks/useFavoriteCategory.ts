@@ -5,17 +5,17 @@ export const useFavoriteCategory = () => {
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-            const fetchData = async () => {
-                const res = await fetch(
-                    "http://localhost:3000/api/categories"
-                );
-    
-                const json: Category[] = await res.json();
-    
-                setCategories(json);
-            };
-    
-            fetchData();
+        const fetchData = async () => {
+            const res = await fetch(
+                "http://localhost:3000/api/categories"
+            );
+
+            const json: Category[] = await res.json();
+            
+            setCategories(json);
+        };
+
+        fetchData();
     }, []);
     
     return {

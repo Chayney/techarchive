@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import { NAVIGATION_PATH } from "../../../const/navigation";
-import { Bookmark, Heart, Rss, Star, Building2 } from "lucide-react";
-import { useFavoriteCategoryContext } from "../../../../features/favorite/hooks/FavoriteCategoryContext";
+import { Bookmark, Heart, Rss, Star, Building2, Newspaper } from "lucide-react";
+import { useFavoriteCategoryContext } from "../../../../features/favorite/hooks/useFavoriteCategoryContext";
 
 export type Category = {
     id: number;
@@ -16,17 +16,84 @@ export const useSidebar = () => {
         { title: "Bookmark", url: NAVIGATION_PATH.BOOKMARK, icon: Bookmark }
     ];
 
-    const { categories, setCategories} = useFavoriteCategoryContext();
+    const feedItems = [
+        {
+            title: "All",
+            icon: Newspaper
+        },
+        {
+            title: "Next.js",
+            category_id: 1,
+            children: [
+                {
+                    title: "Qiita",
+                    service: "qiita"
+                },
+                {
+                    title: "Zenn",
+                    service: "zenn"
+                }
+            ]
+        },
+        {
+            title: "React",
+            category_id: 2,
+            children: [
+                {
+                    title: "Qiita",
+                    service: "qiita"
+                },
+                {
+                    title: "Zenn",
+                    service: "zenn"
+                }
+            ]
+        },
+        {
+            title: "TypeScript",
+            category_id: 3,
+            children: [
+                {
+                    title: "Qiita",
+                    service: "qiita"
+                },
+                {
+                    title: "Zenn",
+                    service: "zenn"
+                }
+            ]
+        },
+        {
+            title: "GCP",
+            category_id: 4,
+            children: [
+                {
+                    title: "Qiita",
+                    service: "qiita"
+                },
+                {
+                    title: "Zenn",
+                    service: "zenn"
+                }
+            ]
+        },
+        {
+            title: "AWS",
+            category_id: 5,
+            children: [
+                {
+                    title: "Qiita",
+                    service: "qiita"
+                },
+                {
+                    title: "Zenn",
+                    service: "zenn"
+                }
+            ]
+        }
+    ];
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const res = await fetch("http://localhost:3000/api/categories");
-            const data = await res.json();
-            setCategories(data);
-        };
-
-        fetchData();
-    }, []);
+    const { categories } = useFavoriteCategoryContext();
 
     // レンダリングの度に作成しないようにする
     const favoriteItems = useMemo(
@@ -42,6 +109,7 @@ export const useSidebar = () => {
 
     return {
         mainItems,
+        feedItems,
         favoriteItems
     }
 }

@@ -1,0 +1,12 @@
+.underContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+    gap: 50px;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .underContainer {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,90 +1,120 @@
 import { useState } from "react";
 
-export const useFavorite = (
-    profileId: number,
-    categoryId: number
-) => {
+export const useFavorite = () => {
     const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
-
     const [favoriteArticleMap, setFavoriteArticleMap] = useState<Record<number, boolean>>({});
 
-    const [loading, setLoading] = useState(false);
+    // POST /favorites
+    const addFavorite = async (
+        articleId: number,
+        categoryId: number
+    ) => {
+        const response = await fetch(
+            "http://localhost:3000/favorites",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    article_id: articleId,
+                    category_id: categoryId,
+                }),
+            }
+        );
 
-    /**
-     * Favorite ON/OFF
-     */
+        if (!response.ok) {
+            throw new Error("favorite登録失敗");
+        }
+
+        const key = `${articleId}-${categoryId}`;
+
+        setFavoriteCategoryMap(prev => ({
+            ...prev,
+            [key]: true
+        }));
+
+        setFavoriteArticleMap(prev => ({
+            ...prev,
+            [articleId]: true
+        }));
+    };
+
+    // DELETE /favorites
+    const removeFavorite = async (
+        articleId: number,
+        categoryId: number
+    ) => {
+        const response = await fetch(
+            "http://localhost:3000/favorites",
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    article_id: articleId,
+                    category_id: categoryId
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("favorite削除失敗");
+        }
+
+        const key = `${articleId}-${categoryId}`;
+
+        setFavoriteCategoryMap(prev => ({
+            ...prev,
+            [key]: false
+        }));
+
+        // 同じ記事に他カテゴリーが残っているか確認
+        setFavoriteArticleMap(prev => {
+            const hasOtherFavorite =
+                Object.entries(favoriteCategoryMap)
+                    .some(([k, v]) => {
+                        return (
+                            k.startsWith(`${articleId}-`)
+                            && v
+                            && k !== key
+                        )
+                    });
+
+            return {
+                ...prev,
+                [articleId]: hasOtherFavorite
+            };
+        });
+    };
+
     const toggleFavorite = async (
         articleId: number,
         categoryId: number
     ) => {
-        // if (!profileId) return;
 
-        setLoading(true);
-
-        try {
-            const key = `${articleId}-${categoryId}`;
-            const isFavorite = favoriteCategoryMap[key] ?? false;
-
-            if (isFavorite) {
-                setFavoriteCategoryMap(prev => ({
-                    ...prev,
-                    [key]: false
-                }));
-
-                setFavoriteArticleMap(prev => ({
-                    ...prev,
-                    [articleId]: false
-                }));
-
-            } else {
-                setFavoriteCategoryMap(prev => ({
-                    ...prev,
-                    [key]: true
-                }));
-
-                setFavoriteArticleMap(prev => ({
-                    ...prev,
-                    [articleId]: true
-                }));
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    /**
-     * 判定
-     */
-    const isFavorited = (articleId: number) => {
-        return favoriteArticleMap[articleId] ?? false;
-    };
-
-    const isCategoryFavorited = (
-        articleId: number,
-        categoryId: number
-    ) => {
         const key = `${articleId}-${categoryId}`;
 
-        return (favoriteCategoryMap[key] ?? false);
+        if (favoriteCategoryMap[key]) {
+            await removeFavorite(
+                articleId,
+                categoryId
+            );
+        } else {
+            await addFavorite(
+                articleId,
+                categoryId
+            );
+        }
+
     };
 
-    // favoritesにcategory_id
-    // categoriesにprofile_id
-    const handleAddFavorite = async (
-        profileId: number,
-        categoryId: number
-    ) => {
-
-    }
-
     return {
-        loading,
         favoriteCategoryMap,
         favoriteArticleMap,
-        toggleFavorite,
-        isFavorited,
-        isCategoryFavorited
+        addFavorite,
+        removeFavorite,
+        toggleFavorite
     };
 };
