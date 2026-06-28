@@ -9,10 +9,11 @@ import {
     ManyToOne,
 } from "typeorm";
 import { Profile } from "./profiles.entity";
-import { Favorite } from "./favorites.entity";
+import { FolderFeed } from "./folder_feeds.entity";
 
-@Entity("categories")
-export class Category {
+@Entity("folders")
+export class Folder {
+
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -28,10 +29,10 @@ export class Category {
     @UpdateDateColumn({ name: "updated_at" })
     updated_at!: Date;
 
-    @ManyToOne(() => Profile, (profile) => profile.categories, { onDelete: "CASCADE" })
+    @ManyToOne(() => Profile, profile => profile.folders, { onDelete: "CASCADE" })
     @JoinColumn({ name: "profile_id" })
     profile!: Profile;
 
-    @OneToMany(() => Favorite, (favorite) => favorite.article)
-    favorites!: Favorite[];
+    @OneToMany(() => FolderFeed, feed => feed.folder)
+    folderFeed!: FolderFeed[];
 }

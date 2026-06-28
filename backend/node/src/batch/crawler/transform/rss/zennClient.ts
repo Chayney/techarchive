@@ -43,6 +43,15 @@ export const transformZennRssArticles = async (): Promise<ArticleCreateInput[]> 
 
             const pubDate = matchTag(itemXml, "pubDate") ?? "";
 
+            const html = await fetchArticleHtml(link);
+
+            const tags = extractZennTags(html);
+
+            console.log("[Zenn Transform] scraped tags", {
+                title,
+                tags,
+            });
+
             if (!link) {
                 console.warn("[Zenn Transform] skip article", {
                     reason: "missing url",
@@ -58,7 +67,7 @@ export const transformZennRssArticles = async (): Promise<ArticleCreateInput[]> 
                 source_type: SourceType.ZENNRSS,
                 title,
                 article_url: link,
-                tags: "Zennのフィード",
+                tags: tags,
                 thumbnail_url: null,
                 is_private: false,
                 published_at: new Date(pubDate)
@@ -99,4 +108,72 @@ function matchTag(
         .replace("<![CDATA[", "")
         .replace("]]>", "")
         .trim();
+}
+
+async function fetchArticleHtml(
+    url: string,
+): Promise<string> {
+
+    const res = await fetch(url);
+
+    if (!res.ok) {
+        throw new Error(
+            `failed fetch ${url}`
+        );
+    }
+
+    return res.text();
+}
+
+function extractZennTags(
+    html: string,
+): string | null {
+
+    const matches = [
+        ...html.matchAll(
+            /"topics":(\[.*?\])/gs
+        ),
+    ];
+
+    if (!matches.length) {
+        console.log(
+            "[Zenn Tag Extract] not found"
+        );
+
+        return null;
+    }
+
+
+    try {
+
+        const topics = JSON.parse(
+            matches[0][1]
+        );
+
+
+        const tags = topics.map(
+            (t: any) =>
+                t.name ?? t.slug
+        );
+
+
+        console.log(
+            "[Zenn Tag Extract] parsed",
+            {
+                tags,
+            }
+        );
+
+
+        return tags.join(",");
+
+    } catch (e) {
+
+        console.error(
+            "[Zenn Tag Extract] parse failed",
+            e,
+        );
+
+        return null;
+    }
 }

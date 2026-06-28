@@ -11,6 +11,7 @@ import {
 import { User } from "./users.entity";
 import { Category } from "./categories.entity";
 import { Bookmark } from "./bookmarks.entity";
+import { Folder } from "./folders.entity";
 
 @Entity("profiles")
 export class Profile {
@@ -35,6 +36,9 @@ export class Profile {
 
     @OneToMany(() => Category, (category) => category.profile)
     categories!: Category[];
+
+    @OneToMany(() => Folder, folder => folder.profile)
+    folders!: Folder[];
 
     @OneToMany(() => Bookmark, (bookmark) => bookmark.profile)
     bookmarks!: Bookmark[];

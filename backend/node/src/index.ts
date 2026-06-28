@@ -8,6 +8,9 @@ import { articleRouter } from "./routes/article.route";
 import { categoryRouter } from "./routes/category.route";
 import { saveOgps } from "./batch/ogp/repository/article.repository";
 import { favoriteRouter } from "./routes/favorite.route";
+import { transformQiitaRssArticles } from "./batch/crawler/transform/rss/qiitaClient";
+import { transformZennRssArticles } from "./batch/crawler/transform/rss/zennClient";
+import { feedRouter } from "./routes/feed.route";
 
 
 dotenv.config();
@@ -25,6 +28,7 @@ const PORT = process.env.PORT || 3000;
 app.use("/api", articleRouter);
 app.use("/api", categoryRouter);
 app.use("/api", favoriteRouter);
+app.use("/api", feedRouter);
 
 AppDataSource.initialize()
     .then(() => {
@@ -51,6 +55,7 @@ const startServer = async () => {
         // console.log("start get articles");
         // await trendArticles();
         // await feedArticles();
+        // await transformZennRssArticles();
         // console.log("Articles save completed");
 
         // console.log("start get ogps");

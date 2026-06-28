@@ -37,12 +37,16 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
 
             const published = matchTag(itemXml, "published") ?? "";
 
+            const html = await fetchArticleHtml(link);
+
+            const tags = extractQiitaTags(html);
+
             items.push({
                 platform_id: PlatformId.QIITA,
                 source_type: SourceType.QIITARSS,
                 title: title,
                 article_url: link,
-                tags: "Qiitaのフィード",
+                tags: tags,
                 thumbnail_url: null,
                 is_private: false,
                 published_at: new Date(published)
@@ -74,4 +78,55 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
 function matchTag(xml: string, tag: string): string | null {
     const match = xml.match(new RegExp(`<${tag}>(.*?)</${tag}>`));
     return match ? match[1] : null;
+}
+
+async function fetchArticleHtml(url: string): Promise<string> {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(
+            `failed to fetch article ${url}`
+        );
+    }
+
+    return await response.text();
+}
+
+
+function extractQiitaTags(html: string): string | null {
+
+    const match = html.match(
+        /"tags"\s*:\s*(\[[\s\S]*?\])/
+    );
+
+    if (!match) {
+        console.log("[Qiita Tag Extract] not found");
+        return null;
+    }
+
+    const raw = match[1];
+
+    try {
+        const tags = JSON.parse(raw);
+
+        const names = tags
+            .map((t: any) => t.name)
+            .filter(Boolean);
+
+        console.log("[Qiita Tag Extract] parsed", {
+            names,
+        });
+
+        return names.length
+            ? names.join(",")
+            : null;
+
+    } catch (e) {
+        console.error("[Qiita Tag Extract] parse error", {
+            raw,
+            error: e,
+        });
+
+        return null;
+    }
 }
