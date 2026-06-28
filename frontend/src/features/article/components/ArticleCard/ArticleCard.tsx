@@ -247,9 +247,11 @@ export const ArticleCard = ({
                     </div>
 
                     <div className={styles.tags}>
-                        <span className={styles.tag}>
-                            {article.tags}
-                        </span>
+                        {article.tags?.split(",").map((tag, i) => (
+                            <span key={i} className={styles.tag}>
+                                {tag}
+                            </span>
+                        ))}
                     </div>
                 </div>
             </div>

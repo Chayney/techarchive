@@ -23,3 +23,12 @@ export type TrendArticle = {
     article: Article;
     platform: Platform;
 };
+
+export type FeedArticle = {
+    id: number;
+    platform_id: number;
+    article_id: number;
+    tags: string;
+    article: Article;
+    platform: Platform;
+};

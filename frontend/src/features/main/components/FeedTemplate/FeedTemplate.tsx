@@ -7,20 +7,17 @@ import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import styles from "./style.module.css";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
 import { usePagination } from "../../../article/hooks/usePagination";
-import { useArticleActions } from "../../../article/hooks/useArticleActions";
-import { useArticleData } from "../../../article/hooks/useArticleData";
+import { useFeedTemplate } from "./useFeedTemplate";
 
 export const FeedTemplate = () => {
-    const { profileId, isAuth } = useAuthContext();
+    // const { profileId, isAuth } = useAuthContext();
 
     const [keyword, setKeyword] = useState("");
-    const [searchKeyword, setSearchKeyword] = useState("");
+    const [_searchKeyword, setSearchKeyword] = useState("");
 
-    const { articles, categories, loading: feedLoading } = useArticleData(searchKeyword, "latest");
+    const { feedArticles, loading } = useFeedTemplate();
 
-    const pagination = usePagination(articles);
-
-    const actions = useArticleActions(profileId ?? undefined);
+    const pagination = usePagination(feedArticles);
 
     return (
         <Layout
@@ -37,20 +34,30 @@ export const FeedTemplate = () => {
             }
         >
             <main className={styles.underContainer}>
-                {feedLoading ? (
-                    <Loader2 />
+                {loading ? (
+                    <Loader2 className={styles.spinner} />
                 ) : (
                     <>
                         {pagination.paginated.map((article) => (
                             <ArticleCard
                                 key={article.id}
-                                article={article}
+                                article={{
+                                    id: article.id,
+                                    title: article.article.title,
+                                    article_url:
+                                        article.article.article_url,
+                                    thumbnail_url:
+                                        article.article.thumbnail_url,
+                                    published_at: article.article.published_at,
+                                    tags:
+                                        article.tags
+                                }}
                                 
                             />
                         ))}
 
                         <Pagination
-                            totalItems={articles.length}
+                            totalItems={feedArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
                             onPageChange={pagination.setPage}
