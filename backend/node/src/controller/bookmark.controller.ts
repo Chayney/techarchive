@@ -1,56 +1,56 @@
 import { RequestHandler } from "express";
 import { AppDataSource } from "../config/appDataSource";
-import { Favorite } from "../domain/entity/favorites.entity";
+import { Bookmark } from "../domain/entity/bookmarks.entity";
 
-export const getFavoriteArticlesHandler: RequestHandler = async (_req, res) => {
+export const getBookmarkArticlesHandler: RequestHandler = async (_req, res) => {
     const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Favorite);
+    const repo = db.getRepository(Bookmark);
     try {
-        const favoriteArticles = await repo.find({
+        const bookmarkArticles = await repo.find({
             relations: {
                 article: true,
-                category: true
+                profile: true
             },
             take: 20
         });
 
-        res.json(favoriteArticles);
+        res.json(bookmarkArticles);
     } catch (error) {
         console.error(error);
 
         res.status(500).json({
-            message: "failed to get trend articles"
+            message: "failed to get bookmark articles"
         });
     }
 }
 
-export const createFavoriteArticlesHandler: RequestHandler = async (req, res) => {
+export const createBookmarkArticlesHandler: RequestHandler = async (req, res) => {
     const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Favorite);
+    const repo = db.getRepository(Bookmark);
     try {
-        const { category_id, article_id } = req.body;
+        const { profile_id, article_id } = req.body;
 
         const exists = await repo.findOne({
             where: {
-                category: { id: category_id },
+                profile: { id: profile_id },
                 article: { id: article_id }
             }
         });
 
         if (exists) {
             return res.status(409).json({
-                message: "Already favorited"
+                message: "Already bookmarkd"
             });
         }
 
-        const favorite = repo.create({
-            category: { id: category_id },
+        const bookmark = repo.create({
+            profile: { id: profile_id },
             article: { id: article_id }
         });
 
-        await repo.save(favorite);
+        await repo.save(bookmark);
 
-        return res.status(201).json(favorite);
+        return res.status(201).json(bookmark);
 
     } catch (error) {
         console.error(error);
@@ -60,26 +60,26 @@ export const createFavoriteArticlesHandler: RequestHandler = async (req, res) =>
     }
 }
 
-export const deleteFavoriteArticlesHandler: RequestHandler = async (req, res) => {
+export const deleteBookmarkArticlesHandler: RequestHandler = async (req, res) => {
     const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Favorite);
+    const repo = db.getRepository(Bookmark);
     try {
-        const { category_id, article_id } = req.body;
+        const { profile_id, article_id } = req.body;
 
-        const favorite = await repo.findOne({
+        const bookmark = await repo.findOne({
             where: {
                 article: { id: article_id },
-                category: { id: category_id }
+                profile: { id: profile_id }
             }
         });
 
-        if (!favorite) {
+        if (!bookmark) {
             return res.status(404).json({
                 message: "not found"
             });
         }
 
-        await repo.remove(favorite);
+        await repo.remove(bookmark);
 
         res.status(204).send();
 

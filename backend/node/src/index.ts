@@ -4,13 +4,14 @@ import cors from "cors";
 import { AppDataSource } from "./config/appDataSource";
 import { trendArticles } from "./batch/crawler/service/trend.service";
 import { feedArticles } from "./batch/crawler/service/feed.service";
-import { articleRouter } from "./routes/article.route";
+import { trendRouter } from "./routes/trend.route";
 import { categoryRouter } from "./routes/category.route";
 import { saveOgps } from "./batch/ogp/repository/article.repository";
 import { favoriteRouter } from "./routes/favorite.route";
 import { transformQiitaRssArticles } from "./batch/crawler/transform/rss/qiitaClient";
 import { transformZennRssArticles } from "./batch/crawler/transform/rss/zennClient";
 import { feedRouter } from "./routes/feed.route";
+import { bookmarkRouter } from "./routes/bookmark.route";
 
 
 dotenv.config();
@@ -25,9 +26,10 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // DBからデータ取得処理
-app.use("/api", articleRouter);
+app.use("/api", trendRouter);
 app.use("/api", categoryRouter);
 app.use("/api", favoriteRouter);
+app.use("/api", bookmarkRouter);
 app.use("/api", feedRouter);
 
 AppDataSource.initialize()
@@ -55,7 +57,6 @@ const startServer = async () => {
         // console.log("start get articles");
         // await trendArticles();
         // await feedArticles();
-        // await transformZennRssArticles();
         // console.log("Articles save completed");
 
         // console.log("start get ogps");
