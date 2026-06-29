@@ -24,14 +24,12 @@ type ArticleCardProps = {
 
 export const ArticleCard = ({
     article,
-    likes_count,
-    profile_id,
-    showBookmark,
-    showFavorite
+    likes_count
 }: ArticleCardProps) => {
     const { categories, setCategories } = useFavoriteCategoryContext();
+   
     const { 
-        bookmarkMap,
+        bookmarkArticleMap,
         favoriteCategoryMap,
         favoriteArticleMap,
         tooltip,
@@ -40,7 +38,6 @@ export const ArticleCard = ({
         toggleFavorite,
         toggleDropdown,
         showTooltip,
-        setOpenArticleId,
         handleAddCategory
     } = useArticleActionsContext();
     
@@ -94,15 +91,17 @@ export const ArticleCard = ({
                     </a>
 
                     {/* Bookmark */}
-                    {/* <Bookmark
+                    <Bookmark
                         size={30}
-                        onClick={() => toggleBookmark(article.article.id)}
+                        onClick={() => toggleBookmark(
+                            article.id, profileId
+                        )}
                         className={
-                            bookmarkMap[article.article.id]
+                            bookmarkArticleMap[article.id]
                                 ? styles.bookmarkActive
                                 : styles.bookmark
                         }
-                    /> */}
+                    />
 
                     {/* Favorite */}
                     <div className="relative">

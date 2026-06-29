@@ -40,9 +40,9 @@ export const TrendTemplate = () => {
                     <>
                         {pagination.paginated.map((article) => (
                             <ArticleCard
-                                key={article.id}
+                                key={article.article.id}
                                 article={{
-                                    id: article.id,
+                                    id: article.article.id,
                                     title: article.article.title,
                                     article_url:
                                         article.article.article_url,

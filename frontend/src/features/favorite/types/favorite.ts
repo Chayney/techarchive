@@ -4,6 +4,7 @@ export type Category = {
 }
 
 export type Article = {
+    id: number
     title: string;
     article_url: string;
     thumbnail_url: string | null;

@@ -10,7 +10,7 @@ export type Category = {
 
 export const useSidebar = () => {
     const mainItems = [
-        { title: "Feeds", url: NAVIGATION_PATH.FEED, icon: Rss },
+        { title: "Feed", url: NAVIGATION_PATH.FEED, icon: Rss },
         { title: "Trend", url: NAVIGATION_PATH.TREND, icon: Star },
         { title: "Company", url: NAVIGATION_PATH.COMPANY, icon: Building2 },
         { title: "Bookmark", url: NAVIGATION_PATH.BOOKMARK, icon: Bookmark }

@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
-import type { TrendArticle } from "../../types/main";
+import type { BookmarkArticle } from "../../types/main";
 
-export const useTrendTemplate = () => {
-    const [trendArticles, setTrendArticle] = useState<TrendArticle[]>([]);
+export const useBookmarkTemplate = () => {
+    const [bookmarkArticles, setBookmarkArticle] = useState<BookmarkArticle[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             const res = await fetch(
-                "http://localhost:3000/api/trends"
+                "http://localhost:3000/api/bookmarks"
             );
 
-            const json: TrendArticle[] =
+            const json: BookmarkArticle[] =
                 await res.json();
 
-            setTrendArticle(json);
+            setBookmarkArticle(json);
             setLoading(false);
         };
 
         fetchData();
     }, []);
     return {
-        trendArticles,
+        bookmarkArticles,
         loading
     }
 }

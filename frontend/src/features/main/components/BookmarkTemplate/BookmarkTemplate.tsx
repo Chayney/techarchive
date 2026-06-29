@@ -1,31 +1,22 @@
 import { useState } from "react";
 import Layout from "../../../../shared/components/layouts/BaseLayout/BaseLayout";
 import styles from "./style.module.css";
+import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import { Loader2 } from "lucide-react";
-
 import { Header } from "../../../../shared/components/layouts/Header/Header";
-
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
-import { useBookmark } from "../../../article/hooks/useBookmark";
 import { usePagination } from "../../../article/hooks/usePagination";
-import { useArticleActions } from "../../../article/hooks/useArticleActions";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
+import { useBookmarkTemplate } from "./useBookmarkTemplate";
 
 export const BookmarkTemplate = () => {
+    // isAuthはcategory用に使用
+    const { isAuth } = useAuthContext();
     const [keyword, setKeyword] = useState("");
-    const [searchKeyword, setSearchKeyword] = useState("");
-
-    const {
-        bookmarkArticles,
-        categories,
-        profileId,
-        loading: bookmarkLoading,
-        isAuth
-    } = useBookmark(searchKeyword);
+    const [_searchKeyword, setSearchKeyword] = useState("");
+    const { bookmarkArticles, loading } = useBookmarkTemplate();
 
     const pagination = usePagination(bookmarkArticles);
-
-    const actions = useArticleActions(profileId ?? undefined);
 
     return (
         <Layout
@@ -39,27 +30,27 @@ export const BookmarkTemplate = () => {
                         pagination.setPage(1);
                     }}
                 />
+
             }
         >
             <main className={styles.underContainer}>
-                {bookmarkLoading ? (
-                    <Loader2 />
-                ) : !isAuth ? (
-                    <div>ログインしていません</div>
-                ) : bookmarkArticles.length === 0 ? (
-                    <div className={styles.emptyCard}>
-                        <h3>ブックマーク記事はありません</h3>
-                        <p>
-                            記事一覧から🔖ボタンを押してブックマーク登録してください
-                        </p>
-                    </div>
+                {loading ? (
+                    <Loader2 className={styles.spinner} />
                 ) : (
                     <>
                         {pagination.paginated.map((article) => (
                             <ArticleCard
-                                key={article.id}
-                                article={article}
-                                
+                                key={article.article.id}
+                                article={{
+                                    id: article.article.id,
+                                    title: article.article.title,
+                                    article_url:
+                                        article.article.article_url,
+                                    thumbnail_url:
+                                        article.article.thumbnail_url,
+                                    published_at: article.article.published_at,
+                                    
+                                }}
                             />
                         ))}
 
@@ -74,4 +65,4 @@ export const BookmarkTemplate = () => {
             </main>
         </Layout>
     );
-}
+};

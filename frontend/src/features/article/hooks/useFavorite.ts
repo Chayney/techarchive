@@ -5,11 +5,11 @@ export const useFavorite = () => {
     const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
     const [favoriteArticleMap, setFavoriteArticleMap] = useState<Record<number, boolean>>({});
 
-    // POST /favorites
     const addFavorite = async (
         articleId: number,
         categoryId: number
     ) => {
+        console.log("addFavorite", articleId, categoryId);
         const response = await fetch(
             "http://localhost:3000/api/favorite", {
                 method: "POST",
@@ -40,7 +40,6 @@ export const useFavorite = () => {
         }));
     };
 
-    // DELETE /favorites
     const removeFavorite = async (
         articleId: number,
         categoryId: number
@@ -89,6 +88,7 @@ export const useFavorite = () => {
         });
     };
 
+    // お気に入り済みか否かの判定
     const toggleFavorite = async (
         articleId: number,
         categoryId: number
@@ -113,6 +113,8 @@ export const useFavorite = () => {
     return {
         favoriteCategoryMap,
         favoriteArticleMap,
+        setFavoriteCategoryMap,
+        setFavoriteArticleMap,
         addFavorite,
         removeFavorite,
         toggleFavorite

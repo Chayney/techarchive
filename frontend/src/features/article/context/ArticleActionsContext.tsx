@@ -7,7 +7,7 @@ type ContextProps = {
 };
 
 type ArticleActionsContextType = {
-    bookmarkMap: Record<number, boolean>;
+    bookmarkArticleMap: Record<number, boolean>;
     favoriteCategoryMap: Record<string, boolean>;
     favoriteArticleMap: Record<number, boolean>;
 
@@ -18,7 +18,7 @@ type ArticleActionsContextType = {
 
     openArticleId: number | null;
 
-    toggleBookmark: (articleId: number) => Promise<void>;
+    toggleBookmark: (articleId: number, profileId: number) => Promise<void>;
     toggleFavorite: (articleId: number, categoryId: number) => Promise<void>;
     toggleDropdown: (id: number) => void;
     showTooltip: (articleId: number, message: string) => void;
@@ -32,7 +32,7 @@ type ArticleActionsContextType = {
 
 export const ArticleActionsContext =
     createContext<ArticleActionsContextType>({
-        bookmarkMap: {},
+        bookmarkArticleMap: {},
         favoriteCategoryMap: {},
         favoriteArticleMap: {},
 
@@ -55,7 +55,7 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
 }) => {
 
     const {
-        bookmarkMap,
+        bookmarkArticleMap,
         favoriteCategoryMap,
         favoriteArticleMap,
         tooltip,
@@ -71,7 +71,7 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
     return (
         <ArticleActionsContext.Provider
             value={{
-                bookmarkMap,
+                bookmarkArticleMap,
                 favoriteCategoryMap,
                 favoriteArticleMap,
                 tooltip,

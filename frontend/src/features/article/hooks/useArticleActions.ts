@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../shared/lib/supabaseClient";
-import type { Category } from "../types/article";
+import type { Bookmark, Category, Favorite } from "../types/article";
 import { useFavorite } from "./useFavorite";
+import { useBookmark } from "./useBookmark";
 
 export const useArticleActions = (profileId?: number) => {
     const { 
         favoriteCategoryMap,
         favoriteArticleMap,
-        toggleFavorite
+        toggleFavorite,
+        setFavoriteCategoryMap,
+        setFavoriteArticleMap
     } = useFavorite();
-    const [bookmarkMap, setBookmarkMap] = useState<Record<number, boolean>>({});
+    
+    const { 
+        bookmarkArticleMap,
+        setBookmarkArticleMap,
+        toggleBookmark
+    } = useBookmark();
 
     const [tooltip, setTooltip] = useState<{
         articleId: number;
@@ -64,109 +71,60 @@ export const useArticleActions = (profileId?: number) => {
         };
     }, [openArticleId]);
 
-    // ブックマーク済みか否かの判定
-    const toggleBookmark = async (articleId: number) => {
-        if (!profileId) return;
-
-        const isBookmark = bookmarkMap[articleId];
-
-        if (isBookmark) {
-            const { error } = await supabase
-                .from("bookmarks")
-                .delete()
-                .eq("profile_id", profileId)
-                .eq("article_id", articleId);
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            setBookmarkMap((prev) => ({
-                ...prev,
-                [articleId]: false
-            }));
-
-            showTooltip(articleId, "Delete Bookmark");
-        } else {
-            const { error } = await supabase
-                .from("bookmarks")
-                .insert({
-                    profile_id: profileId,
-                    article_id: articleId
-                });
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-
-            setBookmarkMap((prev) => ({
-                ...prev,
-                [articleId]: true
-            }));
-
-            showTooltip(articleId, "Add Bookmark");
-        }
-    };
-
     // ブックマーク記事の取得
     useEffect(() => {
         if (!profileId) return;
 
         const fetchBookmarks = async () => {
-            const { data, error } = await supabase
-                .from("bookmarks")
-                .select("article_id")
-                .eq("profile_id", profileId);
+            const res = await fetch("http://localhost:3000/api/bookmarks");
 
-            if (error) {
-                console.error(error);
-                return;
+            if (!res.ok) {
+                throw new Error("ブックマークの取得に失敗しました");
             }
 
-            const map: Record<number, boolean> = {};
+            const data: Bookmark[] = await res.json();
+            
+            const articleMap: Record<number, boolean> = {};
 
             data?.forEach((row) => {
-                map[row.article_id] = true;
+                articleMap[row.article_id] = true;
             });
 
-            setBookmarkMap(map);
+            setBookmarkArticleMap(articleMap);
         };
 
         fetchBookmarks();
     }, [profileId]);
 
     // お気に入り記事の取得
-    // useEffect(() => {
-    //     if (!profileId) return;
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/api/favorites");
 
-    //     const fetchFavorites = async () => {
-    //         const { data, error } = await supabase
-    //             .from("favorites")
-    //             .select("article_id, category_id")
-    //             .eq("profile_id", profileId);
+                if (!res.ok) {
+                    throw new Error("お気に入りの取得に失敗しました");
+                }
 
-    //         if (error) {
-    //             console.error(error);
-    //             return;
-    //         }
+                const data: Favorite[] = await res.json();
+                const categoryMap: Record<string, boolean> = {};
+                const articleMap: Record<number, boolean> = {};
 
-    //         const categoryMap: Record<string, boolean> = {};
-    //         const articleMap: Record<number, boolean> = {};
+                data.forEach((row) => {
+                    const key = `${row.article_id}-${row.category_id}`;
+                    categoryMap[key] = true;
+                    articleMap[row.article_id] = true;
+                });
 
-    //         data?.forEach((row) => {
-    //             const key = `${row.article_id}-${row.category_id}`;
-    //             categoryMap[key] = true;
-    //             articleMap[row.article_id] = true;
-    //         });
+                setFavoriteCategoryMap(categoryMap);
+                setFavoriteArticleMap(articleMap);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    //         setFavoriteCategoryMap(categoryMap);
-    //         setFavoriteArticleMap(articleMap);
-    //     };
-
-    //     fetchFavorites();
-    // }, [profileId]);
+        fetchFavorites();
+    }, [setFavoriteCategoryMap, setFavoriteArticleMap]);
 
     // カテゴリー名の追加
     const handleAddCategory = async (
@@ -195,13 +153,11 @@ export const useArticleActions = (profileId?: number) => {
     };
 
     return {
-        bookmarkMap,
+        bookmarkArticleMap,
         favoriteCategoryMap,
         favoriteArticleMap,
-
         tooltip,
         openArticleId,
-
         toggleBookmark,
         toggleFavorite,
         toggleDropdown,

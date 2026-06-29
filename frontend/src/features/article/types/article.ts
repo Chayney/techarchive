@@ -48,7 +48,7 @@ export type ArticleTagRow = {
     }[];
 };
 
-export type Bookmarks = {
+export type Bookmark = {
     id: number;
     article_id: number;
     profile_id: number;
@@ -73,7 +73,6 @@ export type Favorite = {
     id: number;
     article_id: number;
     category_id: number;
-    profile_id: number;
 }
 
 export type FavoriteArticle = {
