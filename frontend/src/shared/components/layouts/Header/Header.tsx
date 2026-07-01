@@ -4,10 +4,11 @@ import { useAuthContext } from "../../../../features/auth/hooks/useAuthContext";
 import styles from "./style.module.css";
 
 type Props = {
-    title: string;
+    title: string | null;
     keyword: string;
     onKeywordChange: (value: string) => void;
     onSearch: (value: string) => void;
+    actions?: React.ReactNode;
 };
 
 export const Header = ({
@@ -15,6 +16,7 @@ export const Header = ({
     keyword,
     onKeywordChange,
     onSearch,
+    actions
 }: Props) => {
     const { logout } = useAuthContext();
 
@@ -35,6 +37,7 @@ export const Header = ({
                     }}
                     inputSize="lg"
                 />
+                {actions}
                 <Button
                     variant="secondary"
                     onClick={logout}

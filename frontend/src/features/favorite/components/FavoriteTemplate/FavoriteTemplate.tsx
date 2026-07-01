@@ -8,16 +8,20 @@ import { Pagination } from "../../../../shared/components/layouts/Pagination/Pag
 import { useFavoriteTemplate } from "./useFavoriteTemplate";
 import { usePagination } from "../../../article/hooks/usePagination";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
+import { useFavoriteCategoryContext } from "../../hooks/useFavoriteCategoryContext";
 
 export const FavoriteTemplate = () => {
     const { id } = useParams();
     const categoryId = Number(id);
     const { favoriteArticles, loading } = useFavoriteTemplate();
-    
+    const { categories } = useFavoriteCategoryContext();
+
     const filteredArticles = favoriteArticles.filter((article) => article.category_id === categoryId)
+
+    const category = categories.find((category) => category.id === categoryId);
+    const categoryName = category?.name ?? null;
     
-    const pagination = usePagination(filteredArticles);
-    const categoryName = filteredArticles[0]?.category.name;
+    const pagination = usePagination(filteredArticles); 
 
     const [keyword, setKeyword] = useState("");
     const [_searchKeyword, setSearchKeyword] = useState("");
