@@ -12,6 +12,8 @@ import { transformQiitaRssArticles } from "./batch/crawler/transform/rss/qiitaCl
 import { transformZennRssArticles } from "./batch/crawler/transform/rss/zennClient";
 import { feedRouter } from "./routes/feed.route";
 import { bookmarkRouter } from "./routes/bookmark.route";
+import { getPlatformTags } from "./batch/crawler/repository/folder_platform.repository";
+import { folderRouter } from "./routes/folder.route";
 
 
 dotenv.config();
@@ -31,6 +33,7 @@ app.use("/api", categoryRouter);
 app.use("/api", favoriteRouter);
 app.use("/api", bookmarkRouter);
 app.use("/api", feedRouter);
+app.use("/api", folderRouter);
 
 AppDataSource.initialize()
     .then(() => {
@@ -62,6 +65,10 @@ const startServer = async () => {
         // console.log("start get ogps");
         // await saveOgps();
         // console.log("Ogps save completed");
+
+        // console.log('test')
+        // await getPlatformTags()
+        // console.log('test done')
 
         // console.log("start get likes");
         // await upsertLikesCount();

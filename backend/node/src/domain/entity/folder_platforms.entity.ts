@@ -8,11 +8,10 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import { Folder } from "./folders.entity";
-import { Feed } from "./feeds.entity";
+import { Platform } from "./platforms.entity";
 
-@Entity("folder_feeds")
-export class FolderFeed {
-
+@Entity("folder_platforms")
+export class FolderPlatform {
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -20,7 +19,7 @@ export class FolderFeed {
     folder_id!: number;
 
     @Column()
-    feed_id!: number;
+    platform_id!: number;
 
     @Column()
     tag!: string;
@@ -35,7 +34,7 @@ export class FolderFeed {
     @JoinColumn({ name: "folder_id" })
     folder!: Folder;
 
-    @ManyToOne(() => Feed, feed => feed.folderFeed)
-    @JoinColumn({ name: "feed_id" })
-    feed!: Feed;
+    @ManyToOne(() => Platform)
+    @JoinColumn({ name: "platform_id" })
+    platform!: Platform;
 }

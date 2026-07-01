@@ -9,7 +9,7 @@ import {
     ManyToOne,
 } from "typeorm";
 import { Profile } from "./profiles.entity";
-import { FolderFeed } from "./folder_feeds.entity";
+import { FolderPlatform } from "./folder_platforms.entity";
 
 @Entity("folders")
 export class Folder {
@@ -33,6 +33,6 @@ export class Folder {
     @JoinColumn({ name: "profile_id" })
     profile!: Profile;
 
-    @OneToMany(() => FolderFeed, feed => feed.folder)
-    folderFeed!: FolderFeed[];
+    @OneToMany(() => FolderPlatform, platform => platform.folder)
+    folderFeed!: FolderPlatform[];
 }

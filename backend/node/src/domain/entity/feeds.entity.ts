@@ -11,7 +11,6 @@ import {
 } from "typeorm";
 import { Platform } from "./platforms.entity";
 import { Article } from "./articles.entity";
-import { FolderFeed } from "./folder_feeds.entity";
 
 @Entity("feeds")
 export class Feed {
@@ -36,9 +35,6 @@ export class Feed {
 
     @DeleteDateColumn({ name: "deleted_at", nullable: true })
     deleted_at!: Date | null;
-
-    @OneToMany(() => FolderFeed, feed => feed.feed)
-    folderFeed!: FolderFeed[];
 
     @ManyToOne(() => Platform, (platform) => platform.feeds)
     @JoinColumn({ name: "platform_id" })
