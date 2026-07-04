@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { AppDataSource } from "../config/appDataSource";
 import { Folder } from "../domain/entity/folders.entity";
 import { Feed } from "../domain/entity/feeds.entity";
+import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
 
 /**
  * Feed選択UI用
@@ -117,85 +118,38 @@ export const getFeedOptionsHandler: RequestHandler = async (_req, res) => {
     }
 };
 
-// 重複・正規化処理
-const normalizeTag = (tag: string) => {
-    const map: Record<string, string> = {
-        react: "React",
-        "react.js": "React",
-        "next.js": "Next.js",
-        nextjs: "Next.js",
-        typescript: "TypeScript",
-        ts: "TypeScript",
-        aws: "AWS",
-        gcp: "GCP",
-        linux: "Linux",
-        javascript: "JavaScript",
-        js: "JavaScript",
-    };
-
-    const key = tag.trim().toLowerCase();
-    return map[key] ?? tag.trim();
-};
-
 /**
  * getFeedOptionsHandlerで作成した以下を集約する
  * □ React / Zenn
  * □ AI / X
  */
+// querybuilderでarticlesを返すようにしたいがsupabase clientと互換性に懸念があるためここまでの返却
 export const getFolderArticlesHandler: RequestHandler = async (req, res) => {
     const db = AppDataSource.getInstance();
-    const feedRepo = db.getRepository(Feed);
+    const repo = db.getRepository(FolderTagPlatform);
 
     try {
-        const { platform, tag } = req.query as {
-            platform?: string;
-            tag?: string;
-        };
+        const { tagPlatformId } = req.params;
+        const id = Number(tagPlatformId);
 
-        const query = feedRepo
-            .createQueryBuilder("feed")
-            .leftJoinAndSelect("feed.platform", "platform")
-            .leftJoinAndSelect("feed.article", "article");
-
-        // -------------------------
-        // platform条件（Zenn / Qiita）
-        // -------------------------
-        if (platform) {
-            query.andWhere("platform.name = :platform", { platform });
-        }
-
-        // -------------------------
-        // tag条件（react / aws）
-        // -------------------------
-        if (tag) {
-            query.andWhere("LOWER(feed.tags) LIKE :tag", {
-                tag: `%${tag.toLowerCase()}%`,
-            });
-        }
-
-        const feeds = await query.getMany();
-
-        const result = feeds.map(feed => ({
-            id: feed.article.id,
-            title: feed.article.title,
-            article_url: feed.article.article_url,
-            thumbnail_url: feed.article.thumbnail_url,
-            published_at: feed.article.published_at,
-
-            feed: {
-                tags: feed.tags,
+        const folderTagPlatforms = await repo.find({
+            where: {
+                id: id,
+            },
+            relations: {
                 platform: {
-                    name: feed.platform?.name,
-                    favicon_url: feed.platform?.favicon_url,
+                    feeds: {
+                        article: true,
+                    },
                 },
             },
-        }));
+        });
 
-        return res.json(result);
+        return res.json(folderTagPlatforms);
     } catch (error) {
         console.error(error);
         return res.status(500).json({
-            message: "failed to get folder articles",
+            message: "failed to get tag/platform articles",
         });
     }
 };
@@ -237,6 +191,47 @@ export const createFolderHandler: RequestHandler = async (req, res) => {
     }
 };
 
+// フォルダ作成と同時に作成したフォルダに閲覧記事リストを登録
+export const createFolderTagPlatformsHandler: RequestHandler = async (
+    req,
+    res
+) => {
+    const db = AppDataSource.getInstance();
+
+    const repo = db.getRepository(FolderTagPlatform);
+
+    try {
+        const {
+            folder_id,
+            items,
+        }: {
+            folder_id: number;
+            items: {
+                tag: string;
+                platform_id: number;
+            }[];
+        } = req.body;
+
+        const entities = items.map(item =>
+            repo.create({
+                folder_id,
+                tag: item.tag,
+                platform_id: item.platform_id,
+            })
+        );
+
+        await repo.save(entities);
+
+        return res.status(201).json(entities);
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "failed to create folder tag platforms",
+        });
+    }
+};
+
 /**
  グルーピングされたフォルダの一覧を返却
  */
@@ -246,10 +241,10 @@ export const getFolderHandler: RequestHandler = async (_req, res) => {
 
     try {
         const folders = await repo.find({
-            select: {
-                id: true,
-                name: true,
-                profile_id: true,
+            relations: {
+                folderTagPlatforms: {
+                    platform: true
+                },
             }
         });
 

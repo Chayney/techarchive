@@ -10,6 +10,7 @@ import {
 import { Article } from "./articles.entity";
 import { Trend } from "./trends.entity";
 import { Feed } from "./feeds.entity";
+import { FolderTagPlatform } from "./folder_tag_platforms.entity";
 
 @Entity("platforms")
 export class Platform {
@@ -42,6 +43,9 @@ export class Platform {
 
     @DeleteDateColumn({ name: "deleted_at", nullable: true })
     deleted_at!: Date | null;
+
+    @OneToMany(() => FolderTagPlatform, folderTagPlatform => folderTagPlatform.platform)
+    folderTagPlatforms!: FolderTagPlatform[];
 
     @OneToMany(() => Feed, (feed) => feed.platform)
     feeds!: Feed[];
