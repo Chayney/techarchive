@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { NAVIGATION_PATH } from "../../../const/navigation";
 import { Bookmark, Heart, Rss, Star, Building2, Newspaper } from "lucide-react";
 import { useFavoriteCategoryContext } from "../../../../features/favorite/hooks/useFavoriteCategoryContext";
+import { useFolderListContext } from "../../../../features/myfeed/hooks/useFolderListcontext";
 
 export type Category = {
     id: number;
@@ -16,83 +17,23 @@ export const useSidebar = () => {
         { title: "Bookmark", url: NAVIGATION_PATH.BOOKMARK, icon: Bookmark }
     ];
 
+    const { folderList } = useFolderListContext()
+    console.log(folderList)
     const feedItems = [
         {
             title: "All",
-            url: NAVIGATION_PATH.MYFEED,
-            icon: Newspaper
+            url: NAVIGATION_PATH.ALLMYFEED,
+            icon: Newspaper,
         },
-        {
-            title: "Next.js",
-            category_id: 1,
-            children: [
-                {
-                    title: "Qiita",
-                    service: "qiita"
-                },
-                {
-                    title: "Zenn",
-                    service: "zenn"
-                }
-            ]
-        },
-        {
-            title: "React",
-            category_id: 2,
-            children: [
-                {
-                    title: "Qiita",
-                    service: "qiita"
-                },
-                {
-                    title: "Zenn",
-                    service: "zenn"
-                }
-            ]
-        },
-        {
-            title: "TypeScript",
-            category_id: 3,
-            children: [
-                {
-                    title: "Qiita",
-                    service: "qiita"
-                },
-                {
-                    title: "Zenn",
-                    service: "zenn"
-                }
-            ]
-        },
-        {
-            title: "GCP",
-            category_id: 4,
-            children: [
-                {
-                    title: "Qiita",
-                    service: "qiita"
-                },
-                {
-                    title: "Zenn",
-                    service: "zenn"
-                }
-            ]
-        },
-        {
-            title: "AWS",
-            category_id: 5,
-            children: [
-                {
-                    title: "Qiita",
-                    service: "qiita"
-                },
-                {
-                    title: "Zenn",
-                    service: "zenn"
-                }
-            ]
-        }
-    ];
+        ...folderList.map((folder) => ({
+            title: folder.name,
+            folder_id: folder.id,
+            children: folder.folderFeeds.map((folderFeed) => ({
+                title: `${folderFeed.feed.platform.name}/${folderFeed.tag}`,
+                url: `${NAVIGATION_PATH.MYFEED}/${folder.id}`
+            })),
+        })),
+    ]
 
     const { categories } = useFavoriteCategoryContext();
 

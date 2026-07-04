@@ -11,12 +11,11 @@ import { cn } from "../../../lib/utils";
 
 type FeedChild = {
     title: string;
-    service: string;
+    url: string;
 };
 
 type FeedItem = {
     title: string;
-    category_id?: number;
     url?: string;
     icon?: React.ElementType;
     children?: FeedChild[];
@@ -28,49 +27,54 @@ type Props = {
 
 export const FeedMenuItem = ({ item }: Props) => {
     const [open, setOpen] = useState(false);
-    const hasChildren = !!item.children;
+    const hasChildren = !!item.children?.length;
 
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
-                asChild={!!item.url}
                 onClick={() => hasChildren && setOpen((prev) => !prev)}
-                className="flex items-center justify-between"
+                className="flex items-center justify-between w-full"
             >
-                {item.url ? (
-                    <Link to={item.url}>
-                        <div className="flex items-center gap-2">
-                            {item.icon && <item.icon className="h-4 w-4" />}
+                <div className="flex items-center gap-2 flex-1">
 
-                            <span>{item.title}</span>
-                        </div>
-                    </Link>
-                ) : (
-                    <div className="flex items-center gap-2">
-                        {item.icon && <item.icon className="h-4 w-4" />}
+                    {/* Chevron（子がある時だけ） */}
+                    {hasChildren && (
+                        <ChevronRight
+                            className={cn(
+                                "h-4 w-4 transition-transform",
+                                open && "rotate-90"
+                            )}
+                        />
+                    )}
 
-                        {hasChildren && (
-                            <ChevronRight
-                                className={cn(
-                                    "transition-transform",
-                                    open && "rotate-90"
-                                )}
-                            />
-                        )}
+                    {/* icon */}
+                    {item.icon && (
+                        <item.icon className="h-4 w-4" />
+                    )}
 
+                    {/* label */}
+                    {item.url ? (
+                        // Allだけリンク
+                        <Link
+                            to={item.url}
+                            onClick={(e) => hasChildren && e.stopPropagation()}
+                            className="flex-1"
+                        >
+                            {item.title}
+                        </Link>
+                    ) : (
                         <span>{item.title}</span>
-                    </div>
-                )}
+                    )}
+                </div>
             </SidebarMenuButton>
 
+            {/* children */}
             {hasChildren && open && (
                 <SidebarMenuSub>
                     {item.children?.map((child) => (
-                        <SidebarMenuItem key={child.title}>
+                        <SidebarMenuItem key={child.url}>
                             <SidebarMenuButton asChild>
-                                <Link
-                                    to={`/tag/${item.category_id}/${child.service}`}
-                                >
+                                <Link to={child.url}>
                                     <span>{child.title}</span>
                                 </Link>
                             </SidebarMenuButton>

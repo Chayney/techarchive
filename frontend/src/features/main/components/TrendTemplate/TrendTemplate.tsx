@@ -53,7 +53,7 @@ export const TrendTemplate = () => {
                                         article.tags
                                 }}
                                 likes_count={article.likes_count}
-                                
+                                platform={article.platform}                           
                             />
                         ))}
 

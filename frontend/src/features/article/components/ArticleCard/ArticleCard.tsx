@@ -5,7 +5,11 @@ import { useArticleCard } from "./useArticleCard";
 import { Input } from "../../../../shared/components/ui/input";
 import { useFavoriteCategoryContext } from "../../../favorite/hooks/useFavoriteCategoryContext";
 import { useArticleActionsContext } from "../../hooks/useArticleActionsContext";
-import { Dialog, DialogContent, DialogTitle } from "../../../../shared/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+} from "../../../../shared/components/ui/dialog";
 
 type ArticleCardProps = {
     article: {
@@ -16,7 +20,14 @@ type ArticleCardProps = {
         published_at: Date;
         tags?: string | null;
     };
+
     likes_count?: number;
+
+    platform?: {
+        name: string;
+        favicon_url: string;
+    };
+
     profile_id?: number;
     showBookmark?: boolean;
     showFavorite?: boolean;
@@ -24,11 +35,12 @@ type ArticleCardProps = {
 
 export const ArticleCard = ({
     article,
-    likes_count
+    likes_count,
+    platform,
 }: ArticleCardProps) => {
     const { categories, setCategories } = useFavoriteCategoryContext();
-   
-    const { 
+
+    const {
         bookmarkArticleMap,
         favoriteCategoryMap,
         favoriteArticleMap,
@@ -38,64 +50,94 @@ export const ArticleCard = ({
         toggleFavorite,
         toggleDropdown,
         showTooltip,
-        handleAddCategory
+        handleAddCategory,
     } = useArticleActionsContext();
-    
-    // 仮置き
+
     const profileId = 1;
 
-    const { 
+    const {
         categoryName,
         open,
         categorySearch,
         setCategoryName,
         setOpen,
-        setCategorySearch
+        setCategorySearch,
     } = useArticleCard();
 
-    const filteredCategories = categories
-        .filter((category) => category
-            .name
+    const filteredCategories = categories.filter((category) =>
+        category.name
             .toLowerCase()
             .includes(categorySearch.toLowerCase())
-        );
+    );
 
     const onAddCategory = async () => {
         if (!profileId) return;
-        const newCategory = await handleAddCategory(profileId, categoryName);
-        setCategories((prev) => [
-            ...prev,
-            newCategory,
-        ]);
-        setCategoryName('');
+
+        const newCategory = await handleAddCategory(
+            profileId,
+            categoryName
+        );
+
+        setCategories((prev) => [...prev, newCategory]);
+
+        setCategoryName("");
         setOpen(false);
     };
-    
+
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>
                 <div className={styles.left}>
-                    <span className={styles.count}>
-                        {likes_count}
-                    </span>
-                    <span className={styles.label}>likes</span>
+                    {platform && (
+                        <div className={styles.leftArea}>
+                            {likes_count !== undefined ? (
+                                <>
+                                    <div className={styles.countArea}>
+                                        <span className={styles.count}>
+                                            {likes_count}
+                                        </span>
+                                        <span className={styles.label}>
+                                            likes
+                                        </span>
+                                    </div>
+                                    <img
+                                        src={platform.favicon_url}
+                                        alt={platform.name}
+                                        className={styles.platformIcon}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <span className={styles.platformName}>
+                                        {platform.name}
+                                    </span>
+
+                                    <img
+                                        src={platform.favicon_url}
+                                        alt={platform.name}
+                                        className={styles.platformIcon}
+                                    />
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.right}>
                     <a
                         href={article.article_url}
+                        target="_blank"
                         rel="noreferrer"
                         className={styles.icon}
                     >
                         <BookOpen size={30} />
                     </a>
 
-                    {/* Bookmark */}
                     <Bookmark
                         size={30}
-                        onClick={() => toggleBookmark(
-                            article.id, profileId
-                        )}
+                        onClick={() =>
+                            toggleBookmark(article.id, profileId)
+                        }
                         className={
                             bookmarkArticleMap[article.id]
                                 ? styles.bookmarkActive
@@ -103,14 +145,13 @@ export const ArticleCard = ({
                         }
                     />
 
-                    {/* Favorite */}
                     <div className="relative">
                         <Heart
                             size={24}
                             data-dropdown-trigger
-                            onClick={() => {
-                                toggleDropdown(article.id);
-                            }}
+                            onClick={() =>
+                                toggleDropdown(article.id)
+                            }
                             className={
                                 favoriteArticleMap[article.id]
                                     ? styles.heartActive
@@ -118,98 +159,123 @@ export const ArticleCard = ({
                             }
                         />
 
-                        {/* Tooltip */}
                         {tooltip?.articleId === article.id && (
                             <div className={styles.tooltip}>
                                 {tooltip.message}
                             </div>
                         )}
 
-                        {/* Dropdown */}
                         {openArticleId === article.id && (
                             <div
-                                data-dropdown={article.id}                             
+                                data-dropdown={article.id}
                                 className={styles.dropdown}
                             >
                                 <Input
                                     value={categorySearch}
                                     inputSize="xl"
                                     onChange={(e) =>
-                                        setCategorySearch(e.target.value)
+                                        setCategorySearch(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="カテゴリー検索"
                                     className={styles.searchInput}
                                 />
+
                                 <div className={styles.categoryList}>
-                                    {filteredCategories.map((category) => {
-                                        const key = `${article.id}-${category.id}`;
+                                    {filteredCategories.map(
+                                        (category) => {
+                                            const key = `${article.id}-${category.id}`;
 
-                                        return (
-                                            <div
-                                                key={category.id}
-                                                className={styles.dropdownItem}
-                                            >
-                                                <span className="truncate flex-1">
-                                                    {category.name}
-                                                </span>
-
-                                                <Button
-                                                    variant={
-                                                        favoriteCategoryMap[key]
-                                                            ? "quaternary"
-                                                            : "tertiary"
+                                            return (
+                                                <div
+                                                    key={category.id}
+                                                    className={
+                                                        styles.dropdownItem
                                                     }
-                                                    onClick={() => {
-                                                        const isSaved =
-                                                            favoriteCategoryMap[key];
-
-                                                        toggleFavorite(
-                                                            article.id,
-                                                            category.id
-                                                        );
-
-                                                        showTooltip(
-                                                            article.id,
-                                                            isSaved
-                                                                ? "Delete Favorite"
-                                                                : "Add Favorite"
-                                                        );
-                                                    }}
                                                 >
-                                                    {favoriteCategoryMap[key]
-                                                        ? "SAVED"
-                                                        : "SAVE"}
-                                                </Button>
-                                            </div>
-                                        );
-                                    })}
+                                                    <span className="truncate flex-1">
+                                                        {category.name}
+                                                    </span>
+
+                                                    <Button
+                                                        variant={
+                                                            favoriteCategoryMap[
+                                                                key
+                                                            ]
+                                                                ? "quaternary"
+                                                                : "tertiary"
+                                                        }
+                                                        onClick={() => {
+                                                            const isSaved =
+                                                                favoriteCategoryMap[
+                                                                key
+                                                                ];
+
+                                                            toggleFavorite(
+                                                                article.id,
+                                                                category.id
+                                                            );
+
+                                                            showTooltip(
+                                                                article.id,
+                                                                isSaved
+                                                                    ? "Delete Favorite"
+                                                                    : "Add Favorite"
+                                                            );
+                                                        }}
+                                                    >
+                                                        {favoriteCategoryMap[
+                                                            key
+                                                        ]
+                                                            ? "SAVED"
+                                                            : "SAVE"}
+                                                    </Button>
+                                                </div>
+                                            );
+                                        }
+                                    )}
                                 </div>
+
                                 <div
-                                    className={styles.dropdownItem}
-                                    onClick={() => setOpen(true)}
+                                    className={
+                                        styles.dropdownItem
+                                    }
+                                    onClick={() =>
+                                        setOpen(true)
+                                    }
                                 >
-                                    カテゴリーを追加<Plus />
+                                    カテゴリーを追加
+                                    <Plus />
                                 </div>
                             </div>
                         )}
+
                         <Dialog
                             open={open}
                             onOpenChange={setOpen}
                         >
                             <DialogContent>
-                                <DialogTitle>カテゴリーの追加</DialogTitle>
+                                <DialogTitle>
+                                    カテゴリーの追加
+                                </DialogTitle>
+
                                 <Input
                                     value={categoryName}
                                     variant="primary"
                                     inputSize="xl"
                                     onChange={(e) =>
-                                        setCategoryName(e.target.value)
+                                        setCategoryName(
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="カテゴリー名を入力"
                                 />
+
                                 <Button
-                                    variant="secondary"       
-                                    onClick={onAddCategory}>
+                                    variant="secondary"
+                                    onClick={onAddCategory}
+                                >
                                     追加
                                 </Button>
                             </DialogContent>
@@ -241,17 +307,28 @@ export const ArticleCard = ({
                     <div className={styles.meta}>
                         <span>
                             🕒{" "}
-                            {new Date(article.published_at).toLocaleDateString()}
+                            {new Date(
+                                article.published_at
+                            ).toLocaleDateString()}
                         </span>
                     </div>
 
-                    <div className={styles.tags}>
-                        {article.tags?.split(",").map((tag, i) => (
-                            <span key={i} className={styles.tag}>
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+                    {article.tags && (
+                        <div className={styles.tags}>
+                            {article.tags
+                                .split(",")
+                                .map((tag) => tag.trim())
+                                .filter(Boolean)
+                                .map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className={styles.tag}
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

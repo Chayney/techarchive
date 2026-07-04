@@ -52,7 +52,7 @@ export const FeedTemplate = () => {
                                     tags:
                                         article.tags
                                 }}
-                                
+                                platform={article.platform}     
                             />
                         ))}
 

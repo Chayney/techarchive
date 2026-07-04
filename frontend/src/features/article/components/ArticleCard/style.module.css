@@ -25,10 +25,40 @@
 }
 
 .left {
-    width: 30%;
+    width: 15%;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
+}
+
+.leftArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.countArea {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.platformIcon {
+    width: 30%;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.platformName {
+    font-size: 30px;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
 .count {

@@ -1,0 +1,198 @@
+.container {
+    width: 100%;
+    padding: 32px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.card {
+    height: 260px;
+    padding: 24px;
+
+    background: #ffffff;
+    border-radius: 16px;
+
+    border: 1px solid #e5e7eb;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+
+.card h2 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+.card p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+.card span {
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.folderDialog {
+    width: 520px;
+    max-width: 520px;
+    padding: 24px;
+}
+
+
+.selectedArea {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    max-height: 90px;
+    overflow-y: auto;
+
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+
+.tagChip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 2px 8px;
+
+    border-radius: 10px;
+
+    background: #1f2937;
+    color: #fb923c;
+
+    font-size: 12px;
+    height: 25px;
+}
+
+
+.tagChip button {
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+
+    color: #9ca3af;
+}
+
+
+.tagChip button:hover {
+    color: white;
+}
+
+
+
+.search {
+    margin-bottom: 16px;
+}
+
+
+
+.platformList {
+    height: 320px;
+
+    overflow-y: auto;
+
+    border: 1px solid #374151;
+    border-radius: 8px;
+
+    background: #111827;
+}
+
+
+
+.platformRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #374151;
+}
+
+
+.platformRow:last-child {
+    border-bottom: none;
+}
+
+
+.platformRow:hover {
+    background: #1f2937;
+}
+
+
+
+.platformLabel {
+    display: flex;
+    gap: 6px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+
+.muted {
+    color: #ffffff;
+}
+
+
+
+.dialogFooter {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 24px;
+}
+
+
+/* tablet */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* mobile */
+@media (max-width: 640px) {
+    .container {
+        padding: 16px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        height: 220px;
+    }
+}

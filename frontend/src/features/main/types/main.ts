@@ -9,6 +9,7 @@ export type Category = {
 };
 
 export type Platform = {
+    name: string;
     favicon_url: string;
 }
 
