@@ -6,8 +6,7 @@ import {
     DeleteDateColumn,
     ManyToOne,
     JoinColumn,
-    PrimaryGeneratedColumn,
-    OneToMany,
+    PrimaryGeneratedColumn
 } from "typeorm";
 import { Platform } from "./platforms.entity";
 import { Article } from "./articles.entity";

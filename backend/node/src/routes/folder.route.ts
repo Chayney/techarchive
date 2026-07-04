@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { getPlatformTagsHandler, saveFolderPlatformsHandler } from "../controller/folder_platform.controller";
+import { createFolderHandler, getFeedOptionsHandler, getFolderArticlesHandler, getFolderHandler } from "../controller/folder.controller";
 
 export const folderRouter = Router();
 
-folderRouter.get("/folder/platform/tags", getPlatformTagsHandler);
-folderRouter.post("/folder/platforms", saveFolderPlatformsHandler);
+// グルーピングする親フォルダ
+folderRouter.get("/folders", getFolderHandler);
+folderRouter.post("/folder", createFolderHandler);
+
+// 親フォルダにまとめられた各集約フォルダ
+// React/QiitaやReact/Zennのようなリストを作る
+folderRouter.get("/tags/platforms", getFeedOptionsHandler);
+folderRouter.get("/folders/:folder_id/articles", getFolderArticlesHandler);
