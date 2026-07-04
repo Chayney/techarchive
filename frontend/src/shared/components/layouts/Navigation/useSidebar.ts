@@ -17,8 +17,8 @@ export const useSidebar = () => {
         { title: "Bookmark", url: NAVIGATION_PATH.BOOKMARK, icon: Bookmark }
     ];
 
-    const { folderList } = useFolderListContext()
-    console.log(folderList)
+    const { folderList, tagPlatforms } = useFolderListContext()
+    
     const feedItems = [
         {
             title: "All",
@@ -28,12 +28,20 @@ export const useSidebar = () => {
         ...folderList.map((folder) => ({
             title: folder.name,
             folder_id: folder.id,
-            children: folder.folderFeeds.map((folderFeed) => ({
-                title: `${folderFeed.feed.platform.name}/${folderFeed.tag}`,
-                url: `${NAVIGATION_PATH.MYFEED}/${folder.id}`
-            })),
-        })),
-    ]
+            children: folder.folderTagPlatforms.map((item) => {
+                // tagPlatformsからindex id取得
+                const matched = tagPlatforms.find(tp =>
+                    tp.tag === item.tag &&
+                    tp.platform.name === item.platform.name
+                );
+
+                return {
+                    title: `${item.tag}/${item.platform.name}`,
+                    url: `${NAVIGATION_PATH.MYFEED}/${matched?.id ?? 0}`
+                };
+            }),
+        }))
+    ];
 
     const { categories } = useFavoriteCategoryContext();
 

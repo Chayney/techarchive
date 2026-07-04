@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "../../../../shared/components/layouts/BaseLayout/BaseLayout";
 import styles from "./style.module.css";
 import { Header } from "../../../../shared/components/layouts/Header/Header";
@@ -10,44 +10,75 @@ import { X } from "lucide-react";
 import { useFolder } from "../../hooks/useFolder";
 import { Link } from "react-router-dom";
 import { NAVIGATION_PATH } from "../../../../shared/const/navigation";
-import type { Folder, FolderFeed, TagPlatform } from "../../types/myfeed";
+import type { Folder, TagPlatform } from "../../types/myfeed";
 import { useFolderListContext } from "../../hooks/useFolderListcontext";
 
 export const AllMyFeedTemplate = () => {
     const { open, setOpen } = useFeedTemplate();
-    const { folderList } = useFolderListContext();
-    const { tagPlatforms } = useFolder();
-    console.log(tagPlatforms)
+    const { folderList, tagPlatforms } = useFolderListContext();
+    const { createFolder, saveFolderTagPlatforms } = useFolder();
 
     const [selectOpen, setSelectOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
     const [_searchKeyword, setSearchKeyword] = useState("");
-
+    const [tagKeyword, setTagKeyword] = useState("");
     const [selected, setSelected] = useState<TagPlatform[]>([]);
-    const [feedItems, setFeedItems] = useState<FolderFeed[]>([]);
-
-    const [loading, setLoading] = useState(false);
     const [folderName, setFolderName] = useState("");
-    const [folders, setFolders] = useState<Folder[]>([]);
+    const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    /* =========================
+       tag filter
+    ========================= */
+    const filteredTagPlatforms = useMemo(() => {
+        return tagPlatforms.filter((item) =>
+            item.tag.toLowerCase().includes(tagKeyword.toLowerCase())
+        );
+    }, [tagPlatforms, tagKeyword]);
+
+    const [detailFolder, setDetailFolder] = useState<Folder | null>(null);
+    const [detailOpen, setDetailOpen] = useState(false);
+
+    /* =========================
+       folder meta (3件 + +N)
+    ========================= */
+    const folderWithMeta = useMemo(() => {
+        return (folderList ?? []).map(folder => {
+            const items = folder.folderTagPlatforms ?? [];
+
+            return {
+                ...folder,
+                visibleItems: items.slice(0, 3),
+                remainingCount: items.length - 3,
+            };
+        });
+    }, [folderList]);
+
+    const filteredFolders = useMemo(() => {
+        return folderWithMeta.filter(folder =>
+            folder.name.toLowerCase().includes(keyword.toLowerCase())
+        );
+    }, [folderWithMeta, keyword]);
+
+    const openCreateDialog = () => {
+        setEditingFolder(null);
+        setFolderName("");
+        setSelected([]);
+        setOpen(true);
+    };
 
     /* =========================
        Toggle select
     ========================= */
     const toggle = (item: TagPlatform) => {
         const exists = selected.some(
-            x =>
-                x.tag === item.tag &&
-                x.platform.name === item.platform.name
+            x => x.tag === item.tag && x.platform.id === item.platform.id
         );
 
         if (exists) {
             setSelected(prev =>
                 prev.filter(
-                    x =>
-                        !(
-                            x.tag === item.tag &&
-                            x.platform.name === item.platform.name
-                        )
+                    x => !(x.tag === item.tag && x.platform.id === item.platform.id)
                 )
             );
         } else {
@@ -61,11 +92,7 @@ export const AllMyFeedTemplate = () => {
     const remove = (item: TagPlatform) => {
         setSelected(prev =>
             prev.filter(
-                x =>
-                    !(
-                        x.tag === item.tag &&
-                        x.platform.name === item.platform.name
-                    )
+                x => !(x.tag === item.tag && x.platform.id === item.platform.id)
             )
         );
     };
@@ -73,27 +100,52 @@ export const AllMyFeedTemplate = () => {
     /* =========================
        Save folder + feeds
     ========================= */
-    // const handleSave = async () => {
-    //     try {
-    //         setLoading(true);
+    const handleSave = async () => {
+        try {
+            setLoading(true);
 
-    //         const folder = await createFolder(folderName);
+            if (editingFolder) {
+                // 編集（未実装）
+                // await updateFolder(editingFolder.id, folderName);
+            } else {
+                const folder = await createFolder(folderName);
 
-    //         await saveFolderFeeds(
-    //             folder.id,
-    //             selected.map(item => ({
-    //                 feed_id: item.feed_id,
-    //                 tag: item.tag,
-    //             }))
-    //         );
+                await saveFolderTagPlatforms(
+                    folder.id,
+                    selected.map(item => ({
+                        tag: item.tag,
+                        platform_id: item.platform.id,
+                    }))
+                );
+            }
 
-    //         setSelectOpen(false);
-    //     } catch (error) {
-    //         console.error(error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+            setSelectOpen(false);
+            setOpen(false);
+            setSelected([]);
+            setFolderName("");
+            setEditingFolder(null);
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!editingFolder) return;
+
+        setFolderName(editingFolder.name);
+
+        setSelected(
+            editingFolder.folderTagPlatforms.map(item => ({
+                id: item.platform.id,
+                tag: item.tag,
+                platform: item.platform,
+                articles: []
+            }))
+        );
+    }, [editingFolder]);
 
     return (
         <Layout
@@ -104,7 +156,7 @@ export const AllMyFeedTemplate = () => {
                     onKeywordChange={setKeyword}
                     onSearch={setSearchKeyword}
                     actions={
-                        <Button variant="secondary" onClick={() => setOpen(true)}>
+                        <Button variant="secondary" onClick={openCreateDialog}>
                             追加
                         </Button>
                     }
@@ -117,23 +169,75 @@ export const AllMyFeedTemplate = () => {
                     Folder list
                 ========================= */}
                 <div className={styles.grid}>
-                    {(folderList ?? []).length === 0 ? (
+                    {(filteredFolders ?? []).length === 0 ? (
                         <div className={styles.empty}>
                             フォルダがありません
                         </div>
                     ) : (
-                        folderList.map(folder => (
+                        filteredFolders.map(folder => (
                             <div key={folder.id} className={styles.card}>
+
                                 <Link to={`${NAVIGATION_PATH.MYFEED}/${folder.id}`}>
                                     <h2>{folder.name}</h2>
                                 </Link>
+
+                                {/* tag/platform preview */}
+                                <div className={styles.labelInFolder}>
+                                    {folder.visibleItems?.map((item) => (
+                                        <div
+                                            key={`${item.platform.id}-${item.tag}`}
+                                            className={styles.platformLabelInFolder}
+                                        >
+                                            <span>{item.tag}</span>
+
+                                            <span className={styles.muted}>
+                                                {" | "}
+                                                {item.platform.name}
+                                            </span>
+                                        </div>
+                                    ))}
+
+                                    {folder.remainingCount > 0 && (
+                                        <Button
+                                            className={styles.moreButton}
+                                            onClick={() => {
+                                                setDetailFolder(folder);
+                                                setDetailOpen(true);
+                                            }}
+                                        >
+                                            +{folder.remainingCount}
+                                        </Button>
+                                    )}
+                                </div>
+
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => {
+                                        setEditingFolder(folder);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    編集
+                                </Button>
+                                <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+                                    <DialogContent className={styles.scrollArea}>
+                                        <DialogTitle>タグ一覧</DialogTitle>
+
+                                        {detailFolder?.folderTagPlatforms?.map((item) => (
+                                            <div key={`${item.platform.id}-${item.tag}`}>
+                                                {item.tag} | {item.platform.name}
+                                            </div>
+                                        ))}
+                                    </DialogContent>
+                                </Dialog>
+
                             </div>
                         ))
                     )}
                 </div>
 
                 {/* =========================
-                    Folder create dialog
+                    Folder dialog
                 ========================= */}
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent className={styles.folderDialog}>
@@ -145,7 +249,6 @@ export const AllMyFeedTemplate = () => {
                             onChange={(e) => setFolderName(e.target.value)}
                         />
 
-                        {/* selected feeds */}
                         <div className={styles.selectedArea}>
                             {selected.map(item => (
                                 <div
@@ -174,31 +277,33 @@ export const AllMyFeedTemplate = () => {
                             <Button variant="secondary" onClick={() => setOpen(false)}>
                                 CLOSE
                             </Button>
-                            {/* <Button onClick={handleSave} disabled={loading}>
+                            <Button onClick={handleSave} disabled={loading}>
                                 DONE
-                            </Button> */}
+                            </Button>
                         </div>
                     </DialogContent>
                 </Dialog>
 
                 {/* =========================
-                    Feed select dialog
+                    Tag select dialog
                 ========================= */}
                 <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
-                    <DialogContent className={styles.selectDialog}>
+                    <DialogContent>
                         <DialogTitle>タグを選択</DialogTitle>
 
                         <Input
                             placeholder="search keyword"
                             className={styles.search}
+                            value={tagKeyword}
+                            onChange={(e) => setTagKeyword(e.target.value)}
                         />
 
                         <div className={styles.platformList}>
-                            {tagPlatforms.map(item => {
+                            {filteredTagPlatforms.map((item) => {
                                 const checked = selected.some(
                                     x =>
                                         x.tag === item.tag &&
-                                        x.platform.name === item.platform.name
+                                        x.platform.id === item.platform.id
                                 );
 
                                 return (
@@ -229,9 +334,9 @@ export const AllMyFeedTemplate = () => {
                             >
                                 CLOSE
                             </Button>
-                            {/* <Button onClick={handleSave} disabled={loading}>
+                            <Button onClick={handleSave} disabled={loading}>
                                 {loading ? "Saving..." : "DONE"}
-                            </Button> */}
+                            </Button>
                         </div>
                     </DialogContent>
                 </Dialog>

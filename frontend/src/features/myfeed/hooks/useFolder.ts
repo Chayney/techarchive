@@ -3,13 +3,10 @@ import type { TagPlatform } from "../types/myfeed";
 
 export const useFolder = () => {
     const [tagPlatforms, settagPlatform] = useState<TagPlatform[]>([]);
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchTagPlatforms = async () => {
             try {
-                setLoading(true);
-
                 const response = await fetch(
                     "http://localhost:3000/api/tags/platforms"
                 );
@@ -22,36 +19,42 @@ export const useFolder = () => {
                 settagPlatform(raw)
             } catch (e) {
                 console.error(e);
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchTagPlatforms();
     }, []);
 
-    const saveFolderFeeds = async (
+    const saveFolderTagPlatforms = async (
         folderId: number,
-        items: { feed_id: number; tag: string }[]
+        items: {
+            tag: string;
+            platform_id: number;
+        }[]
     ) => {
-        const response = await fetch("http://localhost:3000/api/folder/feeds", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                folder_id: folderId,
-                items,
-            }),
-        });
+        const response = await fetch(
+            "http://localhost:3000/api/tags/platforms",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    folder_id: folderId,
+                    items,
+                }),
+            }
+        );
 
         if (!response.ok) {
-            throw new Error("folder feed保存失敗");
+            throw new Error("folder_tag_platforms保存失敗");
         }
 
         return await response.json();
     };
 
     const createFolder = async (folderName: string) => {
-        const res = await fetch("http://localhost:3000/api/folders", {
+        const res = await fetch("http://localhost:3000/api/folder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: folderName })
@@ -70,17 +73,10 @@ export const useFolder = () => {
         }
     };
 
-    const getFolderArticles = async (folderId: number) => {
-        const response = await fetch(`http://localhost:3000/api/folders/${folderId}/articles`);
-        if (!response.ok) throw new Error("folder記事取得失敗");
-        return await response.json();
-    };
-
     return {
         tagPlatforms,
-        saveFolderFeeds,
+        saveFolderTagPlatforms,
         deleteFolderFeed,
-        getFolderArticles,
         createFolder
     };
 };

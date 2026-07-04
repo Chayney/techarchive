@@ -51,7 +51,7 @@
 
 
 .card span {
-    color: #2563eb;
+    color: #000000;
     font-size: 14px;
     font-weight: 600;
 }
@@ -126,6 +126,12 @@
     background: #111827;
 }
 
+.labelInFolder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
 
 
 .platformRow {
@@ -150,8 +156,6 @@
     background: #1f2937;
 }
 
-
-
 .platformLabel {
     display: flex;
     gap: 6px;
@@ -159,9 +163,23 @@
     color: #ffffff;
 }
 
+.platformLabelInFolder {
+    background: #f7931e;
+    min-width: 5%;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    align-items: center;
+}
+
 
 .muted {
     color: #ffffff;
+}
+
+.scrollArea {
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
 

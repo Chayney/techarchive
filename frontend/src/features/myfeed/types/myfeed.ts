@@ -1,41 +1,45 @@
-type Article = {
-    id: number;
-    title: string;
-    article_url: string;
-    thumbnail_url: string | null;
-    published_at: Date;
-};
-
 type Platform = {
     id: number;
     name: string;
     favicon_url: string;
 };
 
-type Feed = {
+type Article = {
     id: number;
-    tags: string;
-    platform: Platform;
+    title: string;
+    article_url: string;
+    thumbnail_url: string | null;
+    published_at: string;
+}
+
+export type MyFeedArticle = {
     article: Article;
+    feed: {
+        tags: string | null;
+        platform: {
+            name: string;
+            favicon_url: string;
+        };
+    };
 };
 
 export type TagPlatform = {
     id: number;
     tag: string;
     platform: Platform;
+    articles: Article[];
 }
 
-export type FolderFeed = {
+export type FolderTagPlatform = {
     id: number;
     folder_id: number;
-    feed_id: number;
+    platform: Platform;
     tag: string;
-    feed: Feed;
-};
+}
 
 export type Folder = {
     id: number;
     profile_id: number;
     name: string;
-    folderFeeds: FolderFeed[];
+    folderTagPlatforms: FolderTagPlatform[];
 };
