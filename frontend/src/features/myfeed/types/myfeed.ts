@@ -9,7 +9,7 @@ type Article = {
     title: string;
     article_url: string;
     thumbnail_url: string | null;
-    published_at: string;
+    published_at: Date;
 }
 
 export type MyFeedArticle = {
