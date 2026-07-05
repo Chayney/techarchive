@@ -41,12 +41,12 @@ export const useBookmark = () => {
             {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     article_id: articleId,
-                    profile_id: profileId
-                })
+                    profile_id: profileId,
+                }),
             }
         );
 
@@ -54,6 +54,10 @@ export const useBookmark = () => {
             throw new Error("favorite削除失敗");
         }
 
+        setBookmarkArticleMap((prev) => ({
+            ...prev,
+            [articleId]: false,
+        }));
     };
 
     // ブックマーク済みか否かの判定

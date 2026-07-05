@@ -3,6 +3,11 @@ export type Category = {
     name: string;
 }
 
+export type Platform = {
+    name: string;
+    favicon_url: string;
+}
+
 export type Article = {
     id: number
     title: string;
@@ -16,5 +21,7 @@ export type FavoriteArticle = {
     article_id: number;
     category_id: number;
     category: Category;
-    article: Article
+    article: Article & {
+        platform: Platform;
+    };
 };

@@ -26,7 +26,9 @@ export type BookmarkArticle = {
     article_id: number;
     profile_id: number;
     profile: Profile;
-    article: Article
+    article: Article & {
+        platform: Platform;
+    };
 };
 
 export type TrendArticle = {

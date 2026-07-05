@@ -135,9 +135,16 @@ export const ArticleCard = ({
 
                     <Bookmark
                         size={30}
-                        onClick={() =>
-                            toggleBookmark(article.id, profileId)
-                        }
+                        onClick={() => {
+                            const isBookmarked = bookmarkArticleMap[article.id];
+                            toggleBookmark(article.id, profileId);
+                            showTooltip(
+                                article.id,
+                                isBookmarked
+                                    ? "Delete Bookmark"
+                                    : "Add Bookmark"
+                            );
+                        }}
                         className={
                             bookmarkArticleMap[article.id]
                                 ? styles.bookmarkActive

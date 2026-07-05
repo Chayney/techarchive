@@ -13,10 +13,16 @@ export const TrendTemplate = () => {
     // isAuthはcategory用に使用
     const { isAuth } = useAuthContext();
     const [keyword, setKeyword] = useState("");
-    const [_searchKeyword, setSearchKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
     const { trendArticles, loading } = useTrendTemplate();
 
-    const pagination = usePagination(trendArticles);
+    const filteredArticles = trendArticles.filter((article) =>
+        article.article.title
+            .toLowerCase()
+            .includes(searchKeyword.toLowerCase())
+    );
+
+    const pagination = usePagination(filteredArticles);
 
     return (
         <Layout
@@ -61,7 +67,10 @@ export const TrendTemplate = () => {
                             totalItems={trendArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
-                            onPageChange={pagination.setPage}
+                            onPageChange={(page) => {
+                                pagination.setPage(page);
+                                window.scrollTo(0, 0);
+                            }}
                         />
                     </>
                 )}

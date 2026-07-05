@@ -16,15 +16,21 @@ export const FavoriteTemplate = () => {
     const { favoriteArticles, loading } = useFavoriteTemplate();
     const { categories } = useFavoriteCategoryContext();
 
-    const filteredArticles = favoriteArticles.filter((article) => article.category_id === categoryId)
-
     const category = categories.find((category) => category.id === categoryId);
     const categoryName = category?.name ?? null;
-    
-    const pagination = usePagination(filteredArticles); 
 
     const [keyword, setKeyword] = useState("");
-    const [_searchKeyword, setSearchKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
+
+    const categoryArticles = favoriteArticles.filter((article) => article.category_id === categoryId);
+
+    const filteredArticles = categoryArticles.filter((article) =>
+        article.article.title
+            .toLowerCase()
+            .includes(searchKeyword.toLowerCase())
+    );
+
+    const pagination = usePagination(filteredArticles); 
 
     return (
         <Layout
@@ -57,14 +63,18 @@ export const FavoriteTemplate = () => {
                                         article.article.thumbnail_url,
                                     published_at: article.article.published_at,
                                 }}
+                                platform={article.article.platform}
                             />
                         ))}
 
                         <Pagination
-                            totalItems={favoriteArticles.length}
+                            totalItems={categoryArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
-                            onPageChange={pagination.setPage}
+                            onPageChange={(page) => {
+                                pagination.setPage(page);
+                                window.scrollTo(0, 0);
+                            }}
                         />
                     </>
                 )}

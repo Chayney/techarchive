@@ -13,11 +13,17 @@ export const FeedTemplate = () => {
     // const { profileId, isAuth } = useAuthContext();
 
     const [keyword, setKeyword] = useState("");
-    const [_searchKeyword, setSearchKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const { feedArticles, loading } = useFeedTemplate();
 
-    const pagination = usePagination(feedArticles);
+    const filteredArticles = feedArticles.filter((article) =>
+        article.article.title
+            .toLowerCase()
+            .includes(searchKeyword.toLowerCase())
+    );
+
+    const pagination = usePagination(filteredArticles);
 
     return (
         <Layout
@@ -60,7 +66,10 @@ export const FeedTemplate = () => {
                             totalItems={feedArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
-                            onPageChange={pagination.setPage}
+                            onPageChange={(page) => {
+                                pagination.setPage(page);
+                                window.scrollTo(0, 0);
+                            }}
                         />
                     </>
                 )}

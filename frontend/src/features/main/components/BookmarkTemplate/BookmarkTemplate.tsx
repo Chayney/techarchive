@@ -13,10 +13,16 @@ export const BookmarkTemplate = () => {
     // isAuthはcategory用に使用
     const { isAuth } = useAuthContext();
     const [keyword, setKeyword] = useState("");
-    const [_searchKeyword, setSearchKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
     const { bookmarkArticles, loading } = useBookmarkTemplate();
 
-    const pagination = usePagination(bookmarkArticles);
+    const filteredArticles = bookmarkArticles.filter((article) =>
+        article.article.title
+            .toLowerCase()
+            .includes(searchKeyword.toLowerCase())
+    );
+
+    const pagination = usePagination(filteredArticles);
 
     return (
         <Layout
@@ -48,9 +54,9 @@ export const BookmarkTemplate = () => {
                                         article.article.article_url,
                                     thumbnail_url:
                                         article.article.thumbnail_url,
-                                    published_at: article.article.published_at,
-                                    
+                                    published_at: article.article.published_at,                               
                                 }}
+                                platform={article.article.platform}
                             />
                         ))}
 
@@ -58,7 +64,10 @@ export const BookmarkTemplate = () => {
                             totalItems={bookmarkArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
-                            onPageChange={pagination.setPage}
+                            onPageChange={(page) => {
+                                pagination.setPage(page);
+                                window.scrollTo(0, 0);
+                            }}
                         />
                     </>
                 )}
