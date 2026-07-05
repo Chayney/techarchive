@@ -8,10 +8,11 @@ export const getFavoriteArticlesHandler: RequestHandler = async (_req, res) => {
     try {
         const favoriteArticles = await repo.find({
             relations: {
-                article: true,
+                article: {
+                    platform: true
+                },
                 category: true
-            },
-            take: 20
+            }
         });
 
         res.json(favoriteArticles);

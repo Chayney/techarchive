@@ -8,10 +8,11 @@ export const getBookmarkArticlesHandler: RequestHandler = async (_req, res) => {
     try {
         const bookmarkArticles = await repo.find({
             relations: {
-                article: true,
+                article: {
+                    platform: true
+                },
                 profile: true
-            },
-            take: 20
+            }
         });
 
         res.json(bookmarkArticles);
