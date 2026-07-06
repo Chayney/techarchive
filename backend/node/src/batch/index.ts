@@ -1,39 +1,41 @@
-import dotenv from "dotenv";
-import { AppDataSource } from "../config/appDataSource";
-import { trendArticles } from "./crawler/service/trend.service";
 import { feedArticles } from "./crawler/service/feed.service";
+import { trendArticles } from "./crawler/service/trend.service";
+import { deleteArticles } from "./delete/article";
+import { upsertLikesCount } from "./likes/repository/trend.repository";
 import { saveOgps } from "./ogp/repository/article.repository";
 
-dotenv.config();
+async function run() {
+    const mode = process.argv[2];
 
-async function bootstrap() {
-    try {
-        await AppDataSource.initialize();
-        const job = process.argv[2];
-        switch (job) {
-            case "crawler":
-                await trendArticles();
-                await feedArticles();
-                break;
-            case "ogp":
-                await saveOgps();
-                break;
-            case "likes":
-                // await updateLikes();
-                break;
-            case "delete":
-                // await deleteArticles();
-                break;
-            default:
-                throw new Error(
-                    `unknown batch ${job}`
-                );
-        }
-        process.exit(0);
-    } catch (e) {
-        console.error(e);
-        process.exit(1);
+    switch (mode) {
+        case "collect":
+            console.log("start collect");
+            await trendArticles();
+            await feedArticles();
+            await saveOgps();
+            console.log("collect done");
+            break;
+
+        case "likes":
+            console.log("start likes");
+            await upsertLikesCount();
+            console.log("likes done");
+            break;
+
+        case "delete":
+            console.log("start delete");
+            await deleteArticles();
+            console.log("delete done");
+            break;
+
+        default:
+            throw new Error(`Unknown mode: ${mode}`);
     }
 }
 
-bootstrap();
+run()
+    .then(() => process.exit(0))
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    });
