@@ -48,7 +48,7 @@ export const LoginTemplate = () => {
                     />
                 </div>
                 <div className={styles.area}>
-                    <Button type="submit">Login</Button>
+                    <Button type="submit" size="lg">Login</Button>
                 </div>
             </form>
         </div>

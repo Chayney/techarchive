@@ -1,44 +1,65 @@
-import type { Session, User } from "@supabase/supabase-js"
-import { createContext, type FC, type ReactNode } from "react"
-import { useAuth } from "../hooks/useAuth"
+import type { Session, User } from "@supabase/supabase-js";
+import { createContext, type FC, type ReactNode } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 type AuthContextProps = {
-    children: ReactNode
-}
+    children: ReactNode;
+};
 
 type AuthContextType = {
-    session: Session | null,
-    user: User | null,
-    profileId: number | null,
-    loading: boolean,
-    isAuth: boolean,
-    logout: () => Promise<void>
-}
+    session: Session | null;
+    user: User | null;
+    loading: boolean;
+    isAuth: boolean;
+    logout: () => Promise<void>;
+    requireAuth: () => boolean;
+    loginDialogOpen: boolean;
+    setLoginDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    handleGoLogin: () => void;
+};
 
 export const AuthContext = createContext<AuthContextType>({
     session: null,
     user: null,
-    profileId: null,
     loading: true,
     isAuth: false,
-    logout: async () => {}
+    logout: async () => { },
+    requireAuth: () => false,
+    loginDialogOpen: false,
+    setLoginDialogOpen: () => { },
+    handleGoLogin: () => { },
 });
 
 export const AuthProvider: FC<AuthContextProps> = ({ children }) => {
-    const { session, user, profileId, loading, isAuth, logout } = useAuth();
+    const {
+        session,
+        user,
+        loading,
+        isAuth,
+        logout,
+        requireAuth,
+        loginDialogOpen,
+        setLoginDialogOpen,
+        handleGoLogin,
+    } = useAuth();
 
     return (
         <AuthContext.Provider
             value={{
                 session,
                 user,
-                profileId,
                 loading,
                 isAuth,
-                logout
+                logout,
+
+                // ⭐追加
+                requireAuth,
+                loginDialogOpen,
+                setLoginDialogOpen,
+                handleGoLogin,
             }}
         >
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Layout from "../../../../shared/components/layouts/BaseLayout/BaseLayout";
 import styles from "./style.module.css";
-import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import { Loader2 } from "lucide-react";
 import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
@@ -10,8 +9,6 @@ import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard
 import { useBookmarkTemplate } from "./useBookmarkTemplate";
 
 export const BookmarkTemplate = () => {
-    // isAuthはcategory用に使用
-    const { isAuth } = useAuthContext();
     const [keyword, setKeyword] = useState("");
     const [searchKeyword, setSearchKeyword] = useState("");
     const { bookmarkArticles, loading } = useBookmarkTemplate();
@@ -61,7 +58,7 @@ export const BookmarkTemplate = () => {
                         ))}
 
                         <Pagination
-                            totalItems={bookmarkArticles.length}
+                            totalItems={filteredArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
                             onPageChange={(page) => {

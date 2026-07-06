@@ -9,6 +9,7 @@ import { usePagination } from "../../../article/hooks/usePagination";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
 import { useFolderListContext } from "../../hooks/useFolderListcontext";
 
+
 export const MyFeedTemplate = () => {
     const { id } = useParams();
     const tagPlatformId = Number(id);

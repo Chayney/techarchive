@@ -27,9 +27,6 @@ export const AllMyFeedTemplate = () => {
     const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
     const [loading, setLoading] = useState(false);
 
-    /* =========================
-       tag filter
-    ========================= */
     const filteredTagPlatforms = useMemo(() => {
         return tagPlatforms.filter((item) =>
             item.tag.toLowerCase().includes(tagKeyword.toLowerCase())
@@ -39,9 +36,7 @@ export const AllMyFeedTemplate = () => {
     const [detailFolder, setDetailFolder] = useState<Folder | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
 
-    /* =========================
-       folder meta (3件 + +N)
-    ========================= */
+    // フォルダ内のリストが4件以上の表示処理
     const folderWithMeta = useMemo(() => {
         return (folderList ?? []).map(folder => {
             const items = folder.folderTagPlatforms ?? [];
@@ -67,9 +62,6 @@ export const AllMyFeedTemplate = () => {
         setOpen(true);
     };
 
-    /* =========================
-       Toggle select
-    ========================= */
     const toggle = (item: TagPlatform) => {
         const exists = selected.some(
             x => x.tag === item.tag && x.platform.id === item.platform.id
@@ -86,9 +78,6 @@ export const AllMyFeedTemplate = () => {
         }
     };
 
-    /* =========================
-       Remove selected
-    ========================= */
     const remove = (item: TagPlatform) => {
         setSelected(prev =>
             prev.filter(
@@ -97,9 +86,6 @@ export const AllMyFeedTemplate = () => {
         );
     };
 
-    /* =========================
-       Save folder + feeds
-    ========================= */
     const handleSave = async () => {
         try {
             setLoading(true);
@@ -164,10 +150,6 @@ export const AllMyFeedTemplate = () => {
             }
         >
             <main className={styles.container}>
-
-                {/* =========================
-                    Folder list
-                ========================= */}
                 <div className={styles.grid}>
                     {(filteredFolders ?? []).length === 0 ? (
                         <div className={styles.empty}>
@@ -236,9 +218,6 @@ export const AllMyFeedTemplate = () => {
                     )}
                 </div>
 
-                {/* =========================
-                    Folder dialog
-                ========================= */}
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent className={styles.folderDialog}>
                         <DialogTitle>フォルダの編集</DialogTitle>
@@ -284,9 +263,6 @@ export const AllMyFeedTemplate = () => {
                     </DialogContent>
                 </Dialog>
 
-                {/* =========================
-                    Tag select dialog
-                ========================= */}
                 <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
                     <DialogContent>
                         <DialogTitle>タグを選択</DialogTitle>

@@ -26,7 +26,8 @@ export const useRegister = () => {
                 .from("profiles")
                 .insert({
                     user_id: data.user.id,
-                    name: name
+                    name: name,
+                    role: 1
                 });
             if (profileError) {
                 console.error(profileError);

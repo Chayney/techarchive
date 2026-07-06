@@ -4,6 +4,7 @@ import { TooltipProvider } from "../../ui/tooltip";
 import { useIsMobile } from "./useMobile";
 import { MobileNav } from "../Navigation/MobileNavigation/MobileNavigation";
 import styles from "./style.module.css";
+import { LoginRequiredDialog } from "../Dialog/CommonDialog";
 
 type Props = {
     children: React.ReactNode;
@@ -15,6 +16,7 @@ export default function Layout({ children, header }: Props) {
 
     return (
         <TooltipProvider>
+            <LoginRequiredDialog />
             {!isMobile ? (
                 <SidebarProvider defaultOpen={true}>
                     <div className={styles.layout}>

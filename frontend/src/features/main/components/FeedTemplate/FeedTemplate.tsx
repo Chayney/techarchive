@@ -3,15 +3,13 @@ import Layout from "../../../../shared/components/layouts/BaseLayout/BaseLayout"
 import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
 import { Loader2 } from "lucide-react";
-import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import styles from "./style.module.css";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
 import { usePagination } from "../../../article/hooks/usePagination";
 import { useFeedTemplate } from "./useFeedTemplate";
 
 export const FeedTemplate = () => {
-    // const { profileId, isAuth } = useAuthContext();
-
+    
     const [keyword, setKeyword] = useState("");
     const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -63,7 +61,7 @@ export const FeedTemplate = () => {
                         ))}
 
                         <Pagination
-                            totalItems={feedArticles.length}
+                            totalItems={filteredArticles.length}
                             itemsPerPage={10}
                             currentPage={pagination.page}
                             onPageChange={(page) => {

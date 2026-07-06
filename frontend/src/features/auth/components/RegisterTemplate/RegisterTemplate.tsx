@@ -49,12 +49,13 @@ export const RegisterTemplate = () => {
                     <Input
                         type="password"
                         placeholder="Password"
+                        variant="primary"
                         onChange={inputPassword}
                         value={password}
                     /> 
                 </div>
                 <div className={styles.area}>
-                    <Button type="submit">Register</Button>
+                    <Button type="submit" size="lg">Register</Button>
                 </div>
             </form>
         </div>

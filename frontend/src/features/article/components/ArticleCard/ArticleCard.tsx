@@ -10,6 +10,8 @@ import {
     DialogContent,
     DialogTitle,
 } from "../../../../shared/components/ui/dialog";
+import { useAuthContext } from "../../../auth/hooks/useAuthContext";
+import { useIsMobile } from "../../../../shared/components/layouts/BaseLayout/useMobile";
 
 type ArticleCardProps = {
     article: {
@@ -38,8 +40,8 @@ export const ArticleCard = ({
     likes_count,
     platform,
 }: ArticleCardProps) => {
+    const { requireAuth } = useAuthContext();
     const { categories, setCategories } = useFavoriteCategoryContext();
-
     const {
         bookmarkArticleMap,
         favoriteCategoryMap,
@@ -63,6 +65,8 @@ export const ArticleCard = ({
         setOpen,
         setCategorySearch,
     } = useArticleCard();
+
+    const isMobile = useIsMobile();
 
     const filteredCategories = categories.filter((category) =>
         category.name
@@ -108,9 +112,11 @@ export const ArticleCard = ({
                                 </>
                             ) : (
                                 <>
-                                    <span className={styles.platformName}>
-                                        {platform.name}
-                                    </span>
+                                    {!isMobile && (
+                                        <span className={styles.platformName}>
+                                            {platform.name}
+                                        </span>
+                                    )}
 
                                     <img
                                         src={platform.favicon_url}
@@ -136,6 +142,7 @@ export const ArticleCard = ({
                     <Bookmark
                         size={30}
                         onClick={() => {
+                            if (!requireAuth()) return;
                             const isBookmarked = bookmarkArticleMap[article.id];
                             toggleBookmark(article.id, profileId);
                             showTooltip(
@@ -156,9 +163,10 @@ export const ArticleCard = ({
                         <Heart
                             size={24}
                             data-dropdown-trigger
-                            onClick={() =>
+                            onClick={() => {
+                                if (!requireAuth()) return;
                                 toggleDropdown(article.id)
-                            }
+                            }}
                             className={
                                 favoriteArticleMap[article.id]
                                     ? styles.heartActive
@@ -281,7 +289,10 @@ export const ArticleCard = ({
 
                                 <Button
                                     variant="secondary"
-                                    onClick={onAddCategory}
+                                    onClick={() => {
+                                        if (!requireAuth()) return;
+                                        onAddCategory
+                                    }}
                                 >
                                     追加
                                 </Button>
