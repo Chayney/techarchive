@@ -1,5 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import { AppDataSource } from "./config/appDataSource";
 import { trendRouter } from "./routes/trend.route";
@@ -9,33 +8,44 @@ import { feedRouter } from "./routes/feed.route";
 import { bookmarkRouter } from "./routes/bookmark.route";
 import { folderRouter } from "./routes/folder.route";
 
-dotenv.config();
+export const app = express();
 
-const app = express();
-
-app.use(cors({
-    origin:
+export const start = async () => {
+    const PORT =
+        process.env.NODE_ENV === "production"
+            ? process.env.PORT
+            : process.env.LOCAL_PORT;
+    const FRONTEND_URL =
         process.env.NODE_ENV === "production"
             ? process.env.FRONTEND_URL
-            : process.env.LOCAL_FRONTEND_URL,
-    credentials: true,
-}));
+            : process.env.LOCAL_FRONTEND_URL;
 
-app.use(express.json());
+    try {
+        // CORS設定
+        app.use(cors({
+            origin: FRONTEND_URL,
+            credentials: true,
+        }));
 
-app.use("/api", trendRouter);
-app.use("/api", categoryRouter);
-app.use("/api", favoriteRouter);
-app.use("/api", bookmarkRouter);
-app.use("/api", feedRouter);
-app.use("/api", folderRouter);
+        app.use(express.json());
 
-const PORT = process.env.PORT || process.env.LOCAL_PORT || 3000;
+        app.use("/api", trendRouter);
+        app.use("/api", categoryRouter);
+        app.use("/api", favoriteRouter);
+        app.use("/api", bookmarkRouter);
+        app.use("/api", feedRouter);
+        app.use("/api", folderRouter);
 
-AppDataSource.initialize()
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`[SERVER] running on ${PORT}`);
-        });
-    })
-    .catch(console.error);
+        AppDataSource.initialize()
+            .then(() => {
+                app.listen(PORT, () => {
+                    console.log(`[SERVER] running on ${PORT}`);
+                });
+            })
+            .catch(console.error);
+    } catch (error) {
+        console.error('Internal Server Error', error);
+    }
+};
+
+start();

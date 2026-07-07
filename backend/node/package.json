@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
+    "start": "NODE_ENV=production node dist/index.js",
     "build": "tsc",
     "batch": "node dist/batch/index.js",
     "batch:collect": "tsx src/batch/index.ts collect",

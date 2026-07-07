@@ -256,3 +256,83 @@ export const getFolderHandler: RequestHandler = async (_req, res) => {
         });
     }
 };
+
+export const updateFolderHandler: RequestHandler = async (req, res) => {
+    const db = AppDataSource.getInstance();
+    const folderRepo = db.getRepository(Folder);
+    const tagRepo = db.getRepository(FolderTagPlatform);
+
+    const { id } = req.params;
+    const { name, items } = req.body;
+
+    try {
+        const folder = await folderRepo.findOne({
+            where: { id: Number(id) },
+        });
+
+        if (!folder) {
+            return res.status(404).json({ message: "folder not found" });
+        }
+
+        // ① フォルダ名更新
+        folder.name = name;
+        await folderRepo.save(folder);
+
+        // ② 既存タグ削除
+        await tagRepo.delete({
+            folder_id: Number(id),
+        });
+
+        // ③ 新規タグ挿入
+        const newItems = (items ?? []).map((item: any) =>
+            tagRepo.create({
+                folder_id: Number(id),
+                tag: item.tag,
+                platform_id: item.platform_id,
+            })
+        );
+
+        const saved = await tagRepo.save(newItems);
+
+        return res.json({
+            folder,
+            folderTagPlatforms: saved,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "failed to update folder",
+        });
+    }
+};
+
+export const deleteFolderHandler: RequestHandler = async (req, res) => {
+    const db = AppDataSource.getInstance();
+    const repo = db.getRepository(Folder);
+
+    const { id } = req.params;
+
+    try {
+        const folder = await repo.findOne({
+            where: { id: Number(id) },
+        });
+
+        if (!folder) {
+            return res.status(404).json({
+                message: "folder not found",
+            });
+        }
+
+        await repo.remove(folder);
+
+        return res.json({
+            message: "folder deleted",
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "failed to delete folder",
+        });
+    }
+};
