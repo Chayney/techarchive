@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FeedArticle } from "../../types/main";
+import { API_URL } from "../../../../shared/api/apiClient";
 
 export const useFeedTemplate = () => {
     const [feedArticles, setFeedArticle] = useState<FeedArticle[]>([]);
@@ -8,9 +9,7 @@ export const useFeedTemplate = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            const res = await fetch(
-                "http://localhost:3000/api/feeds"
-            );
+            const res = await fetch(`${API_URL}/feeds`);
 
             const json: FeedArticle[] =
                 await res.json();

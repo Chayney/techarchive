@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Bookmark, Category, Favorite } from "../types/article";
 import { useFavorite } from "./useFavorite";
 import { useBookmark } from "./useBookmark";
+import { API_URL } from "../../../shared/api/apiClient";
 
 export const useArticleActions = (profileId?: number) => {
     const { 
@@ -76,7 +77,7 @@ export const useArticleActions = (profileId?: number) => {
         if (!profileId) return;
 
         const fetchBookmarks = async () => {
-            const res = await fetch("http://localhost:3000/api/bookmarks");
+            const res = await fetch(`${API_URL}/bookmarks`);
 
             if (!res.ok) {
                 throw new Error("ブックマークの取得に失敗しました");
@@ -100,7 +101,7 @@ export const useArticleActions = (profileId?: number) => {
     useEffect(() => {
         const fetchFavorites = async () => {
             try {
-                const res = await fetch("http://localhost:3000/api/favorites");
+                const res = await fetch(`${API_URL}/favorites`);
 
                 if (!res.ok) {
                     throw new Error("お気に入りの取得に失敗しました");
@@ -131,19 +132,16 @@ export const useArticleActions = (profileId?: number) => {
         profileId: number,
         categoryName: string,
     ): Promise<Category> => {
-        const res = await fetch(
-            "http://localhost:3000/api/category",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    profile_id: profileId,
-                    name: categoryName,
-                }),
-            }
-        );
+        const res = await fetch(`${API_URL}/category`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                profile_id: profileId,
+                name: categoryName,
+            }),
+        });
 
         if (!res.ok) {
             throw new Error("カテゴリ作成失敗");

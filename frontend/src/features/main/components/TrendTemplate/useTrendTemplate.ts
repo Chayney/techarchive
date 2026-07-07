@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { TrendArticle } from "../../types/main";
+import { API_URL } from "../../../../shared/api/apiClient";
 
 export const useTrendTemplate = () => {
     const [trendArticles, setTrendArticle] = useState<TrendArticle[]>([]);
@@ -8,9 +9,7 @@ export const useTrendTemplate = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            const res = await fetch(
-                "http://localhost:3000/api/trends"
-            );
+            const res = await fetch(`${API_URL}/trends`);
 
             const json: TrendArticle[] =
                 await res.json();

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { MyFeedArticle } from "../../types/myfeed";
+import { API_URL } from "../../../../shared/api/apiClient";
 
 export const useMyFeedTemplate = (tagPlatformId: number) => {
     const [myFeedArticles, setMyFeedArticles] = useState<MyFeedArticle[]>([]);
@@ -7,9 +8,7 @@ export const useMyFeedTemplate = (tagPlatformId: number) => {
     useEffect(() => {
         const fetchFolderArticles = async () => {
             try {
-                const response = await fetch(
-                    `http://localhost:3000/api/tags/platforms/${tagPlatformId}`
-                );
+                const response = await fetch(`${API_URL}/tags/platforms/${tagPlatformId}`);
 
                 if (!response.ok) {
                     throw new Error("folder記事取得失敗");

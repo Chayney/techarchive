@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { TagPlatform } from "../types/myfeed";
+import { API_URL } from "../../../shared/api/apiClient";
 
 export const useFolder = () => {
     const [tagPlatforms, settagPlatform] = useState<TagPlatform[]>([]);
@@ -7,9 +8,7 @@ export const useFolder = () => {
     useEffect(() => {
         const fetchTagPlatforms = async () => {
             try {
-                const response = await fetch(
-                    "http://localhost:3000/api/tags/platforms"
-                );
+                const response = await fetch(`${API_URL}/tags/platforms`);
 
                 if (!response.ok) {
                     throw new Error("feed取得失敗");
@@ -32,19 +31,16 @@ export const useFolder = () => {
             platform_id: number;
         }[]
     ) => {
-        const response = await fetch(
-            "http://localhost:3000/api/tags/platforms",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    folder_id: folderId,
-                    items,
-                }),
-            }
-        );
+        const response = await fetch(`${API_URL}/tags/platforms`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                folder_id: folderId,
+                items,
+            })
+        });
 
         if (!response.ok) {
             throw new Error("folder_tag_platforms保存失敗");
@@ -54,7 +50,7 @@ export const useFolder = () => {
     };
 
     const createFolder = async (folderName: string) => {
-        const res = await fetch("http://localhost:3000/api/folder", {
+        const res = await fetch(`${API_URL}/folder`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: folderName })
@@ -68,7 +64,7 @@ export const useFolder = () => {
         name: string,
         items: { tag: string; platform_id: number }[]
     ) => {
-        const res = await fetch(`http://localhost:3000/api/folder/${id}`, {
+        const res = await fetch(`${API_URL}/folder/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -87,7 +83,7 @@ export const useFolder = () => {
     };
 
     const deleteFolder = async (id: number) => {
-        const res = await fetch(`http://localhost:3000/api/folder/${id}`, {
+        const res = await fetch(`${API_URL}/folder/${id}`, {
             method: "DELETE",
         });
 
@@ -96,20 +92,9 @@ export const useFolder = () => {
         }
     };
 
-    // const deleteFolderFeed = async (id: number) => {
-    //     const response = await fetch(`http://localhost:3000/api/folder/feeds/${id}`, {
-    //         method: "DELETE",
-    //     });
-
-    //     if (!response.ok) {
-    //         throw new Error("folder feed削除失敗");
-    //     }
-    // };
-
     return {
         tagPlatforms,
         saveFolderTagPlatforms,
-        // deleteFolderFeed,
         createFolder,
         updateFolder,
         deleteFolder

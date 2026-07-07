@@ -5,7 +5,6 @@ import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Button } from "../../../../shared/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../../../../shared/components/ui/dialog";
 import { Input } from "../../../../shared/components/ui/input";
-import { useFeedTemplate } from "./useFeedTemplate";
 import { X } from "lucide-react";
 import { useFolder } from "../../hooks/useFolder";
 import { Link } from "react-router-dom";
@@ -14,18 +13,18 @@ import type { Folder, TagPlatform } from "../../types/myfeed";
 import { useFolderListContext } from "../../hooks/useFolderListContext";
 
 export const AllMyFeedTemplate = () => {
-    const { open, setOpen } = useFeedTemplate();
-    const { folderList, tagPlatforms, setFolderList } = useFolderListContext();
+    const { folderList, tagPlatforms, fetchFolders } = useFolderListContext();
     const { createFolder, saveFolderTagPlatforms, updateFolder, deleteFolder } = useFolder();
 
     const [selectOpen, setSelectOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
-    const [_searchKeyword, setSearchKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
     const [tagKeyword, setTagKeyword] = useState("");
     const [selected, setSelected] = useState<TagPlatform[]>([]);
     const [folderName, setFolderName] = useState("");
     const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
     const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const filteredTagPlatforms = useMemo(() => {
         return tagPlatforms.filter((item) =>
@@ -53,7 +52,7 @@ export const AllMyFeedTemplate = () => {
         return folderWithMeta.filter(folder =>
             folder.name.toLowerCase().includes(keyword.toLowerCase())
         );
-    }, [folderWithMeta, keyword]);
+    }, [folderWithMeta, searchKeyword]);
     
     const openCreateDialog = () => {
         setEditingFolder(null);
@@ -99,6 +98,9 @@ export const AllMyFeedTemplate = () => {
                         platform_id: item.platform.id,
                     }))
                 );
+
+                await fetchFolders();
+
             } else {
                 const folder = await createFolder(folderName);
 
@@ -110,16 +112,7 @@ export const AllMyFeedTemplate = () => {
                     }))
                 );
 
-                setFolderList(prev => [
-                    ...prev,
-                    {
-                        ...folder,
-                        folderTagPlatforms: selected.map(item => ({
-                            tag: item.tag,
-                            platform: item.platform,
-                        })),
-                    },
-                ]);
+                await fetchFolders();
             }
 
             setSelectOpen(false);
@@ -141,6 +134,8 @@ export const AllMyFeedTemplate = () => {
 
             await deleteFolder(folderId);
 
+            await fetchFolders();
+
             setOpen(false);
             setEditingFolder(null);
             setSelected([]);
@@ -153,6 +148,7 @@ export const AllMyFeedTemplate = () => {
         }
     };
 
+    // フォルダ情報を編集フォームにセットする
     useEffect(() => {
         if (!editingFolder) return;
 
@@ -358,9 +354,6 @@ export const AllMyFeedTemplate = () => {
                                 onClick={() => setSelectOpen(false)}
                             >
                                 CLOSE
-                            </Button>
-                            <Button onClick={handleSave} disabled={loading}>
-                                {loading ? "Saving..." : "DONE"}
                             </Button>
                         </div>
                     </DialogContent>

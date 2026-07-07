@@ -1,6 +1,7 @@
 // ブックマーク記事の登録と削除
 import { useState } from "react";
-import { getAccessToken } from "../../../shared/api/client";
+import { getAccessToken } from "../../../shared/api/supabaseClient";
+import { API_URL } from "../../../shared/api/apiClient";
 
 export const useBookmark = () => {
     const [bookmarkArticleMap, setBookmarkArticleMap] = useState<Record<number, boolean>>({});
@@ -11,19 +12,17 @@ export const useBookmark = () => {
     ) => {
         console.log("addBookmark", articleId, profileId);
         const accessToken = await getAccessToken();
-        const response = await fetch(
-            "http://localhost:3000/api/bookmark", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`
-                },
-                body: JSON.stringify({
-                    article_id: articleId,
-                    profile_id: profileId,
-                }),
-            }
-        );
+        const response = await fetch(`${API_URL}/bookmark`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                profile_id: profileId,
+            }),
+        });
 
         if (!response.ok) {
             throw new Error("favorite登録失敗");
@@ -40,19 +39,17 @@ export const useBookmark = () => {
         profileId: number
     ) => {
         const accessToken = await getAccessToken();
-        const response = await fetch(
-            "http://localhost:3000/api/bookmark", {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`
-                },
-                body: JSON.stringify({
-                    article_id: articleId,
-                    profile_id: profileId,
-                }),
-            }
-        );
+        const response = await fetch(`${API_URL}/bookmark`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                profile_id: profileId,
+            }),
+        });
 
         if (!response.ok) {
             throw new Error("favorite削除失敗");

@@ -12,6 +12,8 @@ type FolderListContextType = {
 
     tagPlatforms: TagPlatform[];
     settagPlatform: React.Dispatch<React.SetStateAction<TagPlatform[]>>;
+
+    fetchFolders: () => Promise<void>;
 }
 
 export const FolderListContext = createContext<FolderListContextType>({
@@ -19,7 +21,9 @@ export const FolderListContext = createContext<FolderListContextType>({
     setFolderList: () => { },
 
     tagPlatforms: [],
-    settagPlatform: () => { }
+    settagPlatform: () => { },
+
+    fetchFolders: async () => { }
 });
 
 export const FolderListProvider: FC<ContextProps> = ({ children }) => {
@@ -27,7 +31,8 @@ export const FolderListProvider: FC<ContextProps> = ({ children }) => {
         folderList,
         setFolderList,
         tagPlatforms,
-        settagPlatform
+        settagPlatform,
+        fetchFolders
     } = useFolderList();
 
     return (
@@ -36,7 +41,9 @@ export const FolderListProvider: FC<ContextProps> = ({ children }) => {
                 folderList,
                 setFolderList,
                 tagPlatforms,
-                settagPlatform
+                settagPlatform,
+                // 追加
+                fetchFolders
             }}
         >
             {children}

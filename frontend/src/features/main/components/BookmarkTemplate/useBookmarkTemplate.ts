@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { BookmarkArticle } from "../../types/main";
+import { API_URL } from "../../../../shared/api/apiClient";
 
 export const useBookmarkTemplate = () => {
     const [bookmarkArticles, setBookmarkArticle] = useState<BookmarkArticle[]>([]);
@@ -8,9 +9,7 @@ export const useBookmarkTemplate = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            const res = await fetch(
-                "http://localhost:3000/api/bookmarks"
-            );
+            const res = await fetch(`${API_URL}/bookmarks`);
 
             const json: BookmarkArticle[] =
                 await res.json();

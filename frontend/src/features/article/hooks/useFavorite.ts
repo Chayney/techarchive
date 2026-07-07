@@ -1,5 +1,7 @@
 // お気に入り記事の登録と削除
 import { useState } from "react";
+import { getAccessToken } from "../../../shared/api/supabaseClient";
+import { API_URL } from "../../../shared/api/apiClient";
 
 export const useFavorite = () => {
     const [favoriteCategoryMap, setFavoriteCategoryMap] = useState<Record<string, boolean>>({});
@@ -10,18 +12,18 @@ export const useFavorite = () => {
         categoryId: number
     ) => {
         console.log("addFavorite", articleId, categoryId);
-        const response = await fetch(
-            "http://localhost:3000/api/favorite", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    article_id: articleId,
-                    category_id: categoryId,
-                }),
-            }
-        );
+        const accessToken = await getAccessToken();
+        const response = await fetch(`${API_URL}/favorite`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                category_id: categoryId,
+            }),
+        });
 
         if (!response.ok) {
             throw new Error("favorite登録失敗");
@@ -44,19 +46,18 @@ export const useFavorite = () => {
         articleId: number,
         categoryId: number
     ) => {
-        const response = await fetch(
-            "http://localhost:3000/api/favorite",
-            {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    article_id: articleId,
-                    category_id: categoryId
-                })
-            }
-        );
+        const accessToken = await getAccessToken();
+        const response = await fetch(`${API_URL}/favorite`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                article_id: articleId,
+                category_id: categoryId
+            })
+        });
 
         if (!response.ok) {
             throw new Error("favorite削除失敗");
