@@ -63,20 +63,55 @@ export const useFolder = () => {
         return await res.json();
     };
 
-    const deleteFolderFeed = async (id: number) => {
-        const response = await fetch(`http://localhost:3000/api/folder/feeds/${id}`, {
+    const updateFolder = async (
+        id: number,
+        name: string,
+        items: { tag: string; platform_id: number }[]
+    ) => {
+        const res = await fetch(`http://localhost:3000/api/folder/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                items,
+            }),
+        });
+
+        if (!res.ok) {
+            throw new Error("folder update failed");
+        }
+
+        return await res.json();
+    };
+
+    const deleteFolder = async (id: number) => {
+        const res = await fetch(`http://localhost:3000/api/folder/${id}`, {
             method: "DELETE",
         });
 
-        if (!response.ok) {
-            throw new Error("folder feed削除失敗");
+        if (!res.ok) {
+            throw new Error("folder削除失敗");
         }
     };
+
+    // const deleteFolderFeed = async (id: number) => {
+    //     const response = await fetch(`http://localhost:3000/api/folder/feeds/${id}`, {
+    //         method: "DELETE",
+    //     });
+
+    //     if (!response.ok) {
+    //         throw new Error("folder feed削除失敗");
+    //     }
+    // };
 
     return {
         tagPlatforms,
         saveFolderTagPlatforms,
-        deleteFolderFeed,
-        createFolder
+        // deleteFolderFeed,
+        createFolder,
+        updateFolder,
+        deleteFolder
     };
 };

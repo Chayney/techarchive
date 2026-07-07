@@ -2,7 +2,8 @@ import { useMemo } from "react"
 import { NAVIGATION_PATH } from "../../../const/navigation";
 import { Bookmark, Heart, Rss, Star, Building2, Newspaper } from "lucide-react";
 import { useFavoriteCategoryContext } from "../../../../features/favorite/hooks/useFavoriteCategoryContext";
-import { useFolderListContext } from "../../../../features/myfeed/hooks/useFolderListcontext";
+import { useFolderListContext } from "../../../../features/myfeed/hooks/useFolderListContext";
+
 
 export type Category = {
     id: number;

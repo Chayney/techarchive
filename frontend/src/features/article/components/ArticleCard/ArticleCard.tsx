@@ -75,6 +75,7 @@ export const ArticleCard = ({
     );
 
     const onAddCategory = async () => {
+        if (!requireAuth()) return;
         if (!profileId) return;
 
         const newCategory = await handleAddCategory(
@@ -289,10 +290,7 @@ export const ArticleCard = ({
 
                                 <Button
                                     variant="secondary"
-                                    onClick={() => {
-                                        if (!requireAuth()) return;
-                                        onAddCategory
-                                    }}
+                                    onClick={onAddCategory}
                                 >
                                     追加
                                 </Button>

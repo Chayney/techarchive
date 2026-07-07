@@ -1,5 +1,6 @@
 // ブックマーク記事の登録と削除
 import { useState } from "react";
+import { getAccessToken } from "../../../shared/api/client";
 
 export const useBookmark = () => {
     const [bookmarkArticleMap, setBookmarkArticleMap] = useState<Record<number, boolean>>({});
@@ -9,17 +10,19 @@ export const useBookmark = () => {
         profileId: number
     ) => {
         console.log("addBookmark", articleId, profileId);
+        const accessToken = await getAccessToken();
         const response = await fetch(
             "http://localhost:3000/api/bookmark", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                article_id: articleId,
-                profile_id: profileId,
-            }),
-        }
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    article_id: articleId,
+                    profile_id: profileId,
+                }),
+            }
         );
 
         if (!response.ok) {
@@ -36,12 +39,13 @@ export const useBookmark = () => {
         articleId: number,
         profileId: number
     ) => {
+        const accessToken = await getAccessToken();
         const response = await fetch(
-            "http://localhost:3000/api/bookmark",
-            {
+            "http://localhost:3000/api/bookmark", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`
                 },
                 body: JSON.stringify({
                     article_id: articleId,

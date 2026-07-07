@@ -2,7 +2,7 @@ type Platform = {
     id: number;
     name: string;
     favicon_url: string;
-};
+}
 
 type Article = {
     id: number;
@@ -42,4 +42,4 @@ export type Folder = {
     profile_id: number;
     name: string;
     folderTagPlatforms: FolderTagPlatform[];
-};
+}

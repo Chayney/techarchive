@@ -11,12 +11,12 @@ import { useFolder } from "../../hooks/useFolder";
 import { Link } from "react-router-dom";
 import { NAVIGATION_PATH } from "../../../../shared/const/navigation";
 import type { Folder, TagPlatform } from "../../types/myfeed";
-import { useFolderListContext } from "../../hooks/useFolderListcontext";
+import { useFolderListContext } from "../../hooks/useFolderListContext";
 
 export const AllMyFeedTemplate = () => {
     const { open, setOpen } = useFeedTemplate();
-    const { folderList, tagPlatforms } = useFolderListContext();
-    const { createFolder, saveFolderTagPlatforms } = useFolder();
+    const { folderList, tagPlatforms, setFolderList } = useFolderListContext();
+    const { createFolder, saveFolderTagPlatforms, updateFolder, deleteFolder } = useFolder();
 
     const [selectOpen, setSelectOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
@@ -54,7 +54,7 @@ export const AllMyFeedTemplate = () => {
             folder.name.toLowerCase().includes(keyword.toLowerCase())
         );
     }, [folderWithMeta, keyword]);
-
+    
     const openCreateDialog = () => {
         setEditingFolder(null);
         setFolderName("");
@@ -91,8 +91,14 @@ export const AllMyFeedTemplate = () => {
             setLoading(true);
 
             if (editingFolder) {
-                // 編集（未実装）
-                // await updateFolder(editingFolder.id, folderName);
+                await updateFolder(
+                    editingFolder.id,
+                    folderName,
+                    selected.map(item => ({
+                        tag: item.tag,
+                        platform_id: item.platform.id,
+                    }))
+                );
             } else {
                 const folder = await createFolder(folderName);
 
@@ -103,6 +109,17 @@ export const AllMyFeedTemplate = () => {
                         platform_id: item.platform.id,
                     }))
                 );
+
+                setFolderList(prev => [
+                    ...prev,
+                    {
+                        ...folder,
+                        folderTagPlatforms: selected.map(item => ({
+                            tag: item.tag,
+                            platform: item.platform,
+                        })),
+                    },
+                ]);
             }
 
             setSelectOpen(false);
@@ -110,6 +127,24 @@ export const AllMyFeedTemplate = () => {
             setSelected([]);
             setFolderName("");
             setEditingFolder(null);
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteFolder = async (folderId: number) => {
+        try {
+            setLoading(true);
+
+            await deleteFolder(folderId);
+
+            setOpen(false);
+            setEditingFolder(null);
+            setSelected([]);
+            setFolderName("");
 
         } catch (error) {
             console.error(error);
@@ -220,7 +255,9 @@ export const AllMyFeedTemplate = () => {
 
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent className={styles.folderDialog}>
-                        <DialogTitle>フォルダの編集</DialogTitle>
+                        <DialogTitle>
+                            {editingFolder ? "フォルダの編集" : "フォルダの作成"}
+                        </DialogTitle>
 
                         <Input
                             placeholder="フォルダ名"
@@ -253,12 +290,24 @@ export const AllMyFeedTemplate = () => {
                         </Button>
 
                         <div className={styles.dialogFooter}>
-                            <Button variant="secondary" onClick={() => setOpen(false)}>
+                            <Button variant="secondary" onClick={() => {
+                                setOpen(false);
+                                setEditingFolder(null);
+                            }}>
                                 CLOSE
                             </Button>
                             <Button onClick={handleSave} disabled={loading}>
-                                DONE
+                                {editingFolder ? "UPDATE" : "CREATE"}
                             </Button>
+                            {editingFolder && (
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => handleDeleteFolder(editingFolder.id)}
+                                    disabled={loading}
+                                >
+                                    DELETE
+                                </Button>
+                            )}
                         </div>
                     </DialogContent>
                 </Dialog>

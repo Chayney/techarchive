@@ -33,9 +33,6 @@ export const useFolderList = () => {
 
                 const raw = await response.json();
 
-                // =========================
-                // ここが変更ポイント
-                // =========================
                 const mapped: TagPlatform[] = raw.map((item: any, index: number) => ({
                     id: index + 1,
                     tag: item.tag,

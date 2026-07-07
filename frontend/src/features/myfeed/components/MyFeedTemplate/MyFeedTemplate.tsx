@@ -7,8 +7,7 @@ import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
 import { usePagination } from "../../../article/hooks/usePagination";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
-import { useFolderListContext } from "../../hooks/useFolderListcontext";
-
+import { useFolderListContext } from "../../hooks/useFolderListContext";
 
 export const MyFeedTemplate = () => {
     const { id } = useParams();

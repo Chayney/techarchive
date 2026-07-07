@@ -1,3 +1,4 @@
+// supabaseのaccess_tokenをNode.jsで検証
 import { supabase } from "../lib/supabaseClient";
 
 export async function getAccessToken() {
