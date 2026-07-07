@@ -4,6 +4,6 @@ import { authMiddleware } from "../middleware/auth";
 
 export const bookmarkRouter = Router();
 
-bookmarkRouter.get("/bookmarks", authMiddleware, getBookmarkArticlesHandler);
+bookmarkRouter.get("/bookmarks", getBookmarkArticlesHandler);
 bookmarkRouter.post("/bookmark", authMiddleware, createBookmarkArticlesHandler);
 bookmarkRouter.delete("/bookmark", authMiddleware, deleteBookmarkArticlesHandler);
