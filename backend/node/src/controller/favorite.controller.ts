@@ -83,7 +83,6 @@ export const deleteFavoriteArticlesHandler: RequestHandler = async (req, res) =>
         await repo.remove(favorite);
 
         res.status(204).send();
-
     } catch (error) {
         console.error(error);
         return res.status(500).json({
