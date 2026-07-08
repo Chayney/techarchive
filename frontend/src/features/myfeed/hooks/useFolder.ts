@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { TagPlatform } from "../types/myfeed";
 import { API_URL } from "../../../shared/api/apiClient";
+import { getAccessToken } from "../../../shared/api/supabaseClient";
 
 export const useFolder = () => {
     const [tagPlatforms, settagPlatform] = useState<TagPlatform[]>([]);
@@ -31,10 +32,12 @@ export const useFolder = () => {
             platform_id: number;
         }[]
     ) => {
+        const accessToken = await getAccessToken();
         const response = await fetch(`${API_URL}/tags/platforms`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({
                 folder_id: folderId,
@@ -50,9 +53,13 @@ export const useFolder = () => {
     };
 
     const createFolder = async (folderName: string) => {
+        const accessToken = await getAccessToken();
         const res = await fetch(`${API_URL}/folder`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
             body: JSON.stringify({ name: folderName })
         });
         if (!res.ok) throw new Error("folder作成失敗");
@@ -64,10 +71,12 @@ export const useFolder = () => {
         name: string,
         items: { tag: string; platform_id: number }[]
     ) => {
+        const accessToken = await getAccessToken();
         const res = await fetch(`${API_URL}/folder/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({
                 name,
@@ -83,8 +92,13 @@ export const useFolder = () => {
     };
 
     const deleteFolder = async (id: number) => {
+        const accessToken = await getAccessToken();
         const res = await fetch(`${API_URL}/folder/${id}`, {
             method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`
+            },
         });
 
         if (!res.ok) {

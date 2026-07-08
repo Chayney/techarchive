@@ -40,7 +40,7 @@ export const ArticleCard = ({
     likes_count,
     platform,
 }: ArticleCardProps) => {
-    const { requireAuth } = useAuthContext();
+    const { requireAuth, profileId } = useAuthContext();
     const { categories, setCategories } = useFavoriteCategoryContext();
     const {
         bookmarkArticleMap,
@@ -54,8 +54,6 @@ export const ArticleCard = ({
         showTooltip,
         handleAddCategory,
     } = useArticleActionsContext();
-
-    const profileId = 1;
 
     const {
         categoryName,

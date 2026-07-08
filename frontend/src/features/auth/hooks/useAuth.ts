@@ -9,14 +9,35 @@ export const useAuth = () => {
 
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [profileId, setProfileId] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
 
+    const fetchProfileId = async (userId: string) => {
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("user_id", userId)
+            .single();
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        setProfileId(data.id);
+    };
+
     useEffect(() => {
-        supabase.auth.getSession().then(({ data }) => {
+        supabase.auth.getSession().then(async ({ data }) => {
+            const currentUser = data.session?.user ?? null;
             setSession(data.session);
-            setUser(data.session?.user ?? null);
+            setUser(currentUser);
+            if (currentUser) {
+                await fetchProfileId(currentUser.id);
+            }
+
             setLoading(false);
         });
 
@@ -24,6 +45,12 @@ export const useAuth = () => {
             (_event, session) => {
                 setSession(session);
                 setUser(session?.user ?? null);
+
+                if (session?.user) {
+                    fetchProfileId(session.user.id);
+                } else {
+                    setProfileId(0);
+                }
             }
         );
 
@@ -56,6 +83,8 @@ export const useAuth = () => {
         user,
         loading,
         isAuth: !!session,
+        profileId,
+        setProfileId,
         logout,
         requireAuth,
         loginDialogOpen,

@@ -11,8 +11,10 @@ import { Link } from "react-router-dom";
 import { NAVIGATION_PATH } from "../../../../shared/const/navigation";
 import type { Folder, TagPlatform } from "../../types/myfeed";
 import { useFolderListContext } from "../../hooks/useFolderListContext";
+import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 
 export const AllMyFeedTemplate = () => {
+    const { requireAuth } = useAuthContext()
     const { folderList, tagPlatforms, fetchFolders } = useFolderListContext();
     const { createFolder, saveFolderTagPlatforms, updateFolder, deleteFolder } = useFolder();
 
@@ -55,6 +57,7 @@ export const AllMyFeedTemplate = () => {
     }, [folderWithMeta, searchKeyword]);
     
     const openCreateDialog = () => {
+        if (!requireAuth()) return;
         setEditingFolder(null);
         setFolderName("");
         setSelected([]);
@@ -226,6 +229,7 @@ export const AllMyFeedTemplate = () => {
                                 <Button
                                     variant="secondary"
                                     onClick={() => {
+                                        if (!requireAuth()) return;
                                         setEditingFolder(folder);
                                         setOpen(true);
                                     }}

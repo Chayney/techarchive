@@ -11,6 +11,7 @@ type AuthContextType = {
     user: User | null;
     loading: boolean;
     isAuth: boolean;
+    profileId: number;
     logout: () => Promise<void>;
     requireAuth: () => boolean;
     loginDialogOpen: boolean;
@@ -23,6 +24,7 @@ export const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: true,
     isAuth: false,
+    profileId: 0,
     logout: async () => { },
     requireAuth: () => false,
     loginDialogOpen: false,
@@ -36,6 +38,7 @@ export const AuthProvider: FC<AuthContextProps> = ({ children }) => {
         user,
         loading,
         isAuth,
+        profileId,
         logout,
         requireAuth,
         loginDialogOpen,
@@ -50,9 +53,8 @@ export const AuthProvider: FC<AuthContextProps> = ({ children }) => {
                 user,
                 loading,
                 isAuth,
+                profileId,
                 logout,
-
-                // ⭐追加
                 requireAuth,
                 loginDialogOpen,
                 setLoginDialogOpen,
