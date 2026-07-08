@@ -3,58 +3,68 @@
 // マイグレーション用とは別
 
 import { DataSource } from "typeorm";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 let instance: DataSource;
 
 export const AppDataSource = {
-
     getInstance: (): DataSource => {
-
         if (!instance) {
+            const isProduction = process.env.NODE_ENV === "production";
 
-            const isProduction =
-                process.env.NODE_ENV === "production";
+            const {
+                DB_HOST,
+                DB_PORT,
+                POSTGRES_USER,
+                POSTGRES_PASSWORD,
+                POSTGRES_DB,
+            } = process.env;
+
+            // 必須環境変数のチェック
+            const missing = [
+                ["DB_HOST", DB_HOST],
+                ["DB_PORT", DB_PORT],
+                ["POSTGRES_USER", POSTGRES_USER],
+                ["POSTGRES_PASSWORD", POSTGRES_PASSWORD],
+                ["POSTGRES_DB", POSTGRES_DB],
+            ]
+                .filter(([, value]) => !value)
+                .map(([key]) => key);
+
+            if (missing.length > 0) {
+                throw new Error(
+                    `Missing required environment variables: ${missing.join(", ")}`
+                );
+            }
 
             instance = new DataSource({
-
                 type: "postgres",
-
-                host: process.env.DB_HOST,
-
-                port: Number(process.env.DB_PORT),
-
-                username: process.env.POSTGRES_USER,
-
-                password: process.env.POSTGRES_PASSWORD,
-
-                database: process.env.POSTGRES_DB,
-
+                host: DB_HOST,
+                port: Number(DB_PORT),
+                username: POSTGRES_USER,
+                password: POSTGRES_PASSWORD,
+                database: POSTGRES_DB,
 
                 entities: [
-                    "src/domain/entity/*.ts"
+                    isProduction
+                        ? "dist/domain/entity/*.js"
+                        : "src/domain/entity/*.ts",
                 ],
 
                 logging: false,
 
-
                 // Supabase接続時のみSSL
                 ssl: isProduction
                     ? {
-                        rejectUnauthorized: false
+                        rejectUnauthorized: false,
                     }
-                    : false
+                    : false,
             });
         }
 
         return instance;
     },
 
-
     initialize: async () => {
-
         const dataSource = AppDataSource.getInstance();
 
         if (!dataSource.isInitialized) {
@@ -62,5 +72,5 @@ export const AppDataSource = {
         }
 
         return dataSource;
-    }
+    },
 };

@@ -1,3 +1,4 @@
+import { AppDataSource } from "../config/appDataSource";
 import { feedArticles } from "./crawler/service/feed.service";
 import { trendArticles } from "./crawler/service/trend.service";
 import { deleteArticles } from "./delete/article";
@@ -5,6 +6,7 @@ import { upsertLikesCount } from "./likes/repository/trend.repository";
 import { saveOgps } from "./ogp/repository/article.repository";
 
 async function run() {
+    await AppDataSource.initialize();
     const mode = process.argv[2];
 
     switch (mode) {

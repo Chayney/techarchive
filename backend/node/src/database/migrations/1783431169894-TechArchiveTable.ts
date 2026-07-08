@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class TechArchiveTable1783158310650 implements MigrationInterface {
-    name = 'TechArchiveTable1783158310650'
+export class TechArchiveTable1783431169894 implements MigrationInterface {
+    name = 'TechArchiveTable1783431169894'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "trends" ("id" SERIAL NOT NULL, "platform_id" integer NOT NULL, "article_id" integer NOT NULL, "likes_count" integer NOT NULL DEFAULT '0', "tags" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_4de18eea43d948e5ea66520e0e8" PRIMARY KEY ("id"))`);

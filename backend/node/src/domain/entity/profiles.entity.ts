@@ -19,7 +19,7 @@ export class Profile {
     id!: number;
 
     @Column()
-    user_id!: number;
+    user_id!: string;
 
     @Column()
     name!: string;

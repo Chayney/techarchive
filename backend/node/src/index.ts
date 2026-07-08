@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./config/appDataSource";
-
 import { trendRouter } from "./routes/trend.route";
 import { categoryRouter } from "./routes/category.route";
 import { favoriteRouter } from "./routes/favorite.route";
@@ -9,38 +8,22 @@ import { feedRouter } from "./routes/feed.route";
 import { bookmarkRouter } from "./routes/bookmark.route";
 import { folderRouter } from "./routes/folder.route";
 
-
 export const app = express();
 
-
 export const start = async () => {
+    const isProduction = process.env.NODE_ENV === "production";
 
-    const isProduction =
-        process.env.NODE_ENV === "production";
+    const PORT = isProduction ? process.env.PORT : process.env.LOCAL_PORT;
 
-
-    const PORT =
-        isProduction
-            ? process.env.PORT
-            : process.env.LOCAL_PORT;
-
-
-    const FRONTEND_URL =
-        isProduction
-            ? process.env.FRONTEND_URL
-            : process.env.LOCAL_FRONTEND_URL;
-
+    const FRONTEND_URL = isProduction ? process.env.FRONTEND_URL : process.env.LOCAL_FRONTEND_URL;
 
     try {
-
         app.use(cors({
             origin: FRONTEND_URL,
             credentials: true,
         }));
 
-
         app.use(express.json());
-
 
         app.use("/api", trendRouter);
         app.use("/api", categoryRouter);
@@ -49,28 +32,20 @@ export const start = async () => {
         app.use("/api", feedRouter);
         app.use("/api", folderRouter);
 
-
-
         await AppDataSource.initialize();
-
 
         app.listen(PORT, () => {
             console.log(
                 `[SERVER] running on ${PORT}`
             );
         });
-
-
     } catch (error) {
-
         console.error(
             "[SERVER ERROR]",
             error
         );
-
         process.exit(1);
     }
 };
-
 
 start();

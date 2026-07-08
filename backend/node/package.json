@@ -7,10 +7,10 @@
     "start": "NODE_ENV=production node dist/index.js",
     "build": "tsc",
     "batch": "node dist/batch/index.js",
-    "batch:collect": "tsx src/batch/index.ts collect",
-    "batch:ogp": "tsx src/batch/index.ts ogp",
-    "batch:likes": "tsx src/batch/index.ts likes",
-    "batch:delete": "tsx src/batch/index.ts delete",
+    "batch:collect": "ts-node src/batch/index.ts collect",
+    "batch:ogp": "ts-node src/batch/index.ts ogp",
+    "batch:likes": "ts-node src/batch/index.ts likes",
+    "batch:delete": "ts-node src/batch/index.ts delete",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:generate": "npm run typeorm -- migration:generate src/database/migrations/TechArchiveTable  --dataSource src/config/migrationDataSource.ts",
     "migration:run": "npm run typeorm -- migration:run --dataSource src/config/migrationDataSource.ts",
@@ -29,10 +29,11 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.109.0",
+    "@supabase/supabase-js": "2.98.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

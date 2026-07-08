@@ -3,6 +3,7 @@ import { AppDataSource } from "../config/appDataSource";
 import { Folder } from "../domain/entity/folders.entity";
 import { Feed } from "../domain/entity/feeds.entity";
 import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
+import { Profile } from "../domain/entity/profiles.entity";
 
 /**
  * Feed選択UI用
@@ -167,24 +168,34 @@ export const createFolderHandler: RequestHandler = async (req, res) => {
     try {
         const { name } = req.body;
 
-        const profileId = 1; // TODO: authに置き換え
+        const userId = req.user.id;
 
-        if (!name) {
-            return res.status(400).json({
-                message: "name is required",
+        const profile = await db
+            .getRepository(Profile)
+            .findOne({
+                where: {
+                    user_id: userId
+                }
+            });
+
+        if (!profile) {
+            return res.status(404).json({
+                message: "profile not found",
             });
         }
 
         const folder = repo.create({
             name,
-            profile_id: profileId,
+            profile_id: profile.id,
         });
 
         const result = await repo.save(folder);
 
         return res.json(result);
+
     } catch (error) {
         console.error(error);
+
         return res.status(500).json({
             message: "failed to create folder",
         });
