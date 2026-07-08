@@ -13,8 +13,7 @@ export const getTrendArticlesHandler: RequestHandler = async (_req, res) => {
             },
             order: {
                 likes_count: "DESC"
-            },
-            
+            },       
         });
 
         res.json(trendArticles);
