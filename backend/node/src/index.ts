@@ -16,7 +16,7 @@ export const start = async () => {
     const PORT = isProduction ? process.env.PORT : process.env.LOCAL_PORT;
 
     const FRONTEND_URL = isProduction ? process.env.FRONTEND_URL : process.env.LOCAL_FRONTEND_URL;
-
+    console.log("[BACKEND] FRONTEND_URL:", process.env.FRONTEND_URL);
     try {
         app.use(cors({
             origin: FRONTEND_URL,
