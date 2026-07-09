@@ -34,7 +34,7 @@ steps:
   args:
     [
       'gcloud','run','deploy','backend-node',
-      '--image','gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
+      '--image','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/backend:$COMMIT_SHA',
       '--region','asia-northeast1',
       '--platform','managed',
       '--allow-unauthenticated',
@@ -49,12 +49,12 @@ steps:
   args:
     [
       'gcloud','run','deploy','frontend',
-      '--image','gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
+      '--image','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/frontend:$COMMIT_SHA',
       '--region','asia-northeast1',
       '--platform','managed',
       '--allow-unauthenticated'
     ]
 
 images:
-- gcr.io/$PROJECT_ID/backend:$COMMIT_SHA
-- gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA
+- asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/backend:$COMMIT_SHA
+- asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/frontend:$COMMIT_SHA
