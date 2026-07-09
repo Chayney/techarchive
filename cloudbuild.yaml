@@ -40,8 +40,6 @@ steps:
       '--region','asia-northeast1',
       '--platform','managed',
       '--allow-unauthenticated',
-      '--set-env-vars',
-      'SUPABASE_URL=${_SUPABASE_URL}, SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY}, POSTGRES_USER=${_POSTGRES_USER}, POSTGRES_DB=${_POSTGRES_DB}, DB_PORT=${_DB_PORT}, FRONTEND_URL=${_FRONTEND_URL},NODE_ENV=production',
       '--update-secrets',
       'POSTGRES_PASSWORD=POSTGRES_PASSWORD:latest, DB_HOST=DB_HOST:latest'
     ]
