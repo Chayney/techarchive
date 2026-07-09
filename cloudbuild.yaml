@@ -40,8 +40,10 @@ steps:
       '--region','asia-northeast1',
       '--platform','managed',
       '--allow-unauthenticated',
+      '--set-env-vars',
+      'NODE_ENV=production,FRONTEND_URL=${_FRONTEND_URL},SUPABASE_URL=${_SUPABASE_URL},SUPABASE_ANON_KEY=${_SUPABASE_ANON_KEY},DB_PORT=${_DB_PORT},POSTGRES_USER=${_POSTGRES_USER},POSTGRES_DB=${_POSTGRES_DB}',
       '--update-secrets',
-      'POSTGRES_PASSWORD=POSTGRES_PASSWORD:latest, DB_HOST=DB_HOST:latest'
+      'POSTGRES_PASSWORD=POSTGRES_PASSWORD:latest,DB_HOST=DB_HOST:latest'
     ]
 
 # ------------------- Frontend Deploy -------------------
