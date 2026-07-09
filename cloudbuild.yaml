@@ -8,8 +8,7 @@ steps:
     [
       'build',
       '-f','backend/docker/node/Dockerfile.production',
-      '-t','gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
-      'backend'
+      '-t','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/backend:$COMMIT_SHA','backend'
     ]
 
 # ------------------- Frontend Build -------------------
@@ -20,16 +19,15 @@ steps:
       '--build-arg','VITE_API_URL=${_VITE_API_URL}',
       '--build-arg','VITE_SUPABASE_URL=${_VITE_SUPABASE_URL}',
       '--build-arg','VITE_SUPABASE_ANON_KEY=${_VITE_SUPABASE_ANON_KEY}',
-      '-t','gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
-      'frontend'
+      '-t','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/frontend:$COMMIT_SHA','frontend'
     ]
 
 # ------------------- Push -------------------
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push','gcr.io/$PROJECT_ID/backend:$COMMIT_SHA']
+  args: ['push','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/backend:$COMMIT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push','gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA']
+  args: ['push','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/frontend:$COMMIT_SHA']
 
 # ------------------- Backend Deploy -------------------
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
