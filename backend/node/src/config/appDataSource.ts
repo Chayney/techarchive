@@ -12,7 +12,6 @@ export const AppDataSource = {
             const isProduction = process.env.NODE_ENV === "production";
 
             const {
-                NODE_ENV,
                 DB_HOST,
                 DB_PORT,
                 POSTGRES_USER,
@@ -67,18 +66,11 @@ export const AppDataSource = {
 
     initialize: async () => {
         const dataSource = AppDataSource.getInstance();
-
-        console.log("NODE_ENV:", process.env.NODE_ENV);
-        console.log("isProduction:", process.env.NODE_ENV === "production");
+        
         console.log("entities:", dataSource.options.entities);
 
         if (!dataSource.isInitialized) {
             await dataSource.initialize();
-
-            console.log(
-                "Loaded entities:",
-                dataSource.entityMetadatas.map((m) => m.name)
-            );
         }
 
         return dataSource;

@@ -6,6 +6,7 @@ import { upsertLikesCount } from "./likes/repository/trend.repository";
 import { saveOgps } from "./ogp/repository/article.repository";
 
 async function run() {
+    console.log("NODE_ENV:", process.env.NODE_ENV);
     await AppDataSource.initialize();
 
     console.log(
