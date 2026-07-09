@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import type { FeedArticle } from "../../types/main";
 import { API_URL } from "../../../../shared/api/apiClient";
 
+console.log(
+    "[FRONTEND] VITE_API_URL exists:",
+    !!import.meta.env.VITE_API_URL
+);
+
 export const useFeedTemplate = () => {
     const [feedArticles, setFeedArticle] = useState<FeedArticle[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
