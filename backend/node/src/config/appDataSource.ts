@@ -12,6 +12,7 @@ export const AppDataSource = {
             const isProduction = process.env.NODE_ENV === "production";
 
             const {
+                NODE_ENV,
                 DB_HOST,
                 DB_PORT,
                 POSTGRES_USER,
@@ -21,6 +22,7 @@ export const AppDataSource = {
 
             // 必須環境変数のチェック
             const missing = [
+                ["NODE_ENV", NODE_ENV],
                 ["DB_HOST", DB_HOST],
                 ["DB_PORT", DB_PORT],
                 ["POSTGRES_USER", POSTGRES_USER],
