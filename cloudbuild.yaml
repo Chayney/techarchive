@@ -44,6 +44,15 @@ steps:
       'POSTGRES_PASSWORD=POSTGRES_PASSWORD:latest,DB_HOST=DB_HOST:latest'
     ]
 
+# ------------------- Backend Job Deploy -------------------
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+    [
+      'gcloud','run','jobs','update','techarchive',
+      '--image','asia-northeast1-docker.pkg.dev/$PROJECT_ID/techarchive/backend:$COMMIT_SHA',
+      '--region','asia-northeast1'
+    ]
+
 # ------------------- Frontend Deploy -------------------
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
