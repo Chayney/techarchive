@@ -52,7 +52,6 @@ export const createBookmarkArticlesHandler: RequestHandler = async (req, res) =>
         await repo.save(bookmark);
 
         return res.status(201).json(bookmark);
-
     } catch (error) {
         console.error(error);
         return res.status(500).json({
