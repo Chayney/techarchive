@@ -12,9 +12,9 @@ export const app = express();
 
 export const start = async () => {
     const isProduction = process.env.NODE_ENV === "production";
-
+console.log(isProduction)
     const PORT = isProduction ? process.env.PORT : process.env.LOCAL_PORT;
-
+console.log(PORT)
     const FRONTEND_URL = isProduction ? process.env.FRONTEND_URL : process.env.LOCAL_FRONTEND_URL;
     console.log("[BACKEND] FRONTEND_URL:", process.env.FRONTEND_URL);
     try {
