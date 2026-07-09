@@ -48,8 +48,8 @@ export const AppDataSource = {
 
                 entities: [
                     isProduction
-                        ? "dist/domain/entity/*.js"
-                        : "src/domain/entity/*.ts",
+                        ? "./dist/domain/entity/*.js"
+                        : "./src/domain/entity/*.ts",
                 ],
 
                 logging: false,
