@@ -7,6 +7,13 @@ import { saveOgps } from "./ogp/repository/article.repository";
 
 async function run() {
     await AppDataSource.initialize();
+
+    console.log(
+        "Loaded entities:",
+        AppDataSource.getInstance()
+            .entityMetadatas
+            .map((m) => m.name)
+    );
     const mode = process.argv[2];
 
     switch (mode) {
