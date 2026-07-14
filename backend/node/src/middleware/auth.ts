@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabaseClient";
+import { createSupabaseClientWithToken, supabase } from "../config/supabaseClient";
 import { AuthUser } from "../types/express";
 import { NextFunction, Request, Response } from "express";
 
@@ -18,7 +18,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         });
     }
 
-    const { data: profile } = await supabase
+    const supabaseUser = createSupabaseClientWithToken(token)
+    const { data: profile } = await supabaseUser
     .from("profiles")
     .select("id")
     .eq("user_id", data.user.id)
@@ -57,7 +58,8 @@ export const optionalAuthMiddleware = async (
         return next();
     }
 
-    const { data: profile } = await supabase
+    const supabaseUser = createSupabaseClientWithToken(token)
+    const { data: profile } = await supabaseUser
         .from("profiles")
         .select("id")
         .eq("user_id", data.user.id)
