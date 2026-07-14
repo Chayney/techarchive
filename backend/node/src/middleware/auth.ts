@@ -66,7 +66,7 @@ export const optionalAuthMiddleware = async (
     req.user = {
         id: data.user.id,
         email: data.user.email,
-        profile_id: profile!.id
+        profile_id: profile?.id
     };
 
     next();
