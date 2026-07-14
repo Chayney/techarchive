@@ -5,6 +5,7 @@
 export interface AuthUser {
     id: string;
     email?: string | null;
+    profile_id: number;
 }
 
 declare global {

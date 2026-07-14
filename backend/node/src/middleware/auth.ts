@@ -18,13 +18,56 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         });
     }
 
+    const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", data.user.id)
+    .single();
+
     // supabaseから取得したdata.userをAuthUser型に代入
     const user: AuthUser = {
         id: data.user.id,
-        email: data.user.email
+        email: data.user.email,
+        profile_id: profile?.id
     }
     // ミドルウェア後のルートでreq.userにアクセスした時、型チェックが有効
     req.user = user;
 
     next();
 }
+
+export const optionalAuthMiddleware = async (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+) => {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+
+    console.log("token:", token);
+
+    if (!token) {
+        console.log("guest");
+        return next();
+    }
+
+    const { data, error } = await supabase.auth.getUser(token);
+
+    if (error || !data.user) {
+        console.log("invalid token");
+        return next();
+    }
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", data.user.id)
+        .single();
+
+    req.user = {
+        id: data.user.id,
+        email: data.user.email,
+        profile_id: profile!.id
+    };
+
+    next();
+};

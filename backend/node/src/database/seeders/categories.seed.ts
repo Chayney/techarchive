@@ -6,36 +6,41 @@ export const CategoryData = async (dataSource: DataSource) => {
     const categoryRepository = dataSource.getRepository(Category);
     const profileRepository = dataSource.getRepository(Profile);
 
-    // 既存Profileを取得（seed前提）
-    const profiles = await profileRepository.find();
+    // ゲスト用プロフィールを取得
+    const guestProfile = await profileRepository.findOneBy({
+        name: "Test",
+    });
 
-    if (profiles.length === 0) {
-        throw new Error("Profiles must be seeded before Categories");
+    if (!guestProfile) {
+        throw new Error("Guest profile not found");
     }
 
     const categories = [
         {
             name: "React",
-            profile_id: profiles[0].id,
+            profile_id: guestProfile.id,
         },
         {
             name: "Next.js",
-            profile_id: profiles[0].id,
+            profile_id: guestProfile.id,
         },
         {
             name: "TypeScript",
-            profile_id: profiles[0].id,
+            profile_id: guestProfile.id,
         },
         {
             name: "AWS",
-            profile_id: profiles[0].id,
+            profile_id: guestProfile.id,
         },
         {
             name: "GCP",
-            profile_id: profiles[0].id,
+            profile_id: guestProfile.id,
         },
     ];
 
     const entities = categoryRepository.create(categories);
+
     await categoryRepository.save(entities);
+
+    console.log("Categories seed complete:", await categoryRepository.find());
 };

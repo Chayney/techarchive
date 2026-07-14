@@ -2,14 +2,19 @@ import { AppDataSource } from "../config/appDataSource";
 import { RequestHandler } from "express";
 import { Category } from "../domain/entity/categories.entity";
 
-export const getCategoriesHandler: RequestHandler = async (_req, res) => {
+export const getCategoriesHandler: RequestHandler = async (req, res) => {
     try {
         const db = AppDataSource.getInstance();
         const repo = db.getRepository(Category);
-        const categories = await repo.find();
+        const profileId = req.user?.profile_id ?? 2;
+        
+        const categories = await repo.find({
+            where: {
+                profile_id: profileId
+            }
+        });
         
         res.json(categories);
-
     } catch (error) {
         console.error(error);
 
