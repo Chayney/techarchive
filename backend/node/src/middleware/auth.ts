@@ -62,6 +62,9 @@ export const optionalAuthMiddleware = async (
         .select("id")
         .eq("user_id", data.user.id)
         .single();
+    
+    console.log("auth user id:", data.user.id);
+    console.log("profile:", profile);
 
     req.user = {
         id: data.user.id,

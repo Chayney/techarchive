@@ -6,7 +6,11 @@ export const getCategoriesHandler: RequestHandler = async (req, res) => {
     try {
         const db = AppDataSource.getInstance();
         const repo = db.getRepository(Category);
+        console.log("handler req.user:", req.user);
+
         const profileId = req.user?.profile_id ?? 2;
+
+        console.log("category profileId:", profileId);
         
         const categories = await repo.find({
             where: {
