@@ -11,9 +11,7 @@ export const fetchQiitaLikesCountFromApi = async () => {
         response31, response32, response33, response34, response35,
         response36, response37, response38, response39, response40,
         response41, response42, response43, response44, response45,
-        response46, response47, response48, response49, response50,
-        response51, response52, response53, response54, response55,
-        response56, response57, response58, response59, response60
+        response46, response47, response48, response49, response50
     ] = await Promise.all([
         fetch("https://qiita.com/api/v2/items?page=1&per_page=100"),
         fetch("https://qiita.com/api/v2/items?page=2&per_page=100"),
@@ -64,17 +62,7 @@ export const fetchQiitaLikesCountFromApi = async () => {
         fetch("https://qiita.com/api/v2/items?page=47&per_page=100"),
         fetch("https://qiita.com/api/v2/items?page=48&per_page=100"),
         fetch("https://qiita.com/api/v2/items?page=49&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=50&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=51&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=52&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=53&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=54&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=55&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=56&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=57&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=58&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=59&per_page=100"),
-        fetch("https://qiita.com/api/v2/items?page=60&per_page=100"),
+        fetch("https://qiita.com/api/v2/items?page=50&per_page=100")
     ]);
 
     const responses = [
@@ -87,9 +75,7 @@ export const fetchQiitaLikesCountFromApi = async () => {
         response31, response32, response33, response34, response35,
         response36, response37, response38, response39, response40,
         response41, response42, response43, response44, response45,
-        response46, response47, response48, response49, response50,
-        response51, response52, response53, response54, response55,
-        response56, response57, response58, response59, response60
+        response46, response47, response48, response49, response50
     ];
 
     responses.forEach((response, index) => {
