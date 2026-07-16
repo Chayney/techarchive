@@ -2,6 +2,7 @@ import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { useAuthContext } from "../../../../features/auth/hooks/useAuthContext";
 import styles from "./style.module.css";
+import { useHeader } from "./useHeader";
 
 type Props = {
     title: string | null;
@@ -19,6 +20,7 @@ export const Header = ({
     actions
 }: Props) => {
     const { logout } = useAuthContext();
+    const { isLoggedIn } = useHeader();
 
     return (
         <header className={styles.header}>
@@ -38,12 +40,14 @@ export const Header = ({
                     inputSize="lg"
                 />
                 {actions}
-                <Button
-                    variant="secondary"
-                    onClick={logout}
-                >
-                    ログアウト
-                </Button>
+                {isLoggedIn && (
+                    <Button
+                        variant="secondary"
+                        onClick={logout}
+                    >
+                        ログアウト
+                    </Button>
+                )}
             </div>
         </header>
     );
