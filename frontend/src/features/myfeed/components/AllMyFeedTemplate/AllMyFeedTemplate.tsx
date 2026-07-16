@@ -7,8 +7,6 @@ import { Dialog, DialogContent, DialogTitle } from "../../../../shared/component
 import { Input } from "../../../../shared/components/ui/input";
 import { X } from "lucide-react";
 import { useFolder } from "../../hooks/useFolder";
-import { Link } from "react-router-dom";
-import { NAVIGATION_PATH } from "../../../../shared/const/navigation";
 import type { Folder, TagPlatform } from "../../types/myfeed";
 import { useFolderListContext } from "../../hooks/useFolderListContext";
 import { useAuthContext } from "../../../auth/hooks/useAuthContext";
@@ -192,11 +190,7 @@ export const AllMyFeedTemplate = () => {
                     ) : (
                         filteredFolders.map(folder => (
                             <div key={folder.id} className={styles.card}>
-
-                                <Link to={`${NAVIGATION_PATH.MYFEED}/${folder.id}`}>
-                                    <h2>{folder.name}</h2>
-                                </Link>
-
+                                <h2>{folder.name}</h2>
                                 {/* tag/platform preview */}
                                 <div className={styles.labelInFolder}>
                                     {folder.visibleItems?.map((item) => (

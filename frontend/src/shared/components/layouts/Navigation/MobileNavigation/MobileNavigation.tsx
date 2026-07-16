@@ -29,6 +29,7 @@ export function MobileNav() {
                 <nav className={styles.nav}>
                     <Link className={styles.link} to={NAVIGATION_PATH.FEED}>Feeds</Link>
                     <Link className={styles.link} to={NAVIGATION_PATH.TREND}>Trend</Link>
+                    <Link className={styles.link} to={NAVIGATION_PATH.ALLMYFEED}>My Feeds</Link>
                     <Link className={styles.link} to={NAVIGATION_PATH.BOOKMARK}>Bookmarks</Link>
 
                     <button
