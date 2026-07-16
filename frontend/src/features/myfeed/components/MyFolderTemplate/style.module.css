@@ -1,0 +1,15 @@
+.underContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+    gap: 50px;
+}
+
+.spinner {
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .underContainer {
+        grid-template-columns: 1fr;
+    }
+}

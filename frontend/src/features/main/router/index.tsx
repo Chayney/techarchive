@@ -7,6 +7,7 @@ import { FavoritePage } from "../../../pages/FavoritePage"
 import { CompanyPage } from "../../../pages/CompanyPage"
 import { AllMyFeedPage } from "../../../pages/AllMyFeedPage"
 import { MyFeedPage } from "../../../pages/MyFeedPage"
+import { MyFolderPage } from "../../../pages/MyFolderPage"
 
 export const ArticleRouter = () => {
     return (
@@ -16,6 +17,7 @@ export const ArticleRouter = () => {
             <Route path={NAVIGATION_LIST.BOOKMARK} element={<BookmarkPage />} />
             <Route path={NAVIGATION_LIST.COMPANY} element={<CompanyPage />} />
             <Route path={NAVIGATION_LIST.ALLMYFEED} element={<AllMyFeedPage />} />
+            <Route path={NAVIGATION_LIST.MYFOLDER} element={<MyFolderPage />} />
             <Route path={NAVIGATION_LIST.MYFEED} element={<MyFeedPage />} />
             <Route path={NAVIGATION_LIST.FAVORITE} element={<FavoritePage />} />
         </Routes>

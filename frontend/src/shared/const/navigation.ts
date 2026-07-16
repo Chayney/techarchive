@@ -6,6 +6,7 @@ export const NAVIGATION_LIST = {
     COMPANY: '/company',
     BOOKMARK: '/bookmark',
     ALLMYFEED: '/mylist',
+    MYFOLDER: '/myfolder/:id',
     MYFEED: '/myfeed/:id',
     TAG: '/tag/:id/:service',
     FAVORITE: '/favorite/:id'
@@ -19,6 +20,7 @@ export const NAVIGATION_PATH = {
     COMPANY: '/company',
     BOOKMARK: '/bookmark',
     ALLMYFEED: '/mylist',
+    MYFOLDER: '/myfolder',
     MYFEED: '/myfeed',
     TAG: '/tag',
     FAVORITE: '/favorite'
