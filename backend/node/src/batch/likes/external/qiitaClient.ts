@@ -93,7 +93,7 @@ export const fetchQiitaLikesCountFromApi = async () => {
 
     const data = dataArray.flat();
 
-    console.log("[Qiita] fetched data:", data);
+    console.log("[Qiita] fetched count:", data.length);
 
     return data;
 };

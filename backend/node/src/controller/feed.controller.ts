@@ -11,7 +11,11 @@ export const getFeedArticlesHandler: RequestHandler = async (_req, res) => {
                 article: true,
                 platform: true
             },
-            
+            order: {
+                article: {
+                    published_at: "DESC"
+                }
+            }
         });
 
         res.json(feedArticles);

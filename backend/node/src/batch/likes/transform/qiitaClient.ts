@@ -23,7 +23,7 @@ export const transformQiitaLikesCount = async (): Promise<ArticleCreateInput[]> 
         published_at: new Date(item.created_at)
     }));
     
-    console.log("[Qiita Transform] result:", transformed);
+    console.log("[Qiita Transform] count:", transformed.length);
 
     return transformed;
 }
