@@ -8,6 +8,34 @@
     margin: 0 auto;
 }
 
+.emptyCard {
+    background: #ffffdd;
+    border: 3px solid #ffffdd;
+    border-radius: 12px;
+    padding: 24px;
+    width: 95%;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 300px;
+    text-align: center;
+    gap: 12px;
+}
+
+.emptyCard h3 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.emptyCard p {
+    color: #666;
+    font-size: 16px;
+}
+
 @media (max-width: 768px) {
     .underContainer {
         grid-template-columns: 1fr;

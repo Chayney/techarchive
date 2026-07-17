@@ -49,6 +49,13 @@ export const FavoriteTemplate = () => {
             <main className={styles.underContainer}>
                 {loading ? (
                     <Loader2 className={styles.spinner} />
+                ) : categoryArticles.length === 0 ? (
+                    <div className={styles.emptyCard}>
+                        <h3>お気に入り記事はありません</h3>
+                        <p>
+                            記事一覧から🔖ボタンを押してブックマーク登録してください
+                        </p>
+                    </div>
                 ) : (
                     <>
                         {pagination.paginated.map((article) => (
