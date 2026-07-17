@@ -84,8 +84,15 @@ export const useArticleActions = (profileId?: number) => {
             }
 
             const data: Bookmark[] = await res.json();
+
+            console.log(data);
             
             const articleMap: Record<number, boolean> = {};
+
+            data.forEach((row) => {
+                console.log(row);
+                console.log(row.article_id);
+            });
 
             data?.forEach((row) => {
                 articleMap[row.article_id] = true;
