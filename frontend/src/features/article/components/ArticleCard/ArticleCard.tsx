@@ -297,12 +297,10 @@ export const ArticleCard = ({
                     <h3 className={styles.title}>
                         {article.title}
                     </h3>
-                    <div className={styles.meta}>
-                        <span>
-                            🕒{" "}
-                            {new Date(article.published_at).toLocaleDateString()}
-                        </span>
-                    </div>
+                    <span>
+                        🕒{" "}
+                        {new Date(article.published_at).toLocaleDateString()}
+                    </span>
                     {article.tags && (
                         <div className={styles.infoRow}>
                             <div className={styles.tags}>

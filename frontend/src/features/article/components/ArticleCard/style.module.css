@@ -116,10 +116,6 @@
     align-items: center;
 }
 
-.meta {
-    flex: 1;
-}
-
 .countArea {
     display: flex;
     align-items: baseline;
