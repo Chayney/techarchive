@@ -96,6 +96,13 @@
     gap: 10px;
 }
 
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
 .title {
     font-size: 25px;
     font-weight: 600;
@@ -103,8 +110,21 @@
     width: 100%;
 }
 
+.metaRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .meta {
-    width: 100%;
+    flex: 1;
+}
+
+.countArea {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .tags {

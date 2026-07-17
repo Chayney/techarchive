@@ -93,37 +93,17 @@ export const ArticleCard = ({
                 <div className={styles.left}>
                     {platform && (
                         <div className={styles.leftArea}>
-                            {likes_count !== undefined ? (
-                                <>
-                                    <div className={styles.countArea}>
-                                        <span className={styles.count}>
-                                            {likes_count}
-                                        </span>
-                                        <span className={styles.label}>
-                                            likes
-                                        </span>
-                                    </div>
-                                    <img
-                                        src={platform.favicon_url}
-                                        alt={platform.name}
-                                        className={styles.platformIcon}
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    {!isMobile && (
-                                        <span className={styles.platformName}>
-                                            {platform.name}
-                                        </span>
-                                    )}
-
-                                    <img
-                                        src={platform.favicon_url}
-                                        alt={platform.name}
-                                        className={styles.platformIcon}
-                                    />
-                                </>
+                            {!isMobile && (
+                                <span className={styles.platformName}>
+                                    {platform.name}
+                                </span>
                             )}
+
+                            <img
+                                src={platform.favicon_url}
+                                alt={platform.name}
+                                className={styles.platformIcon}
+                            />
                         </div>
                     )}
                 </div>
@@ -160,7 +140,7 @@ export const ArticleCard = ({
 
                     <div className="relative">
                         <Heart
-                            size={24}
+                            size={30}
                             data-dropdown-trigger
                             onClick={() => {
                                 if (!requireAuth()) return;
@@ -317,30 +297,31 @@ export const ArticleCard = ({
                     <h3 className={styles.title}>
                         {article.title}
                     </h3>
-
                     <div className={styles.meta}>
                         <span>
                             🕒{" "}
-                            {new Date(
-                                article.published_at
-                            ).toLocaleDateString()}
+                            {new Date(article.published_at).toLocaleDateString()}
                         </span>
                     </div>
-
                     {article.tags && (
-                        <div className={styles.tags}>
-                            {article.tags
-                                .split(",")
-                                .map((tag) => tag.trim())
-                                .filter(Boolean)
-                                .map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className={styles.tag}
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
+                        <div className={styles.infoRow}>
+                            <div className={styles.tags}>
+                                {article.tags
+                                    .split(",")
+                                    .map((tag) => tag.trim())
+                                    .filter(Boolean)
+                                    .map((tag) => (
+                                        <span key={tag} className={styles.tag}>
+                                            {tag}
+                                        </span>
+                                    ))}
+                            </div>
+                            {likes_count !== undefined && (
+                                <div className={styles.countArea}>
+                                    <span className={styles.count}>{likes_count}</span>
+                                    <span className={styles.label}>likes</span>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
