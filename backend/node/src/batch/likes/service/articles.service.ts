@@ -1,8 +1,8 @@
-import { transformQiitaLikesCount } from "../transform/qiitaClient"
+import { fetchQiitaLikesCountFromApi } from "../external/qiitaClient";
 import { transformZennLikesCount } from "../transform/zennClient";
 
 export const filteredArticles = async () => {
-    const qiita = await transformQiitaLikesCount();
+    const qiita = await fetchQiitaLikesCountFromApi();
     const zenn = await transformZennLikesCount();
 
     const articles = [...qiita, ...zenn];
