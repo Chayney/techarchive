@@ -50,8 +50,7 @@ export const ArticleActionsContext =
     });
 
 export const ArticleActionsProvider: FC<ContextProps> = ({
-    children,
-    profileId
+    children
 }) => {
 
     const {
@@ -66,7 +65,7 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
         showTooltip,
         setOpenArticleId,
         handleAddCategory
-    } = useArticleActions(profileId);
+    } = useArticleActions();
 
     return (
         <ArticleActionsContext.Provider
