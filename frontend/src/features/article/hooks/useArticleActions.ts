@@ -3,8 +3,9 @@ import type { Bookmark, Category, Favorite } from "../types/article";
 import { useFavorite } from "./useFavorite";
 import { useBookmark } from "./useBookmark";
 import { API_URL } from "../../../shared/api/apiClient";
+import { getAccessToken, onAuthChange } from "../../../shared/api/supabaseClient";
 
-export const useArticleActions = (profileId?: number) => {
+export const useArticleActions = () => {
     const { 
         favoriteCategoryMap,
         favoriteArticleMap,
@@ -74,10 +75,14 @@ export const useArticleActions = (profileId?: number) => {
 
     // ブックマーク記事の取得
     useEffect(() => {
-        // if (!profileId) return;
-        console.log('profileIdの確認:', profileId);
         const fetchBookmarks = async () => {
-            const res = await fetch(`${API_URL}/bookmarks`);
+            const token = await getAccessToken();
+
+            const res = await fetch(`${API_URL}/bookmarks`, {
+                headers: token
+                    ? { Authorization: `Bearer ${token}` }
+                    : {},
+            });
 
             if (!res.ok) {
                 throw new Error("ブックマークの取得に失敗しました");
@@ -85,16 +90,9 @@ export const useArticleActions = (profileId?: number) => {
 
             const data: Bookmark[] = await res.json();
 
-            console.log(data);
-            
             const articleMap: Record<number, boolean> = {};
 
             data.forEach((row) => {
-                console.log(row);
-                console.log(row.article_id);
-            });
-
-            data?.forEach((row) => {
                 articleMap[row.article_id] = true;
             });
 
@@ -102,7 +100,13 @@ export const useArticleActions = (profileId?: number) => {
         };
 
         fetchBookmarks();
-    }, [profileId]);
+
+        const unsubscribe = onAuthChange(() => {
+            fetchBookmarks();
+        });
+
+        return unsubscribe;
+    }, []);
 
     // お気に入り記事の取得
     useEffect(() => {
