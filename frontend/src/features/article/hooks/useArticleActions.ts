@@ -3,7 +3,6 @@ import type { Bookmark, Category, Favorite } from "../types/article";
 import { useFavorite } from "./useFavorite";
 import { useBookmark } from "./useBookmark";
 import { API_URL } from "../../../shared/api/apiClient";
-import { getAccessToken, onAuthChange } from "../../../shared/api/supabaseClient";
 
 export const useArticleActions = () => {
     const { 
@@ -76,13 +75,7 @@ export const useArticleActions = () => {
     // ブックマーク記事の取得
     useEffect(() => {
         const fetchBookmarks = async () => {
-            const token = await getAccessToken();
-
-            const res = await fetch(`${API_URL}/bookmarks`, {
-                headers: token
-                    ? { Authorization: `Bearer ${token}` }
-                    : {},
-            });
+            const res = await fetch(`${API_URL}/bookmarks`);
 
             if (!res.ok) {
                 throw new Error("ブックマークの取得に失敗しました");
@@ -90,9 +83,16 @@ export const useArticleActions = () => {
 
             const data: Bookmark[] = await res.json();
 
+            console.log(data);
+            
             const articleMap: Record<number, boolean> = {};
 
             data.forEach((row) => {
+                console.log(row);
+                console.log(row.article_id);
+            });
+
+            data?.forEach((row) => {
                 articleMap[row.article_id] = true;
             });
 
@@ -100,13 +100,7 @@ export const useArticleActions = () => {
         };
 
         fetchBookmarks();
-
-        const unsubscribe = onAuthChange(() => {
-            fetchBookmarks();
-        });
-
-        return unsubscribe;
-    }, []);
+    }, [setBookmarkArticleMap]);
 
     // お気に入り記事の取得
     useEffect(() => {
