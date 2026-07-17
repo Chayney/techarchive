@@ -74,8 +74,8 @@ export const useArticleActions = (profileId?: number) => {
 
     // ブックマーク記事の取得
     useEffect(() => {
-        if (!profileId) return;
-
+        // if (!profileId) return;
+        console.log('profileIdの確認:', profileId);
         const fetchBookmarks = async () => {
             const res = await fetch(`${API_URL}/bookmarks`);
 
