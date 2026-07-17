@@ -16,6 +16,8 @@ export const fetchQiitaLikesCountFromApi = async () => {
 
         const json = await response.json();
 
+        console.log(Object.keys(json[0]));
+
         data.push(...json);
     }
 
