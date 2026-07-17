@@ -1,3 +1,11 @@
+import { transformQiitaLikesCount } from "../transform/qiitaClient";
+
+type QiitaArticle = {
+    url: string;
+    likes_count: number;
+    created_at: Date;
+}
+
 export const fetchQiitaLikesCountFromApi = async () => {
     console.log("[Qiita] fetch start");
 
@@ -14,11 +22,9 @@ export const fetchQiitaLikesCountFromApi = async () => {
             throw new Error(`Qiita API Error: ${response.status}`);
         }
 
-        const json = await response.json();
+        const json: QiitaArticle[] = await response.json();
 
-        console.log(Object.keys(json[0]));
-
-        data.push(...json);
+        data.push(...transformQiitaLikesCount(json));
     }
 
     console.log("[Qiita] fetched count:", data.length);
