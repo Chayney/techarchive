@@ -2,17 +2,21 @@ import { RequestHandler } from "express";
 import { AppDataSource } from "../config/appDataSource";
 import { Bookmark } from "../domain/entity/bookmarks.entity";
 
-export const getBookmarkArticlesHandler: RequestHandler = async (_req, res) => {
+export const getBookmarkArticlesHandler: RequestHandler = async (req, res) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Bookmark);
     try {
+        const profileId = req.user?.profile_id ?? 2;
+
         const bookmarkArticles = await repo.find({
+            where: {
+                profile_id: profileId,
+            },
             relations: {
                 article: {
-                    platform: true
+                    platform: true,
                 },
-                profile: true
-            }
+            },
         });
 
         res.json(bookmarkArticles);
@@ -20,7 +24,7 @@ export const getBookmarkArticlesHandler: RequestHandler = async (_req, res) => {
         console.error(error);
 
         res.status(500).json({
-            message: "failed to get bookmark articles"
+            message: "failed to get bookmark articles",
         });
     }
 }

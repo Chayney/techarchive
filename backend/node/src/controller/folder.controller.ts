@@ -249,7 +249,6 @@ export const createFolderTagPlatformsHandler: RequestHandler = async (
 export const getFolderHandler: RequestHandler = async (_req, res) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Folder);
-
     try {
         const folders = await repo.find({
             relations: {

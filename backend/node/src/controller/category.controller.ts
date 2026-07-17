@@ -3,9 +3,9 @@ import { RequestHandler } from "express";
 import { Category } from "../domain/entity/categories.entity";
 
 export const getCategoriesHandler: RequestHandler = async (req, res) => {
+    const db = AppDataSource.getInstance();
+    const repo = db.getRepository(Category);
     try {
-        const db = AppDataSource.getInstance();
-        const repo = db.getRepository(Category);
         console.log("handler req.user:", req.user);
 
         const profileId = req.user?.profile_id ?? 2;
