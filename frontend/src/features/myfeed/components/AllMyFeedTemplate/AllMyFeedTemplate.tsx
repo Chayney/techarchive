@@ -177,7 +177,7 @@ export const AllMyFeedTemplate = () => {
                     onSearch={setSearchKeyword}
                     actions={
                         <Button variant="secondary" onClick={openCreateDialog}>
-                            追加
+                            作成
                         </Button>
                     }
                 />
@@ -294,10 +294,10 @@ export const AllMyFeedTemplate = () => {
                                 setOpen(false);
                                 setEditingFolder(null);
                             }}>
-                                CLOSE
+                                閉じる
                             </Button>
                             <Button onClick={handleSave} disabled={loading}>
-                                {editingFolder ? "UPDATE" : "CREATE"}
+                                {editingFolder ? "更新" : "作成"}
                             </Button>
                             {editingFolder && (
                                 <Button
@@ -357,7 +357,7 @@ export const AllMyFeedTemplate = () => {
                                 variant="secondary"
                                 onClick={() => setSelectOpen(false)}
                             >
-                                CLOSE
+                                閉じる
                             </Button>
                         </div>
                     </DialogContent>

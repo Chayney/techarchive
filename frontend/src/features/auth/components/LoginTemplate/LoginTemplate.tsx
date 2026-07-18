@@ -4,9 +4,11 @@ import styles from "./style.module.css"
 import { useNavigate } from "react-router-dom"
 import { NAVIGATION_LIST } from "../../../../shared/const/navigation"
 import { useLogin } from "../../hooks/useLogin"
+import { useIsMobile } from "../../../../shared/components/layouts/BaseLayout/useMobile"
 
 export const LoginTemplate = () => {
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
     const { 
         email,
         password,
@@ -27,13 +29,14 @@ export const LoginTemplate = () => {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Login</h1>
+            <h1 className={styles.title}>ユーザーログイン</h1>
             <form className={styles.form} onSubmit={handleLogin}>
                 <div className={styles.area}>
                     <Input
                         type="email"
                         placeholder="Email"
                         variant="primary"
+                        inputSize={isMobile ? "xl" : "md"}
                         onChange={inputEmail}
                         value={email}
                     />
@@ -43,12 +46,13 @@ export const LoginTemplate = () => {
                         type="password"
                         placeholder="Password"
                         variant="primary"
+                        inputSize={isMobile ? "xl" : "md"}
                         onChange={inputPassword}
                         value={password}
                     />
                 </div>
                 <div className={styles.area}>
-                    <Button type="submit" size="lg">Login</Button>
+                    <Button type="submit" size="lg">ログイン</Button>
                 </div>
             </form>
         </div>

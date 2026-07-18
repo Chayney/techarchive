@@ -190,27 +190,3 @@
 
     margin-top: 24px;
 }
-
-
-/* tablet */
-@media (max-width: 1024px) {
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-/* mobile */
-@media (max-width: 640px) {
-    .container {
-        padding: 16px;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-    }
-
-    .card {
-        height: 220px;
-    }
-}

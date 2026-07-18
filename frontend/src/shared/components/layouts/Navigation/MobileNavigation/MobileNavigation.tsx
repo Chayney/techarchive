@@ -27,17 +27,17 @@ export function MobileNav() {
             {/* 横スクロールはここだけ */}
             <div className={styles.scroll}>
                 <nav className={styles.nav}>
-                    <Link className={styles.link} to={NAVIGATION_PATH.FEED}>Feeds</Link>
+                    <Link className={styles.link} to={NAVIGATION_PATH.FEED}>Feed</Link>
                     <Link className={styles.link} to={NAVIGATION_PATH.TREND}>Trend</Link>
-                    <Link className={styles.link} to={NAVIGATION_PATH.ALLMYFEED}>My Feeds</Link>
-                    <Link className={styles.link} to={NAVIGATION_PATH.BOOKMARK}>Bookmarks</Link>
+                    <Link className={styles.link} to={NAVIGATION_PATH.ALLMYFEED}>My Feed List</Link>
+                    <Link className={styles.link} to={NAVIGATION_PATH.BOOKMARK}>Bookmark</Link>
 
                     <button
                         ref={btnRef}
                         className={styles.link}
                         onClick={toggle}
                     >
-                        Favorites ▼
+                        Favorite ▼
                     </button>
                 </nav>
             </div>

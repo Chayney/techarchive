@@ -19,7 +19,7 @@ export function AppSidebar() {
                 </SidebarGroup>
 
                 <SidebarGroup>
-                    <SidebarGroupLabel>My Feeds</SidebarGroupLabel>
+                    <SidebarGroupLabel>My Feed List</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <FeedMenu />
                     </SidebarGroupContent>
