@@ -60,6 +60,7 @@ export const AllMyFeedTemplate = () => {
     
     const openCreateDialog = () => {
         if (!requireAuth()) return;
+        clearFolderNameError();
         setEditingFolder(null);
         setFolderName("");
         setSelected([]);
@@ -204,19 +205,21 @@ export const AllMyFeedTemplate = () => {
 
                                 {/* tag/platform preview */}
                                 <div className={styles.labelInFolder}>
-                                    {folder.visibleItems?.map((item) => (
-                                        <div
-                                            key={`${item.platform.id}-${item.tag}`}
-                                            className={styles.platformLabelInFolder}
-                                        >
-                                            <span>{item.tag}</span>
+                                    <div className={styles.tagList}>
+                                        {folder.visibleItems?.map((item) => (
+                                            <div
+                                                key={`${item.platform.id}-${item.tag}`}
+                                                className={styles.platformLabelInFolder}
+                                            >
+                                                <span>{item.tag}</span>
 
-                                            <span className={styles.muted}>
-                                                {" | "}
-                                                {item.platform.name}
-                                            </span>
-                                        </div>
-                                    ))}
+                                                <span className={styles.muted}>
+                                                    {" | "}
+                                                    {item.platform.name}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
 
                                     {folder.remainingCount > 0 && (
                                         <Button
