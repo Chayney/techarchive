@@ -11,7 +11,7 @@ export const LoginRequiredDialog = () => {
 
     return (
         <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
-            <DialogContent>
+            <DialogContent showCloseButton={false}>
                 <DialogTitle>ログインが必要です</DialogTitle>
 
                 <p className="text-sm text-muted-foreground">

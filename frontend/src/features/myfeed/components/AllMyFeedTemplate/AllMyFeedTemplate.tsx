@@ -254,7 +254,7 @@ export const AllMyFeedTemplate = () => {
                 </div>
 
                 <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogContent>
+                    <DialogContent showCloseButton={false}>
                         <DialogTitle>
                             {editingFolder ? "フォルダの編集" : "フォルダの作成"}
                         </DialogTitle>
@@ -318,7 +318,7 @@ export const AllMyFeedTemplate = () => {
                         setSelectOpen(value);
                     }}
                 >
-                    <DialogContent>
+                    <DialogContent showCloseButton={false}>
                         <DialogTitle>タグを選択</DialogTitle>
 
                         <Input
