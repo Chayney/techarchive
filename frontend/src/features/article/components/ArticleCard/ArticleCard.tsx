@@ -1,4 +1,4 @@
-import { BookOpen, Bookmark, Heart, Plus } from "lucide-react";
+import { Share, Bookmark, Heart, Plus } from "lucide-react";
 import { Button } from "../../../../shared/components/ui/button";
 import styles from "./style.module.css";
 import { useArticleCard } from "./useArticleCard";
@@ -53,6 +53,7 @@ export const ArticleCard = ({
         toggleDropdown,
         showTooltip,
         handleAddCategory,
+        shareArticle
     } = useArticleActionsContext();
 
     const {
@@ -109,14 +110,16 @@ export const ArticleCard = ({
                 </div>
 
                 <div className={styles.right}>
-                    <a
-                        href={article.article_url}
-                        target="_blank"
-                        rel="noreferrer"
+                    <Share
+                        size={30}
                         className={styles.icon}
-                    >
-                        <BookOpen size={30} />
-                    </a>
+                        onClick={() =>
+                            shareArticle({
+                                title: article.title,
+                                url: article.article_url,
+                            })
+                        }
+                    />
 
                     <Bookmark
                         size={30}
@@ -281,11 +284,17 @@ export const ArticleCard = ({
             <div className={styles.cardBody}>
                 <div className={styles.avatarHeader}>
                     {article.thumbnail_url ? (
-                        <img
-                            src={article.thumbnail_url}
-                            alt=""
-                            className={styles.avatar}
-                        />
+                        <a
+                            href={article.article_url}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <img
+                                src={article.thumbnail_url}
+                                alt=""
+                                className={styles.avatar}
+                            />
+                        </a>
                     ) : (
                         <div className={styles.noImage}>
                             No Image
@@ -294,9 +303,16 @@ export const ArticleCard = ({
                 </div>
 
                 <div className={styles.contentArea}>
-                    <h3 className={styles.title}>
-                        {article.title}
-                    </h3>
+                    <a
+                        href={article.article_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.titleLink}
+                    >
+                        <h3 className={styles.title}>
+                            {article.title}
+                        </h3>
+                    </a>
                     <span>
                         🕒{" "}
                         {new Date(article.published_at).toLocaleDateString()}

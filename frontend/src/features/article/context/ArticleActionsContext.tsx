@@ -11,6 +11,14 @@ type ArticleActionsContextType = {
     favoriteCategoryMap: Record<string, boolean>;
     favoriteArticleMap: Record<number, boolean>;
 
+    shareArticle: ({
+        title,
+        url,
+    }: {
+        title: string;
+        url: string;
+    }) => Promise<void>;
+
     tooltip: {
         articleId: number;
         message: string;
@@ -35,6 +43,8 @@ export const ArticleActionsContext =
         bookmarkArticleMap: {},
         favoriteCategoryMap: {},
         favoriteArticleMap: {},
+
+        shareArticle: async () => { },
 
         tooltip: null,
         openArticleId: null,
@@ -64,7 +74,8 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
         toggleDropdown,
         showTooltip,
         setOpenArticleId,
-        handleAddCategory
+        handleAddCategory,
+        shareArticle
     } = useArticleActions();
 
     return (
@@ -80,7 +91,8 @@ export const ArticleActionsProvider: FC<ContextProps> = ({
                 toggleDropdown,
                 showTooltip,
                 setOpenArticleId,
-                handleAddCategory
+                handleAddCategory,
+                shareArticle
             }}
         >
             {children}

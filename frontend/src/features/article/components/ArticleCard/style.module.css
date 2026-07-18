@@ -89,6 +89,10 @@
     border-radius: 10px;
 }
 
+.avatar:hover {
+    filter: brightness(0.9);
+}
+
 .contentArea {
     display: flex;
     flex-direction: column;
@@ -108,6 +112,24 @@
     font-weight: 600;
     line-height: 1.5;
     width: 100%;
+}
+
+.titleLink {
+    color: inherit;
+    text-decoration: none;
+}
+
+.titleLink:visited {
+    color: inherit;
+}
+
+.titleLink:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.titleLink:hover .title {
+    color: #555;
 }
 
 .metaRow {

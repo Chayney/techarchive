@@ -4,6 +4,7 @@ import { useFavorite } from "./useFavorite";
 import { useBookmark } from "./useBookmark";
 import { API_URL } from "../../../shared/api/apiClient";
 import { getAccessToken, onAuthChange } from "../../../shared/api/supabaseClient";
+import { useShareArticle } from "./useShareArticle";
 
 export const useArticleActions = () => {
     const { 
@@ -19,6 +20,8 @@ export const useArticleActions = () => {
         setBookmarkArticleMap,
         toggleBookmark
     } = useBookmark();
+
+    const { shareArticle } = useShareArticle();
 
     const [tooltip, setTooltip] = useState<{
         articleId: number;
@@ -172,6 +175,7 @@ export const useArticleActions = () => {
         toggleDropdown,
         showTooltip,
         setOpenArticleId,
-        handleAddCategory
+        handleAddCategory,
+        shareArticle
     };
 };
