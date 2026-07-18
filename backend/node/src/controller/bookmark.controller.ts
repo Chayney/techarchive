@@ -7,7 +7,6 @@ export const getBookmarkArticlesHandler: RequestHandler = async (req, res) => {
     const repo = db.getRepository(Bookmark);
     try {
         const profileId = req.user?.profile_id ?? 2;
-        console.log(profileId)
         const bookmarkArticles = await repo.find({
             where: {
                 profile_id: profileId,

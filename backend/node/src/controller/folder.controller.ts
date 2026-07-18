@@ -246,21 +246,28 @@ export const createFolderTagPlatformsHandler: RequestHandler = async (
 /**
  グルーピングされたフォルダの一覧を返却
  */
-export const getFolderHandler: RequestHandler = async (_req, res) => {
+export const getFolderHandler: RequestHandler = async (req, res) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Folder);
+
     try {
+        const profileId = req.user?.profile_id ?? 2;
+
         const folders = await repo.find({
+            where: {
+                profile_id: profileId,
+            },
             relations: {
                 folderTagPlatforms: {
-                    platform: true
+                    platform: true,
                 },
-            }
+            },
         });
 
         return res.json(folders);
     } catch (error) {
         console.error(error);
+
         return res.status(500).json({
             message: "failed to get folders",
         });

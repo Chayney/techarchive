@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { createFolderHandler, createFolderTagPlatformsHandler, deleteFolderHandler, getFeedOptionsHandler, getFolderArticlesHandler, getFolderHandler, updateFolderHandler } from "../controller/folder.controller";
-import { authMiddleware } from "../middleware/auth";
+import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth";
 
 export const folderRouter = Router();
 
 // グルーピングする親フォルダ
-folderRouter.get("/folders", getFolderHandler);
+folderRouter.get("/folders", optionalAuthMiddleware, getFolderHandler);
 folderRouter.post("/folder", authMiddleware, createFolderHandler);
 folderRouter.put("/folder/:id", authMiddleware, updateFolderHandler);
 folderRouter.delete("/folder/:id", authMiddleware, deleteFolderHandler);
