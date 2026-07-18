@@ -7,7 +7,7 @@
     text-align: center;
     font-family: 'Times New Roman', Times, serif;
     color: #000;
-    font-size: 48px;
+    font-size: 35px;
 }
 
 .form {
@@ -19,17 +19,21 @@
     margin-top: 40px;
 }
 
-.link {
-    margin-top: 20px;
+.textArea {
+    margin-top: 40px;
+    text-align: center;
 }
 
-.link>a {
-    text-decoration: none;
-    color: #fff;
+.link {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    color: #4da3ff;
     font-weight: bold;
     font-size: 18px;
+    text-decoration: underline;
 }
 
-.link>a:hover {
-    color: #d87e00;
+.link:hover {
+    color: #87c7ff;
 }

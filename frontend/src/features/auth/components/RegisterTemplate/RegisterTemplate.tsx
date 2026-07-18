@@ -1,8 +1,8 @@
 import { Button } from "../../../../shared/components/ui/button"
 import { Input } from "../../../../shared/components/ui/input"
 import styles from "./style.module.css"
-import { useNavigate } from "react-router-dom"
-import { NAVIGATION_LIST } from "../../../../shared/const/navigation"
+import { Link, useNavigate } from "react-router-dom"
+import { NAVIGATION_LIST, NAVIGATION_PATH } from "../../../../shared/const/navigation"
 import { useRegister } from "../../hooks/useRegister"
 import { useIsMobile } from "../../../../shared/components/layouts/BaseLayout/useMobile"
 
@@ -61,6 +61,11 @@ export const RegisterTemplate = () => {
                 </div>
                 <div className={styles.area}>
                     <Button type="submit" size="lg">登録</Button>
+                </div>
+                <div className={styles.textArea}>
+                    <Link to={NAVIGATION_PATH.LOGIN} className={styles.link}>
+                        ログインはこちら
+                    </Link>
                 </div>
             </form>
         </div>

@@ -1,8 +1,8 @@
 import { Button } from "../../../../shared/components/ui/button"
 import { Input } from "../../../../shared/components/ui/input"
 import styles from "./style.module.css"
-import { useNavigate } from "react-router-dom"
-import { NAVIGATION_LIST } from "../../../../shared/const/navigation"
+import { Link, useNavigate } from "react-router-dom"
+import { NAVIGATION_LIST, NAVIGATION_PATH } from "../../../../shared/const/navigation"
 import { useLogin } from "../../hooks/useLogin"
 import { useIsMobile } from "../../../../shared/components/layouts/BaseLayout/useMobile"
 
@@ -53,6 +53,11 @@ export const LoginTemplate = () => {
                 </div>
                 <div className={styles.area}>
                     <Button type="submit" size="lg">ログイン</Button>
+                </div>
+                <div className={styles.textArea}>
+                    <Link to={NAVIGATION_PATH.REGISTER} className={styles.link}>
+                        ユーザー登録がまだの方はこちら
+                    </Link>
                 </div>
             </form>
         </div>
