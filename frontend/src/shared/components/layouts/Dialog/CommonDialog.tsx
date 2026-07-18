@@ -27,7 +27,7 @@ export const LoginRequiredDialog = () => {
                         キャンセル
                     </Button>
 
-                    <Button onClick={handleGoLogin}>
+                    <Button variant="destructive" onClick={handleGoLogin}>
                         ログインへ
                     </Button>
                 </div>

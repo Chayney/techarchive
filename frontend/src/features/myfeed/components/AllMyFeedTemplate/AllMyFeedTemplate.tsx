@@ -254,7 +254,7 @@ export const AllMyFeedTemplate = () => {
                 </div>
 
                 <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogContent className={styles.folderDialog}>
+                    <DialogContent>
                         <DialogTitle>
                             {editingFolder ? "フォルダの編集" : "フォルダの作成"}
                         </DialogTitle>
@@ -286,7 +286,7 @@ export const AllMyFeedTemplate = () => {
                             variant="secondary"
                             onClick={() => setSelectOpen(true)}
                         >
-                            SELECT
+                            選択
                         </Button>
 
                         <div className={styles.dialogFooter}>
@@ -296,7 +296,7 @@ export const AllMyFeedTemplate = () => {
                             }}>
                                 閉じる
                             </Button>
-                            <Button onClick={handleSave} disabled={loading}>
+                            <Button variant="destructive" onClick={handleSave} disabled={loading}>
                                 {editingFolder ? "更新" : "作成"}
                             </Button>
                             {editingFolder && (
@@ -305,7 +305,7 @@ export const AllMyFeedTemplate = () => {
                                     onClick={() => handleDeleteFolder(editingFolder.id)}
                                     disabled={loading}
                                 >
-                                    DELETE
+                                    削除
                                 </Button>
                             )}
                         </div>

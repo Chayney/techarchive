@@ -27,7 +27,7 @@ export const RegisterTemplate = () => {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>ユーザー登録</h1>
+            <h2 className={styles.title}>ユーザー登録</h2>
             <form className={styles.form} onSubmit={handleRegister}>
                 <div className={styles.area}>
                     <Input

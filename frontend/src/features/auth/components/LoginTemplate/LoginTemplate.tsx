@@ -29,7 +29,7 @@ export const LoginTemplate = () => {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>ユーザーログイン</h1>
+            <h2 className={styles.title}>ユーザーログイン</h2>
             <form className={styles.form} onSubmit={handleLogin}>
                 <div className={styles.area}>
                     <Input
