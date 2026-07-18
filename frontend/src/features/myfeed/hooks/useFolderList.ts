@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import type { Folder, TagPlatform } from "../types/myfeed";
 import { API_URL } from "../../../shared/api/apiClient";
+import { getAccessToken, onAuthChange } from "../../../shared/api/supabaseClient";
 
 export const useFolderList = () => {
     const [folderList, setFolderList] = useState<Folder[]>([]);
     const [tagPlatforms, settagPlatform] = useState<TagPlatform[]>([]);
 
     const fetchFolders = async () => {
-        const res = await fetch(`${API_URL}/folders`);
+        const token = await getAccessToken();
+
+        const res = await fetch(`${API_URL}/folders`, {
+            headers: token
+                ? { Authorization: `Bearer ${token}` }
+                : {},
+        });
 
         if (!res.ok) {
             throw new Error("failed to fetch folders");
@@ -20,6 +27,12 @@ export const useFolderList = () => {
 
     useEffect(() => {
         fetchFolders();
+
+        const unsubscribe = onAuthChange(() => {
+            fetchFolders();
+        });
+
+        return unsubscribe;
     }, []);
 
     useEffect(() => {
