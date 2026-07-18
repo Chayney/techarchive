@@ -34,6 +34,7 @@ export const AllMyFeedTemplate = () => {
     
     const openConfirm = (type: "create" | "update" | "delete") => {
         setConfirmType(type);
+        setOpen(false);
         setConfirmOpen(true);
     };
 
@@ -435,9 +436,10 @@ export const AllMyFeedTemplate = () => {
 
                             <Button
                                 variant="secondary"
-                                onClick={() =>
-                                    setConfirmOpen(false)
-                                }
+                                onClick={() => {
+                                    setConfirmOpen(false);
+                                    setOpen(true);
+                                }}
                             >
                                 キャンセル
                             </Button>
