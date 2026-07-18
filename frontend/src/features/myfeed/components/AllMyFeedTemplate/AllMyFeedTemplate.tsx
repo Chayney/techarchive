@@ -60,7 +60,6 @@ export const AllMyFeedTemplate = () => {
     
     const openCreateDialog = () => {
         if (!requireAuth()) return;
-        clearFolderNameError();
         setEditingFolder(null);
         setFolderName("");
         setSelected([]);
@@ -205,12 +204,12 @@ export const AllMyFeedTemplate = () => {
 
                                 {/* tag/platform preview */}
                                 <div className={styles.labelInFolder}>
-                                    <div className={styles.tagList}>
-                                        {folder.visibleItems?.map((item) => (
-                                            <div
-                                                key={`${item.platform.id}-${item.tag}`}
-                                                className={styles.platformLabelInFolder}
-                                            >
+                                    {folder.visibleItems?.map((item, index) => (
+                                        <div
+                                            key={`${item.platform.id}-${item.tag}`}
+                                            className={styles.tagRow}
+                                        >
+                                            <div className={styles.platformLabelInFolder}>
                                                 <span>{item.tag}</span>
 
                                                 <span className={styles.muted}>
@@ -218,20 +217,21 @@ export const AllMyFeedTemplate = () => {
                                                     {item.platform.name}
                                                 </span>
                                             </div>
-                                        ))}
-                                    </div>
 
-                                    {folder.remainingCount > 0 && (
-                                        <Button
-                                            className={styles.moreButton}
-                                            onClick={() => {
-                                                setDetailFolder(folder);
-                                                setDetailOpen(true);
-                                            }}
-                                        >
-                                            +{folder.remainingCount}
-                                        </Button>
-                                    )}
+                                            {index === folder.visibleItems.length - 1 &&
+                                                folder.remainingCount > 0 && (
+                                                    <Button
+                                                        className={styles.moreButton}
+                                                        onClick={() => {
+                                                            setDetailFolder(folder);
+                                                            setDetailOpen(true);
+                                                        }}
+                                                    >
+                                                        +{folder.remainingCount}
+                                                    </Button>
+                                                )}
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <Button
@@ -261,7 +261,16 @@ export const AllMyFeedTemplate = () => {
                     )}
                 </div>
 
-                <Dialog open={open} onOpenChange={setOpen}>
+                <Dialog
+                    open={open}
+                    onOpenChange={(value) => {
+                        if (!value) {
+                            clearFolderNameError();
+                            setEditingFolder(null);
+                        }
+                        setOpen(value);
+                    }}
+                >
                     <DialogContent showCloseButton={false}>
                         <DialogTitle>
                             {editingFolder ? "フォルダの編集" : "フォルダの作成"}
