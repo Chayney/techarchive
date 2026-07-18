@@ -199,64 +199,64 @@ export const AllMyFeedTemplate = () => {
                             フォルダがありません
                         </div>
                     ) : (
-                        filteredFolders.map(folder => (
-                            <Link to={`${NAVIGATION_PATH.MYFOLDER}/${folder.id}`}>
-                                <div key={folder.id} className={styles.card}>
-                                    <h2>{folder.name}</h2>                               
-                                    {/* tag/platform preview */}
-                                    <div className={styles.labelInFolder}>
-                                        {folder.visibleItems?.map((item, index) => (
-                                            <div
-                                                key={`${item.platform.id}-${item.tag}`}
-                                                className={styles.tagRow}
-                                            >
-                                                <div className={styles.platformLabelInFolder}>
-                                                    <span>{item.tag}</span>
+                        filteredFolders.map(folder => (                           
+                            <div key={folder.id} className={styles.card}>
+                                <Link to={`${NAVIGATION_PATH.MYFOLDER}/${folder.id}`}>
+                                    <h2>{folder.name}</h2>
+                                </Link>                                                                  
+                                {/* tag/platform preview */}
+                                <div className={styles.labelInFolder}>
+                                    {folder.visibleItems?.map((item, index) => (
+                                        <div
+                                            key={`${item.platform.id}-${item.tag}`}
+                                            className={styles.tagRow}
+                                        >
+                                            <div className={styles.platformLabelInFolder}>
+                                                <span>{item.tag}</span>
 
-                                                    <span className={styles.muted}>
-                                                        {" | "}
-                                                        {item.platform.name}
-                                                    </span>
-                                                </div>
+                                                <span className={styles.muted}>
+                                                    {" | "}
+                                                    {item.platform.name}
+                                                </span>
+                                            </div>
 
-                                                {index === folder.visibleItems.length - 1 &&
-                                                    folder.remainingCount > 0 && (
-                                                        <Button
-                                                            className={styles.moreButton}
-                                                            onClick={() => {
-                                                                setDetailFolder(folder);
-                                                                setDetailOpen(true);
-                                                            }}
-                                                        >
-                                                            +{folder.remainingCount}
-                                                        </Button>
-                                                    )}
+                                            {index === folder.visibleItems.length - 1 &&
+                                                folder.remainingCount > 0 && (
+                                                    <Button
+                                                        className={styles.moreButton}
+                                                        onClick={() => {
+                                                            setDetailFolder(folder);
+                                                            setDetailOpen(true);
+                                                        }}
+                                                    >
+                                                        +{folder.remainingCount}
+                                                    </Button>
+                                                )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => {
+                                        if (!requireAuth()) return;
+                                        setEditingFolder(folder);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    編集
+                                </Button>
+                                <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+                                    <DialogContent className={styles.scrollArea}>
+                                        <DialogTitle>タグ一覧</DialogTitle>
+
+                                        {detailFolder?.folderTagPlatforms?.map((item) => (
+                                            <div key={`${item.platform.id}-${item.tag}`}>
+                                                {item.tag} | {item.platform.name}
                                             </div>
                                         ))}
-                                    </div>
-                                    <Button
-                                        variant="secondary"
-                                        onClick={() => {
-                                            if (!requireAuth()) return;
-                                            setEditingFolder(folder);
-                                            setOpen(true);
-                                        }}
-                                    >
-                                        編集
-                                    </Button>
-                                    <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-                                        <DialogContent className={styles.scrollArea}>
-                                            <DialogTitle>タグ一覧</DialogTitle>
-
-                                            {detailFolder?.folderTagPlatforms?.map((item) => (
-                                                <div key={`${item.platform.id}-${item.tag}`}>
-                                                    {item.tag} | {item.platform.name}
-                                                </div>
-                                            ))}
-                                        </DialogContent>
-                                    </Dialog>
-                                </div>
-                            </Link>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                         ))
                     )}
                 </div>
