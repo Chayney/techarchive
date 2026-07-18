@@ -328,11 +328,16 @@ export const AllMyFeedTemplate = () => {
                             <Button
                                 variant="destructive"
                                 onClick={() => {
+                                    const isValid = validateFolderName(folderName);
+                                    if (!isValid) {
+                                        return;
+                                    }
                                     openConfirm(
                                         editingFolder ? "update" : "create"
                                     );
                                 }}
-                                disabled={loading}>
+                                disabled={loading}
+                            >
                                 {editingFolder ? "更新" : "作成"}
                             </Button>
                             {editingFolder && (
