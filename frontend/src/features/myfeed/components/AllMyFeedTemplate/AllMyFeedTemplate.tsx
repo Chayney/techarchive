@@ -29,6 +29,13 @@ export const AllMyFeedTemplate = () => {
     const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [confirmType, setConfirmType] = useState<"create" | "update" | "delete" | null>(null);
+    
+    const openConfirm = (type: "create" | "update" | "delete") => {
+        setConfirmType(type);
+        setConfirmOpen(true);
+    };
 
     const filteredTagPlatforms = useMemo(() => {
         return tagPlatforms.filter((item) =>
@@ -90,7 +97,7 @@ export const AllMyFeedTemplate = () => {
         );
     };
 
-    const handleSave = async () => {
+    const executeSave = async () => {
         if (!validateFolderName(folderName)) {
             return;
         }
@@ -107,8 +114,6 @@ export const AllMyFeedTemplate = () => {
                     }))
                 );
 
-                await fetchFolders();
-
             } else {
                 const folder = await createFolder(folderName);
 
@@ -119,11 +124,10 @@ export const AllMyFeedTemplate = () => {
                         platform_id: item.platform.id,
                     }))
                 );
-
-                await fetchFolders();
             }
 
-            setSelectOpen(false);
+            await fetchFolders();
+
             setOpen(false);
             setSelected([]);
             setFolderName("");
@@ -136,7 +140,7 @@ export const AllMyFeedTemplate = () => {
         }
     };
 
-    const handleDeleteFolder = async (folderId: number) => {
+    const executeDeleteFolder = async (folderId: number) => {
         try {
             setLoading(true);
 
@@ -196,67 +200,63 @@ export const AllMyFeedTemplate = () => {
                         </div>
                     ) : (
                         filteredFolders.map(folder => (
-                            <div key={folder.id} className={styles.card}>
+                            <Link to={`${NAVIGATION_PATH.MYFOLDER}/${folder.id}`}>
+                                <div key={folder.id} className={styles.card}>
+                                    <h2>{folder.name}</h2>                               
+                                    {/* tag/platform preview */}
+                                    <div className={styles.labelInFolder}>
+                                        {folder.visibleItems?.map((item, index) => (
+                                            <div
+                                                key={`${item.platform.id}-${item.tag}`}
+                                                className={styles.tagRow}
+                                            >
+                                                <div className={styles.platformLabelInFolder}>
+                                                    <span>{item.tag}</span>
 
-                                <Link to={`${NAVIGATION_PATH.MYFOLDER}/${folder.id}`}>
-                                    <h2>{folder.name}</h2>
-                                </Link>
+                                                    <span className={styles.muted}>
+                                                        {" | "}
+                                                        {item.platform.name}
+                                                    </span>
+                                                </div>
 
-                                {/* tag/platform preview */}
-                                <div className={styles.labelInFolder}>
-                                    {folder.visibleItems?.map((item, index) => (
-                                        <div
-                                            key={`${item.platform.id}-${item.tag}`}
-                                            className={styles.tagRow}
-                                        >
-                                            <div className={styles.platformLabelInFolder}>
-                                                <span>{item.tag}</span>
-
-                                                <span className={styles.muted}>
-                                                    {" | "}
-                                                    {item.platform.name}
-                                                </span>
-                                            </div>
-
-                                            {index === folder.visibleItems.length - 1 &&
-                                                folder.remainingCount > 0 && (
-                                                    <Button
-                                                        className={styles.moreButton}
-                                                        onClick={() => {
-                                                            setDetailFolder(folder);
-                                                            setDetailOpen(true);
-                                                        }}
-                                                    >
-                                                        +{folder.remainingCount}
-                                                    </Button>
-                                                )}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => {
-                                        if (!requireAuth()) return;
-                                        setEditingFolder(folder);
-                                        setOpen(true);
-                                    }}
-                                >
-                                    編集
-                                </Button>
-                                <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-                                    <DialogContent className={styles.scrollArea}>
-                                        <DialogTitle>タグ一覧</DialogTitle>
-
-                                        {detailFolder?.folderTagPlatforms?.map((item) => (
-                                            <div key={`${item.platform.id}-${item.tag}`}>
-                                                {item.tag} | {item.platform.name}
+                                                {index === folder.visibleItems.length - 1 &&
+                                                    folder.remainingCount > 0 && (
+                                                        <Button
+                                                            className={styles.moreButton}
+                                                            onClick={() => {
+                                                                setDetailFolder(folder);
+                                                                setDetailOpen(true);
+                                                            }}
+                                                        >
+                                                            +{folder.remainingCount}
+                                                        </Button>
+                                                    )}
                                             </div>
                                         ))}
-                                    </DialogContent>
-                                </Dialog>
+                                    </div>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => {
+                                            if (!requireAuth()) return;
+                                            setEditingFolder(folder);
+                                            setOpen(true);
+                                        }}
+                                    >
+                                        編集
+                                    </Button>
+                                    <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+                                        <DialogContent className={styles.scrollArea}>
+                                            <DialogTitle>タグ一覧</DialogTitle>
 
-                            </div>
+                                            {detailFolder?.folderTagPlatforms?.map((item) => (
+                                                <div key={`${item.platform.id}-${item.tag}`}>
+                                                    {item.tag} | {item.platform.name}
+                                                </div>
+                                            ))}
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            </Link>
                         ))
                     )}
                 </div>
@@ -324,13 +324,20 @@ export const AllMyFeedTemplate = () => {
                             }}>
                                 閉じる
                             </Button>
-                            <Button variant="destructive" onClick={handleSave} disabled={loading}>
+                            <Button
+                                variant="destructive"
+                                onClick={() => {
+                                    openConfirm(
+                                        editingFolder ? "update" : "create"
+                                    );
+                                }}
+                                disabled={loading}>
                                 {editingFolder ? "更新" : "作成"}
                             </Button>
                             {editingFolder && (
                                 <Button
                                     variant="secondary"
-                                    onClick={() => handleDeleteFolder(editingFolder.id)}
+                                    onClick={() => openConfirm("delete")}
                                     disabled={loading}
                                 >
                                     削除
@@ -399,6 +406,58 @@ export const AllMyFeedTemplate = () => {
                                 }}
                             >
                                 閉じる
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+                <Dialog
+                    open={confirmOpen}
+                    onOpenChange={setConfirmOpen}
+                >
+                    <DialogContent showCloseButton={false}>
+
+                        <DialogTitle>
+                            {confirmType === "create" &&
+                                "フォルダを作成してもよろしいですか？"
+                            }
+
+                            {confirmType === "update" &&
+                                "フォルダを更新してもよろしいですか？"
+                            }
+
+                            {confirmType === "delete" &&
+                                "フォルダを削除してもよろしいですか？"
+                            }
+                        </DialogTitle>
+
+
+                        <div className={styles.dialogFooter}>
+
+                            <Button
+                                variant="secondary"
+                                onClick={() =>
+                                    setConfirmOpen(false)
+                                }
+                            >
+                                キャンセル
+                            </Button>
+
+
+                            <Button
+                                variant="destructive"
+                                disabled={loading}
+                                onClick={async () => {
+                                    setConfirmOpen(false);
+                                    if (confirmType === "delete") {
+                                        if (editingFolder) {
+                                            await executeDeleteFolder(editingFolder.id);
+                                        }
+                                    } else {
+                                        await executeSave();
+                                    }
+                                }}
+                            >
+                                実行
                             </Button>
                         </div>
                     </DialogContent>
