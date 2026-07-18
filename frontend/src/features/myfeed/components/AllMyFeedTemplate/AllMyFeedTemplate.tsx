@@ -312,7 +312,12 @@ export const AllMyFeedTemplate = () => {
                     </DialogContent>
                 </Dialog>
 
-                <Dialog open={selectOpen} onOpenChange={setSelectOpen}>
+                <Dialog
+                    open={selectOpen}
+                    onOpenChange={(value) => {
+                        setSelectOpen(value);
+                    }}
+                >
                     <DialogContent>
                         <DialogTitle>タグを選択</DialogTitle>
 
@@ -337,7 +342,11 @@ export const AllMyFeedTemplate = () => {
                                         className={styles.platformRow}
                                         onClick={() => toggle(item)}
                                     >
-                                        <input type="checkbox" checked={checked} readOnly />
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            readOnly
+                                        />
 
                                         <div className={styles.platformLabel}>
                                             <span>{item.tag}</span>
