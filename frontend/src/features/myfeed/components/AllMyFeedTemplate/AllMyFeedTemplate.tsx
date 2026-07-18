@@ -364,7 +364,11 @@ export const AllMyFeedTemplate = () => {
                         <div className={styles.dialogFooter}>
                             <Button
                                 variant="secondary"
-                                onClick={() => setSelectOpen(false)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setSelectOpen(false);
+                                }}
                             >
                                 閉じる
                             </Button>
