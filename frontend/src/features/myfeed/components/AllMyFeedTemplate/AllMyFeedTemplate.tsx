@@ -12,11 +12,13 @@ import { NAVIGATION_PATH } from "../../../../shared/const/navigation";
 import type { Folder, TagPlatform } from "../../types/myfeed";
 import { useFolderListContext } from "../../hooks/useFolderListContext";
 import { useAuthContext } from "../../../auth/hooks/useAuthContext";
+import { useAllMyFeedTemplate } from "./useAllMyFeedTemplate";
 
 export const AllMyFeedTemplate = () => {
     const { requireAuth } = useAuthContext()
     const { folderList, tagPlatforms, fetchFolders } = useFolderListContext();
     const { createFolder, saveFolderTagPlatforms, updateFolder, deleteFolder } = useFolder();
+    const { folderNameError, validateFolderName, clearFolderNameError } = useAllMyFeedTemplate();
 
     const [selectOpen, setSelectOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
@@ -89,6 +91,9 @@ export const AllMyFeedTemplate = () => {
     };
 
     const handleSave = async () => {
+        if (!validateFolderName(folderName)) {
+            return;
+        }
         try {
             setLoading(true);
 
@@ -262,8 +267,19 @@ export const AllMyFeedTemplate = () => {
                         <Input
                             placeholder="フォルダ名"
                             value={folderName}
-                            onChange={(e) => setFolderName(e.target.value)}
+                            onChange={(e) => {
+                                setFolderName(e.target.value);
+                                if (folderNameError) {
+                                    clearFolderNameError();
+                                }
+                            }}
+                            inputSize="md"
                         />
+                        {folderNameError && (
+                            <p className={styles.errorMessage}>
+                                {folderNameError}
+                            </p>
+                        )}
 
                         <div className={styles.selectedArea}>
                             {selected.map(item => (

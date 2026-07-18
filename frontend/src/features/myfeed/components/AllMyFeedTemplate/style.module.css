@@ -10,7 +10,7 @@
 }
 
 .card {
-    height: 260px;
+    height: 350px;
     padding: 24px;
 
     background: #ffffff;
@@ -24,17 +24,14 @@
 
     cursor: pointer;
 
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
 }
 
 
 .card:hover {
     transform: translateY(-4px);
-
-    box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -122,10 +119,16 @@
 .labelInFolder {
     display: flex;
     flex-wrap: wrap;
-    gap: 25px;
+    gap: 8px;
+    align-items: flex-start;
 }
 
-
+.moreButton {
+    margin-left: auto;
+    min-width: 48px;
+    height: 28px;
+    padding: 0 10px;
+}
 
 .platformRow {
     display: flex;
@@ -165,7 +168,6 @@
     align-items: center;
 }
 
-
 .muted {
     color: #ffffff;
 }
@@ -175,13 +177,16 @@
     overflow-y: auto;
 }
 
-
-
 .dialogFooter {
     display: flex;
     justify-content: space-between;
-
     margin-top: 24px;
+}
+
+.errorMessage {
+    margin-top: 4px;
+    color: #ef4444;
+    font-size: 13px;
 }
 
 

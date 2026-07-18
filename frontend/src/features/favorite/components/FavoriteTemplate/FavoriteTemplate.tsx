@@ -53,7 +53,7 @@ export const FavoriteTemplate = () => {
                     <div className={styles.emptyCard}>
                         <h3>お気に入り記事はありません</h3>
                         <p>
-                            記事一覧から♡ボタンを押してブックマーク登録してください
+                            記事一覧から♡ボタンを押してお気に入り登録してください
                         </p>
                     </div>
                 ) : (
