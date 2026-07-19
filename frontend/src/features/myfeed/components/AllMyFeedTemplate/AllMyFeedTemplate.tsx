@@ -224,6 +224,7 @@ export const AllMyFeedTemplate = () => {
                                             {index === folder.visibleItems.length - 1 &&
                                                 folder.remainingCount > 0 && (
                                                     <Button
+                                                        variant="quinary"
                                                         onClick={() => {
                                                             setDetailFolder(folder);
                                                             setDetailOpen(true);
