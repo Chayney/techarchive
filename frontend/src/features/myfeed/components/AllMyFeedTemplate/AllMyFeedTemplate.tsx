@@ -224,7 +224,7 @@ export const AllMyFeedTemplate = () => {
                                             {index === folder.visibleItems.length - 1 &&
                                                 folder.remainingCount > 0 && (
                                                     <Button
-                                                        className={styles.moreButton}
+                                                    className="ml-auto"
                                                         onClick={() => {
                                                             setDetailFolder(folder);
                                                             setDetailOpen(true);
