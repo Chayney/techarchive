@@ -9,6 +9,9 @@ IT技術集約サイトです。
 ・react-route  
 ・shadcn/ui  
 ・tailwindcss  
+・eslint  
+・prettier  
+・lucide-react  
 
 ### バックエンド  
 ・node.js  
