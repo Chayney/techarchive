@@ -24,4 +24,6 @@ IT技術集約サイトです。
 
 ### その他  
 ・supabase  
+・postgresql  
+・typeorm  
 ・docker  
