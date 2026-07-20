@@ -1,9 +1,15 @@
-import { Routes } from "react-router-dom"
+import { AuthRouter } from "./auth/router"
+import { FavoriteRouter } from "./favorite/router"
+import { MainRouter } from "./main/router"
+import { MyFeedRouter } from "./myfeed/router"
 
 export const FeaturesRouter = () => {
     return (
-        <Routes>
-            
-        </Routes>
+        <>
+            <MainRouter />
+            <MyFeedRouter />
+            <FavoriteRouter />
+            <AuthRouter />
+        </>
     )
 }

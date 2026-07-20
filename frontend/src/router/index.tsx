@@ -1,10 +1,9 @@
 import { BrowserRouter } from "react-router-dom"
-import { AuthRouter } from "../features/auth/router/AuthRouter"
 import { AuthProvider } from "../features/auth/contexts/AuthContext"
-import { ArticleRouter } from "../features/main/router"
 import { FavoriteCategoryProvider } from "../features/favorite/context/FavoriteCategoryContext"
 import { ArticleActionsProvider } from "../features/article/context/ArticleActionsContext"
 import { FolderListProvider } from "../features/myfeed/context/FolderListContext"
+import { FeaturesRouter } from "../features"
 
 export const Router = () => {
     return (
@@ -13,8 +12,7 @@ export const Router = () => {
                 <FavoriteCategoryProvider>
                     <FolderListProvider>
                         <ArticleActionsProvider>
-                            <AuthRouter />
-                            <ArticleRouter />
+                            <FeaturesRouter />
                         </ArticleActionsProvider>
                     </FolderListProvider>
                 </FavoriteCategoryProvider>

@@ -4,22 +4,16 @@ import styles from "./style.module.css";
 import { Loader2 } from "lucide-react";
 import { Header } from "../../../../shared/components/layouts/Header/Header";
 import { Pagination } from "../../../../shared/components/layouts/Pagination/Pagination";
-import { usePagination } from "../../../article/hooks/usePagination";
 import { useTrendTemplate } from "./useTrendTemplate";
 import { ArticleCard } from "../../../article/components/ArticleCard/ArticleCard";
 
 export const TrendTemplate = () => {
     const [keyword, setKeyword] = useState("");
     const [searchKeyword, setSearchKeyword] = useState("");
-    const { trendArticles, loading } = useTrendTemplate();
 
-    const filteredArticles = trendArticles.filter((article) =>
-        article.article.title
-            .toLowerCase()
-            .includes(searchKeyword.toLowerCase())
-    );
+    const [page, setPage] = useState(1);
 
-    const pagination = usePagination(filteredArticles);
+    const { trendArticles, total, loading } = useTrendTemplate(page, searchKeyword);
 
     return (
         <Layout
@@ -30,18 +24,18 @@ export const TrendTemplate = () => {
                     onKeywordChange={setKeyword}
                     onSearch={(value) => {
                         setSearchKeyword(value);
-                        pagination.setPage(1);
+                        setPage(1);
                     }}
                 />
-
             }
         >
             <main className={styles.underContainer}>
+
                 {loading ? (
                     <Loader2 className={styles.spinner} />
                 ) : (
                     <>
-                        {pagination.paginated.map((article) => (
+                        {trendArticles.map((article) => (
                             <ArticleCard
                                 key={article.article.id}
                                 article={{
@@ -51,26 +45,29 @@ export const TrendTemplate = () => {
                                         article.article.article_url,
                                     thumbnail_url:
                                         article.article.thumbnail_url,
-                                    published_at: article.article.published_at,
+                                    published_at:
+                                        article.article.published_at,
                                     tags:
-                                        article.tags
+                                        article.tags,
                                 }}
                                 likes_count={article.likes_count}
-                                platform={article.platform}                           
+                                platform={article.platform}
                             />
                         ))}
 
+
                         <Pagination
-                            totalItems={filteredArticles.length}
+                            totalItems={total}
                             itemsPerPage={10}
-                            currentPage={pagination.page}
-                            onPageChange={(page) => {
-                                pagination.setPage(page);
+                            currentPage={page}
+                            onPageChange={(newPage) => {
+                                setPage(newPage);
                                 window.scrollTo(0, 0);
                             }}
                         />
                     </>
                 )}
+
             </main>
         </Layout>
     );
