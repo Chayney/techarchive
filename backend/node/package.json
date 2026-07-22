@@ -18,6 +18,12 @@
     "seed:run": "ts-node ./src/database/seeders/index.ts",
     "db:reset": "ts-node src/database/reset.ts",
     "db:fresh": "npm run db:reset && npm run migration:generate && npm run migration:run && npm run seed:run",
+    "lint": "eslint .",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "check": "npm run lint && npm run format",
+    "lint:fix": "eslint . --fix",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "fix": "npm run lint:fix && npm run format:fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -25,12 +31,18 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.65.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.98.0",
