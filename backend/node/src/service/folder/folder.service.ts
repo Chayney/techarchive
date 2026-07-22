@@ -16,6 +16,7 @@ import {
     CreateFolderTagPlatformsParam,
     UpdateFolderParam,
     FeedOptionGroup,
+    FeedOptionFlatItem,
 } from "../../types/folder";
 
 export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
@@ -25,8 +26,8 @@ export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
         const map: Record<string, string> = {
             react: "React",
             reactjs: "React",
-            nextjs: "Next.js",
             "next.js": "Next.js",
+            nextjs: "Next.js",
             typescript: "TypeScript",
             ts: "TypeScript",
             javascript: "JavaScript",
@@ -36,10 +37,12 @@ export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
             linux: "Linux",
         };
 
-        return map[tag.trim().toLowerCase()] ?? tag.trim();
+        const key = tag.trim().toLowerCase();
+
+        return map[key] ?? tag.trim();
     };
 
-    const flat = feeds.flatMap((feed) => {
+    const flat: FeedOptionFlatItem[] = feeds.flatMap((feed) => {
         if (!feed.tags) {
             return [];
         }
@@ -47,6 +50,8 @@ export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
         const tags = Array.from(new Set(feed.tags.split(",").map(normalizeTag).filter(Boolean)));
 
         return tags.map((tag) => ({
+            feed_id: feed.id,
+
             tag,
 
             platform: {
@@ -67,7 +72,7 @@ export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
 
     return Object.values(
         flat.reduce<Record<string, FeedOptionGroup>>((acc, item) => {
-            const key = `${item.tag}_${item.platform.name}`;
+            const key = `${item.tag}__${item.platform.name}`;
 
             if (!acc[key]) {
                 acc[key] = {

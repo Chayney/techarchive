@@ -3,25 +3,26 @@ export type CreateFolderParam = {
     userId: string;
 };
 
-
-export type FolderTagPlatformItem = {
-    folder_id: number;
+// Request用
+export type FolderTagPlatformInput = {
     tag: string;
     platform_id: number;
 };
 
+// DB登録用
+export type FolderTagPlatformItem = FolderTagPlatformInput & {
+    folder_id: number;
+};
 
 export type CreateFolderTagPlatformsParam = {
     folder_id: number;
-    items: FolderTagPlatformItem[];
+    items: FolderTagPlatformInput[];
 };
-
 
 export type UpdateFolderParam = {
     name: string;
-    items?: FolderTagPlatformItem[];
+    items?: FolderTagPlatformInput[];
 };
-
 
 export type FeedOptionArticle = {
     id: number;
@@ -31,13 +32,18 @@ export type FeedOptionArticle = {
     published_at: Date;
 };
 
-
 export type FeedOptionPlatform = {
     id: number;
     name: string;
     favicon_url: string;
 };
 
+export type FeedOptionFlatItem = {
+    feed_id: number;
+    tag: string;
+    platform: FeedOptionPlatform;
+    article: FeedOptionArticle;
+};
 
 export type FeedOptionGroup = {
     tag: string;

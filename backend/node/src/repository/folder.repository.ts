@@ -1,7 +1,7 @@
 import { AppDataSource } from "../config/appDataSource";
 import { Feed } from "../domain/entity/feeds.entity";
-import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
 import { Folder } from "../domain/entity/folders.entity";
+import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
 import { Profile } from "../domain/entity/profiles.entity";
 import { FolderTagPlatformItem } from "../types/folder";
 
@@ -25,6 +25,7 @@ export const findFolderArticles = async (id: number) => {
             where: {
                 id,
             },
+
             relations: {
                 platform: {
                     feeds: {
@@ -57,7 +58,9 @@ export const saveFolderTagPlatforms = async (items: FolderTagPlatformItem[]) => 
     const entities = items.map((item) =>
         repo.create({
             folder_id: item.folder_id,
+
             tag: item.tag,
+
             platform_id: item.platform_id,
         }),
     );
@@ -72,6 +75,7 @@ export const findFolders = async (profileId: number) => {
             where: {
                 profile_id: profileId,
             },
+
             relations: {
                 folderTagPlatforms: {
                     platform: true,
@@ -82,7 +86,9 @@ export const findFolders = async (profileId: number) => {
 
 export const findFolderById = async (id: number) => {
     return db().getRepository(Folder).findOne({
-        where: { id },
+        where: {
+            id,
+        },
     });
 };
 

@@ -33,7 +33,6 @@ export const getFeedOptionsHandler: RequestHandler = async (_req, res) => {
  * □ React / Zenn
  * □ AI / X
  */
-// querybuilderでarticlesを返すようにしたいがsupabase clientと互換性に懸念があるためここまでの返却
 export const getFolderArticlesHandler: RequestHandler = async (req, res) => {
     try {
         const result = await getFolderArticles(Number(req.params.tagPlatformId));
@@ -43,7 +42,7 @@ export const getFolderArticlesHandler: RequestHandler = async (req, res) => {
         console.error(error);
 
         return res.status(500).json({
-            message: "failed to get folder articles",
+            message: "failed to get tag/platform articles",
         });
     }
 };
@@ -85,7 +84,6 @@ export const createFolderTagPlatformsHandler: RequestHandler = async (req, res) 
         });
     }
 };
-
 
 // グルーピングされたフォルダの一覧を返却
 export const getFolderHandler: RequestHandler = async (req, res) => {
