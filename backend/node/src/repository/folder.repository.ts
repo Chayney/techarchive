@@ -3,64 +3,73 @@ import { Feed } from "../domain/entity/feeds.entity";
 import { Folder } from "../domain/entity/folders.entity";
 import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
 import { Profile } from "../domain/entity/profiles.entity";
-import { FolderTagPlatformItem } from "../types/folder";
 
-const db = () => AppDataSource.getInstance();
+export const getFeedRepositoryData = async () => {
+    const db = AppDataSource.getInstance();
 
-export const findFeeds = async () => {
-    return db()
-        .getRepository(Feed)
-        .find({
-            relations: {
-                platform: true,
-                article: true,
-            },
-        });
+    return db.getRepository(Feed).find({
+        relations: {
+            platform: true,
+            article: true,
+        },
+    });
 };
 
-export const findFolderArticles = async (id: number) => {
-    return db()
-        .getRepository(FolderTagPlatform)
-        .find({
-            where: {
-                id,
-            },
+export const getFolderTagPlatformArticles = async (id: number) => {
+    const db = AppDataSource.getInstance();
 
-            relations: {
-                platform: {
-                    feeds: {
-                        article: true,
-                    },
+    return db.getRepository(FolderTagPlatform).find({
+        where: {
+            id,
+        },
+        relations: {
+            platform: {
+                feeds: {
+                    article: true,
                 },
             },
-        });
+        },
+    });
 };
 
-export const findProfileByUserId = async (userId: string) => {
-    return db()
-        .getRepository(Profile)
-        .findOne({
-            where: {
-                user_id: userId,
-            },
-        });
+export const findProfile = async (userId: string) => {
+    const db = AppDataSource.getInstance();
+
+    return db.getRepository(Profile).findOne({
+        where: {
+            user_id: userId,
+        },
+    });
 };
 
-export const saveFolder = async (data: Partial<Folder>) => {
-    const repo = db().getRepository(Folder);
+export const saveFolder = async (name: string, profileId: number) => {
+    const db = AppDataSource.getInstance();
 
-    return repo.save(repo.create(data));
+    const repo = db.getRepository(Folder);
+
+    const folder = repo.create({
+        name,
+        profile_id: profileId,
+    });
+
+    return repo.save(folder);
 };
 
-export const saveFolderTagPlatforms = async (items: FolderTagPlatformItem[]) => {
-    const repo = db().getRepository(FolderTagPlatform);
+export const saveFolderTagPlatforms = async (
+    folder_id: number,
+    items: {
+        tag: string;
+        platform_id: number;
+    }[],
+) => {
+    const db = AppDataSource.getInstance();
+
+    const repo = db.getRepository(FolderTagPlatform);
 
     const entities = items.map((item) =>
         repo.create({
-            folder_id: item.folder_id,
-
+            folder_id,
             tag: item.tag,
-
             platform_id: item.platform_id,
         }),
     );
@@ -69,39 +78,72 @@ export const saveFolderTagPlatforms = async (items: FolderTagPlatformItem[]) => 
 };
 
 export const findFolders = async (profileId: number) => {
-    return db()
-        .getRepository(Folder)
-        .find({
-            where: {
-                profile_id: profileId,
-            },
+    const db = AppDataSource.getInstance();
 
-            relations: {
-                folderTagPlatforms: {
-                    platform: true,
-                },
+    return db.getRepository(Folder).find({
+        where: {
+            profile_id: profileId,
+        },
+        relations: {
+            folderTagPlatforms: {
+                platform: true,
             },
-        });
+        },
+    });
 };
 
-export const findFolderById = async (id: number) => {
-    return db().getRepository(Folder).findOne({
+export const findFolder = async (id: number) => {
+    const db = AppDataSource.getInstance();
+
+    return db.getRepository(Folder).findOne({
         where: {
             id,
         },
     });
 };
 
-export const updateFolderEntity = async (folder: Folder) => {
-    return db().getRepository(Folder).save(folder);
-};
+export const updateFolderData = async (id: number, name: string) => {
+    const db = AppDataSource.getInstance();
 
-export const deleteFolderTags = async (folderId: number) => {
-    return db().getRepository(FolderTagPlatform).delete({
-        folder_id: folderId,
+    const repo = db.getRepository(Folder);
+
+    const folder = await repo.findOne({
+        where: {
+            id,
+        },
     });
+
+    if (!folder) {
+        return null;
+    }
+
+    folder.name = name;
+
+    return repo.save(folder);
 };
 
-export const removeFolder = async (folder: Folder) => {
-    return db().getRepository(Folder).remove(folder);
+export const deleteFolderData = async (id: number) => {
+    const db = AppDataSource.getInstance();
+
+    const repo = db.getRepository(Folder);
+
+    const folder = await repo.findOne({
+        where: {
+            id,
+        },
+    });
+
+    if (!folder) {
+        return null;
+    }
+
+    return repo.remove(folder);
+};
+
+export const deleteFolderTags = async (folder_id: number) => {
+    const db = AppDataSource.getInstance();
+
+    return db.getRepository(FolderTagPlatform).delete({
+        folder_id,
+    });
 };

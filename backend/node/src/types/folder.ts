@@ -1,29 +1,3 @@
-export type CreateFolderParam = {
-    name: string;
-    userId: string;
-};
-
-// Request用
-export type FolderTagPlatformInput = {
-    tag: string;
-    platform_id: number;
-};
-
-// DB登録用
-export type FolderTagPlatformItem = FolderTagPlatformInput & {
-    folder_id: number;
-};
-
-export type CreateFolderTagPlatformsParam = {
-    folder_id: number;
-    items: FolderTagPlatformInput[];
-};
-
-export type UpdateFolderParam = {
-    name: string;
-    items?: FolderTagPlatformInput[];
-};
-
 export type FeedOptionArticle = {
     id: number;
     title: string;
@@ -38,15 +12,29 @@ export type FeedOptionPlatform = {
     favicon_url: string;
 };
 
-export type FeedOptionFlatItem = {
-    feed_id: number;
-    tag: string;
-    platform: FeedOptionPlatform;
-    article: FeedOptionArticle;
-};
-
-export type FeedOptionGroup = {
+export type FeedTagPlatformGroup = {
     tag: string;
     platform: FeedOptionPlatform;
     articles: FeedOptionArticle[];
+};
+
+export type CreateFolderTagPlatformItem = {
+    tag: string;
+    platform_id: number;
+};
+
+export type CreateFolderParams = {
+    name: string;
+    userId: number;
+};
+
+export type CreateFolderTagPlatformsParams = {
+    folder_id: number;
+    items: CreateFolderTagPlatformItem[];
+};
+
+export type UpdateFolderParams = {
+    id: number;
+    name: string;
+    items?: CreateFolderTagPlatformItem[];
 };

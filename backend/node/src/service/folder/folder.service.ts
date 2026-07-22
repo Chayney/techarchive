@@ -1,65 +1,54 @@
+import { FeedTagPlatformGroup, UpdateFolderParams } from "../../types/folder";
 import {
-    findFeeds,
-    findFolderArticles,
-    findProfileByUserId,
+    getFeedRepositoryData,
+    getFolderTagPlatformArticles,
+    findProfile,
     saveFolder,
     saveFolderTagPlatforms,
     findFolders,
-    findFolderById,
-    updateFolderEntity,
+    findFolder,
+    updateFolderData,
     deleteFolderTags,
-    removeFolder,
+    deleteFolderData,
 } from "../../repository/folder.repository";
 
-import {
-    CreateFolderParam,
-    CreateFolderTagPlatformsParam,
-    UpdateFolderParam,
-    FeedOptionGroup,
-    FeedOptionFlatItem,
-} from "../../types/folder";
-
-export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
-    const feeds = await findFeeds();
-
-    const normalizeTag = (tag: string): string => {
-        const map: Record<string, string> = {
-            react: "React",
-            reactjs: "React",
-            "next.js": "Next.js",
-            nextjs: "Next.js",
-            typescript: "TypeScript",
-            ts: "TypeScript",
-            javascript: "JavaScript",
-            js: "JavaScript",
-            aws: "AWS",
-            gcp: "GCP",
-            linux: "Linux",
-        };
-
-        const key = tag.trim().toLowerCase();
-
-        return map[key] ?? tag.trim();
+const normalizeTag = (tag: string) => {
+    const map: Record<string, string> = {
+        react: "React",
+        reactjs: "React",
+        "next.js": "Next.js",
+        nextjs: "Next.js",
+        typescript: "TypeScript",
+        ts: "TypeScript",
+        javascript: "JavaScript",
+        js: "JavaScript",
+        aws: "AWS",
+        gcp: "GCP",
+        linux: "Linux",
     };
 
-    const flat: FeedOptionFlatItem[] = feeds.flatMap((feed) => {
+    const value = tag.trim();
+
+    return map[value.toLowerCase()] ?? value;
+};
+
+export const getFeedOptions = async (): Promise<FeedTagPlatformGroup[]> => {
+    const feeds = await getFeedRepositoryData();
+
+    const flat = feeds.flatMap((feed) => {
         if (!feed.tags) {
             return [];
         }
 
-        const tags = Array.from(new Set(feed.tags.split(",").map(normalizeTag).filter(Boolean)));
+        const tags = [...new Set(feed.tags.split(",").map(normalizeTag).filter(Boolean))];
 
         return tags.map((tag) => ({
-            feed_id: feed.id,
-
             tag,
-
             platform: {
                 id: feed.platform.id,
                 name: feed.platform.name,
                 favicon_url: feed.platform.favicon_url,
             },
-
             article: {
                 id: feed.article.id,
                 title: feed.article.title,
@@ -70,99 +59,78 @@ export const getFeedOptions = async (): Promise<FeedOptionGroup[]> => {
         }));
     });
 
-    return Object.values(
-        flat.reduce<Record<string, FeedOptionGroup>>((acc, item) => {
-            const key = `${item.tag}__${item.platform.name}`;
+    const grouped = flat.reduce<Record<string, FeedTagPlatformGroup>>((acc, cur) => {
+        const key = `${cur.tag}__${cur.platform.name}`;
 
-            if (!acc[key]) {
-                acc[key] = {
-                    tag: item.tag,
+        if (!acc[key]) {
+            acc[key] = {
+                tag: cur.tag,
+                platform: cur.platform,
+                articles: [],
+            };
+        }
 
-                    platform: item.platform,
+        acc[key].articles.push(cur.article);
 
-                    articles: [],
-                };
-            }
+        return acc;
+    }, {});
 
-            acc[key].articles.push(item.article);
-
-            return acc;
-        }, {}),
-    );
+    return Object.values(grouped);
 };
 
 export const getFolderArticles = async (id: number) => {
-    return findFolderArticles(id);
+    return getFolderTagPlatformArticles(id);
 };
 
-export const createFolder = async ({ name, userId }: CreateFolderParam) => {
-    const profile = await findProfileByUserId(userId);
+export const createFolder = async (name: string, userId: string) => {
+    const profile = await findProfile(userId);
 
     if (!profile) {
         throw new Error("profile not found");
     }
 
-    return saveFolder({
-        name,
-
-        profile_id: profile.id,
-    });
+    return saveFolder(name, profile.id);
 };
 
-export const createFolderTagPlatforms = async (data: CreateFolderTagPlatformsParam) => {
-    const { folder_id, items } = data;
-
-    return saveFolderTagPlatforms(
-        items.map((item) => ({
-            folder_id,
-
-            tag: item.tag,
-
-            platform_id: item.platform_id,
-        })),
-    );
+export const createFolderTags = async (
+    folder_id: number,
+    items: {
+        tag: string;
+        platform_id: number;
+    }[],
+) => {
+    return saveFolderTagPlatforms(folder_id, items);
 };
 
 export const getFolders = async (profileId: number) => {
     return findFolders(profileId);
 };
 
-export const updateFolder = async (id: number, data: UpdateFolderParam) => {
-    const folder = await findFolderById(id);
+export const updateFolder = async (params: UpdateFolderParams) => {
+    const folder = await findFolder(params.id);
 
     if (!folder) {
         throw new Error("folder not found");
     }
 
-    folder.name = data.name;
+    const updated = await updateFolderData(params.id, params.name);
 
-    await updateFolderEntity(folder);
+    await deleteFolderTags(params.id);
 
-    await deleteFolderTags(id);
-
-    const saved = await saveFolderTagPlatforms(
-        (data.items ?? []).map((item) => ({
-            folder_id: id,
-
-            tag: item.tag,
-
-            platform_id: item.platform_id,
-        })),
-    );
+    const saved = await saveFolderTagPlatforms(params.id, params.items ?? []);
 
     return {
-        folder,
-
+        folder: updated,
         folderTagPlatforms: saved,
     };
 };
 
 export const deleteFolder = async (id: number) => {
-    const folder = await findFolderById(id);
+    const folder = await findFolder(id);
 
     if (!folder) {
         throw new Error("folder not found");
     }
 
-    return removeFolder(folder);
+    await deleteFolderData(id);
 };

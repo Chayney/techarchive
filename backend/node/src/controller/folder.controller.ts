@@ -1,9 +1,13 @@
 import { RequestHandler } from "express";
-import { AppDataSource } from "../config/appDataSource";
-import { Folder } from "../domain/entity/folders.entity";
-import { Feed } from "../domain/entity/feeds.entity";
-import { FolderTagPlatform } from "../domain/entity/folder_tag_platforms.entity";
-import { Profile } from "../domain/entity/profiles.entity";
+import {
+    getFeedOptions,
+    getFolderArticles,
+    createFolder,
+    createFolderTags,
+    getFolders,
+    updateFolder,
+    deleteFolder,
+} from "../service/folder/folder.service";
 
 /**
  * Feed選択UI用
@@ -11,109 +15,14 @@ import { Profile } from "../domain/entity/profiles.entity";
  * □ AI / X
  */
 export const getFeedOptionsHandler: RequestHandler = async (_req, res) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Feed);
-
     try {
-        const feeds = await repo.find({
-            relations: {
-                platform: true,
-                article: true,
-            },
-        });
+        const result = await getFeedOptions();
 
-        // -----------------------------
-        // 正規化関数（表記ゆれ統一）
-        // -----------------------------
-        const normalizeTag = (tag: string) => {
-            const t = tag.trim();
-
-            const map: Record<string, string> = {
-                react: "React",
-                reactjs: "React",
-                "next.js": "Next.js",
-                nextjs: "Next.js",
-                typescript: "TypeScript",
-                ts: "TypeScript",
-                javascript: "JavaScript",
-                js: "JavaScript",
-                aws: "AWS",
-                gcp: "GCP",
-                linux: "Linux",
-            };
-
-            const key = t.toLowerCase();
-            return map[key] ?? t;
-        };
-
-        // -----------------------------
-        // ① flatten（タグ展開）
-        // -----------------------------
-        const flat = feeds.flatMap(feed => {
-            if (!feed.tags) return [];
-
-            const tags = feed.tags
-                .split(",")
-                .map(t => normalizeTag(t))
-                .filter(Boolean);
-
-            const uniqueTags = Array.from(new Set(tags));
-
-            return uniqueTags.map(tag => ({
-                feed_id: feed.id,
-                tag,
-                platform: {
-                    id: feed.platform.id,
-                    name: feed.platform.name,
-                    favicon_url: feed.platform.favicon_url,
-                },
-                article: {
-                    id: feed.article.id,
-                    title: feed.article.title,
-                    article_url: feed.article.article_url,
-                    thumbnail_url: feed.article.thumbnail_url,
-                    published_at: feed.article.published_at,
-                },
-            }));
-        });
-
-        // -----------------------------
-        // ② 集約（React × Zenn形式へ）
-        // -----------------------------
-        const grouped = flat.reduce((acc, cur) => {
-            const key = `${cur.tag}__${cur.platform.name}`;
-
-            if (!acc[key]) {
-                acc[key] = {
-                    tag: cur.tag,
-                    platform: cur.platform,
-                    articles: [],
-                };
-            }
-
-            acc[key].articles.push(cur.article);
-
-            return acc;
-        }, {} as Record<
-            string,
-            {
-                tag: string;
-                platform: {
-                    id: number;
-                    name: string;
-                    favicon_url: string;
-                };
-                articles: any[];
-            }
-        >);
-
-        // object → array
-        const result = Object.values(grouped);
-
-        return res.json(result);
+        res.json(result);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+
+        res.status(500).json({
             message: "failed to get feed options",
         });
     }
@@ -124,32 +33,17 @@ export const getFeedOptionsHandler: RequestHandler = async (_req, res) => {
  * □ React / Zenn
  * □ AI / X
  */
-// querybuilderでarticlesを返すようにしたいがsupabase clientと互換性に懸念があるためここまでの返却
 export const getFolderArticlesHandler: RequestHandler = async (req, res) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(FolderTagPlatform);
-
     try {
-        const { tagPlatformId } = req.params;
-        const id = Number(tagPlatformId);
+        const id = Number(req.params.tagPlatformId);
 
-        const folderTagPlatforms = await repo.find({
-            where: {
-                id: id,
-            },
-            relations: {
-                platform: {
-                    feeds: {
-                        article: true,
-                    },
-                },
-            },
-        });
+        const result = await getFolderArticles(id);
 
-        return res.json(folderTagPlatforms);
+        res.json(result);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+
+        res.status(500).json({
             message: "failed to get tag/platform articles",
         });
     }
@@ -162,193 +56,80 @@ export const getFolderArticlesHandler: RequestHandler = async (req, res) => {
  * □ React / Qiita
  */
 export const createFolderHandler: RequestHandler = async (req, res) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Folder);
-
     try {
-        const { name } = req.body;
+        const result = await createFolder(req.body.name, req.user.id);
 
-        const userId = req.user.id;
-
-        const profile = await db
-            .getRepository(Profile)
-            .findOne({
-                where: {
-                    user_id: userId
-                }
-            });
-
-        if (!profile) {
-            return res.status(404).json({
-                message: "profile not found",
-            });
-        }
-
-        const folder = repo.create({
-            name,
-            profile_id: profile.id,
-        });
-
-        const result = await repo.save(folder);
-
-        return res.json(result);
-
+        res.json(result);
     } catch (error) {
         console.error(error);
 
-        return res.status(500).json({
+        res.status(500).json({
             message: "failed to create folder",
         });
     }
 };
 
 // フォルダ作成と同時に作成したフォルダに閲覧記事リストを登録
-export const createFolderTagPlatformsHandler: RequestHandler = async (
-    req,
-    res
-) => {
-    const db = AppDataSource.getInstance();
-
-    const repo = db.getRepository(FolderTagPlatform);
-
+export const createFolderTagPlatformsHandler: RequestHandler = async (req, res) => {
     try {
-        const {
-            folder_id,
-            items,
-        }: {
-            folder_id: number;
-            items: {
-                tag: string;
-                platform_id: number;
-            }[];
-        } = req.body;
+        const result = await createFolderTags(req.body.folder_id, req.body.items);
 
-        const entities = items.map(item =>
-            repo.create({
-                folder_id,
-                tag: item.tag,
-                platform_id: item.platform_id,
-            })
-        );
-
-        await repo.save(entities);
-
-        return res.status(201).json(entities);
+        res.status(201).json(result);
     } catch (error) {
         console.error(error);
 
-        return res.status(500).json({
+        res.status(500).json({
             message: "failed to create folder tag platforms",
         });
     }
 };
 
-/**
- グルーピングされたフォルダの一覧を返却
- */
+// グルーピングされたフォルダの一覧を返却
 export const getFolderHandler: RequestHandler = async (req, res) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Folder);
-
     try {
         const profileId = req.user?.profile_id ?? 2;
 
-        const folders = await repo.find({
-            where: {
-                profile_id: profileId,
-            },
-            relations: {
-                folderTagPlatforms: {
-                    platform: true,
-                },
-            },
-        });
+        const result = await getFolders(profileId);
 
-        return res.json(folders);
+        res.json(result);
     } catch (error) {
         console.error(error);
 
-        return res.status(500).json({
+        res.status(500).json({
             message: "failed to get folders",
         });
     }
 };
 
 export const updateFolderHandler: RequestHandler = async (req, res) => {
-    const db = AppDataSource.getInstance();
-    const folderRepo = db.getRepository(Folder);
-    const tagRepo = db.getRepository(FolderTagPlatform);
-
-    const { id } = req.params;
-    const { name, items } = req.body;
-
     try {
-        const folder = await folderRepo.findOne({
-            where: { id: Number(id) },
+        const result = await updateFolder({
+            id: Number(req.params.id),
+            name: req.body.name,
+            items: req.body.items,
         });
 
-        if (!folder) {
-            return res.status(404).json({ message: "folder not found" });
-        }
-
-        // ① フォルダ名更新
-        folder.name = name;
-        await folderRepo.save(folder);
-
-        // ② 既存タグ削除
-        await tagRepo.delete({
-            folder_id: Number(id),
-        });
-
-        // ③ 新規タグ挿入
-        const newItems = (items ?? []).map((item: any) =>
-            tagRepo.create({
-                folder_id: Number(id),
-                tag: item.tag,
-                platform_id: item.platform_id,
-            })
-        );
-
-        const saved = await tagRepo.save(newItems);
-
-        return res.json({
-            folder,
-            folderTagPlatforms: saved,
-        });
-
+        res.json(result);
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+
+        res.status(500).json({
             message: "failed to update folder",
         });
     }
 };
 
 export const deleteFolderHandler: RequestHandler = async (req, res) => {
-    const db = AppDataSource.getInstance();
-    const repo = db.getRepository(Folder);
-
-    const { id } = req.params;
-
     try {
-        const folder = await repo.findOne({
-            where: { id: Number(id) },
-        });
+        await deleteFolder(Number(req.params.id));
 
-        if (!folder) {
-            return res.status(404).json({
-                message: "folder not found",
-            });
-        }
-
-        await repo.remove(folder);
-
-        return res.json({
+        res.json({
             message: "folder deleted",
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({
+
+        res.status(500).json({
             message: "failed to delete folder",
         });
     }
