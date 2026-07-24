@@ -1,22 +1,12 @@
 import { getArticlesFromQiitaApiWithoutThumbnail } from "../../../crawler/repository/article.repository";
+import { OgpProps } from "../../types";
 
-type QiitaApiOgp = {
-    url: string;
-    image: string | null;
-};
-
-export const transformQiitaApiOgp = async (): Promise<
-    QiitaApiOgp[]
-> => {
+export const transformQiitaApiOgp = async (): Promise<OgpProps[]> => {
     console.log("[Qiita API] transform start");
 
-    const articles =
-        await getArticlesFromQiitaApiWithoutThumbnail();
+    const articles = await getArticlesFromQiitaApiWithoutThumbnail();
 
-    console.log(
-        "[Qiita API] article count:",
-        articles.length
-    );
+    console.log("[Qiita API] article count:", articles.length);
 
     const result = [];
 
@@ -24,118 +14,70 @@ export const transformQiitaApiOgp = async (): Promise<
         const chunk = articles.slice(i, i + 10);
 
         const chunkResult = await Promise.all(
-            chunk.map(
-                async (
-                    article: {
-                        article_url: string;
-                    }
-                ) => {
-                    console.log(
-                        "[Qiita API] --------------------"
-                    );
+            chunk.map(async (article: { article_url: string }) => {
+                console.log("[Qiita API] --------------------");
 
-                    console.log(
-                        "[Qiita API] article_url:",
-                        article.article_url
-                    );
+                console.log("[Qiita API] article_url:", article.article_url);
 
-                    const image =
-                        await fetchQiitaOgpImage(
-                            article.article_url
-                        );
+                const image = await fetchQiitaOgpImage(article.article_url);
 
-                    console.log(
-                        "[Qiita API] final result:"
-                    );
+                console.log("[Qiita API] final result:");
 
-                    console.log({
-                        url: article.article_url,
-                        image
-                    });
+                console.log({
+                    url: article.article_url,
+                    image,
+                });
 
-                    return {
-                        url: article.article_url,
-                        image
-                    };
-                }
-            )
+                return {
+                    url: article.article_url,
+                    image,
+                };
+            }),
         );
 
         result.push(...chunkResult);
     }
 
-    console.log(
-        "[Qiita API] transform finished:",
-        result.length
-    );
+    console.log("[Qiita API] transform finished:", result.length);
 
     console.table(result);
 
     return result;
 };
 
-const fetchQiitaOgpImage = async (
-    url: string
-): Promise<string | null> => {
-    console.log(
-        "[Qiita API] fetch article:",
-        url
-    );
+const fetchQiitaOgpImage = async (url: string): Promise<string | null> => {
+    console.log("[Qiita API] fetch article:", url);
 
     const response = await fetch(url, {
         headers: {
-            "User-Agent":
-                "Mozilla/5.0"
-        }
+            "User-Agent": "Mozilla/5.0",
+        },
     });
 
-    console.log(
-        "[Qiita API] article response:",
-        response.status,
-        response.statusText
-    );
+    console.log("[Qiita API] article response:", response.status, response.statusText);
 
     if (!response.ok) {
-        console.error(
-            "[Qiita API] article fetch failed:",
-            url
-        );
+        console.error("[Qiita API] article fetch failed:", url);
 
         return null;
     }
 
     const html = await response.text();
 
-    console.log(
-        "[Qiita API] html length:",
-        html.length
-    );
+    console.log("[Qiita API] html length:", html.length);
 
-    let match = html.match(
-        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i
-    );
+    let match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
 
-    console.log(
-        "[Qiita API] og:image pattern1:",
-        match?.[1] ?? "NOT FOUND"
-    );
+    console.log("[Qiita API] og:image pattern1:", match?.[1] ?? "NOT FOUND");
 
     if (!match) {
-        match = html.match(
-            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i
-        );
+        match = html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
 
-        console.log(
-            "[Qiita API] og:image pattern2:",
-            match?.[1] ?? "NOT FOUND"
-        );
+        console.log("[Qiita API] og:image pattern2:", match?.[1] ?? "NOT FOUND");
     }
 
     if (!match) {
-        console.warn(
-            "[Qiita API] og:image not found:",
-            url
-        );
+        console.warn("[Qiita API] og:image not found:", url);
 
         return null;
     }
@@ -146,9 +88,7 @@ const fetchQiitaOgpImage = async (
         .replace(/&#39;/g, "'")
         .trim();
 
-    console.log(
-        "[Qiita API] OGP IMAGE URL:"
-    );
+    console.log("[Qiita API] OGP IMAGE URL:");
 
     console.log(imageUrl);
 

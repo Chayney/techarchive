@@ -1,22 +1,12 @@
 import { getArticlesFromZennApiWithoutThumbnail } from "../../../crawler/repository/article.repository";
+import { OgpProps } from "../../types";
 
-type ZennApiOgp = {
-    url: string;
-    image: string | null;
-};
-
-export const transformZennApiOgp = async (): Promise<
-    ZennApiOgp[]
-> => {
+export const transformZennApiOgp = async (): Promise<OgpProps[]> => {
     console.log("[Zenn API] transform start");
 
-    const articles =
-        await getArticlesFromZennApiWithoutThumbnail();
+    const articles = await getArticlesFromZennApiWithoutThumbnail();
 
-    console.log(
-        "[Zenn API] article count:",
-        articles.length
-    );
+    console.log("[Zenn API] article count:", articles.length);
 
     const result = [];
 
@@ -25,14 +15,9 @@ export const transformZennApiOgp = async (): Promise<
 
         const chunkResult = await Promise.all(
             chunk.map(async (article) => {
-                console.log(
-                    "[Zenn API] article_url:",
-                    article.article_url
-                );
+                console.log("[Zenn API] article_url:", article.article_url);
 
-                const res = await fetch(
-                    article.article_url
-                );
+                const res = await fetch(article.article_url);
 
                 if (!res.ok) {
                     return {
@@ -44,26 +29,22 @@ export const transformZennApiOgp = async (): Promise<
                 const html = await res.text();
 
                 const match = html.match(
-                    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i
+                    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
                 );
 
-                const image =
-                    match?.[1] ?? null;
+                const image = match?.[1] ?? null;
 
                 return {
                     url: article.article_url,
                     image,
                 };
-            })
+            }),
         );
 
         result.push(...chunkResult);
     }
 
-    console.log(
-        "[Zenn API] transform finished:",
-        result.length
-    );
+    console.log("[Zenn API] transform finished:", result.length);
 
     console.table(result);
 

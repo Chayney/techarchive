@@ -1,32 +1,20 @@
 import { PlatformId, SourceType } from "../../../../constant/article";
 import { fetchQiitaRssArticles } from "../../external/rss/qiitaClient";
+import { QiitaRssArticleCreateInput, QiitaTag } from "../../types";
 
-type ArticleCreateInput = {
-    platform_id: number;
-    source_type: number;
-    title: string;
-    article_url: string;
-    tags: string | null;
-    thumbnail_url: string | null;
-    is_private: boolean;
-    published_at: Date;
-};
-
-export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]> => {
+export const transformQiitaRssArticles = async (): Promise<QiitaRssArticleCreateInput[]> => {
     console.log("[Qiita Transform] start");
 
     try {
         const xml = await fetchQiitaRssArticles();
 
-        const itemBlocks = xml
-            .split("<entry>")
-            .slice(1);
+        const itemBlocks = xml.split("<entry>").slice(1);
 
         console.log("[Qiita Transform] entries", {
             count: itemBlocks.length,
         });
 
-        const items: ArticleCreateInput[] = [];
+        const items: QiitaRssArticleCreateInput[] = [];
 
         for (const block of itemBlocks) {
             const itemXml = block.split("</entry>")[0];
@@ -49,7 +37,7 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
                 tags: tags,
                 thumbnail_url: null,
                 is_private: false,
-                published_at: new Date(published)
+                published_at: new Date(published),
             });
         }
 
@@ -58,18 +46,12 @@ export const transformQiitaRssArticles = async (): Promise<ArticleCreateInput[]>
         });
 
         return items;
-
     } catch (error) {
-
-        console.error(
-            "[Qiita Transform] failed",
-            error,
-        );
+        console.error("[Qiita Transform] failed", error);
 
         throw error;
     }
 };
-
 
 // =======================
 // helper functions
@@ -84,20 +66,14 @@ async function fetchArticleHtml(url: string): Promise<string> {
     const response = await fetch(url);
 
     if (!response.ok) {
-        throw new Error(
-            `failed to fetch article ${url}`
-        );
+        throw new Error(`failed to fetch article ${url}`);
     }
 
     return await response.text();
 }
 
-
 function extractQiitaTags(html: string): string | null {
-
-    const match = html.match(
-        /"tags"\s*:\s*(\[[\s\S]*?\])/
-    );
+    const match = html.match(/"tags"\s*:\s*(\[[\s\S]*?\])/);
 
     if (!match) {
         console.log("[Qiita Tag Extract] not found");
@@ -107,20 +83,15 @@ function extractQiitaTags(html: string): string | null {
     const raw = match[1];
 
     try {
-        const tags = JSON.parse(raw);
+        const tags: QiitaTag[] = JSON.parse(raw);
 
-        const names = tags
-            .map((t: any) => t.name)
-            .filter(Boolean);
+        const names = tags.map((tag) => tag.name).filter((name): name is string => Boolean(name));
 
         console.log("[Qiita Tag Extract] parsed", {
             names,
         });
 
-        return names.length
-            ? names.join(",")
-            : null;
-
+        return names.length ? names.join(",") : null;
     } catch (e) {
         console.error("[Qiita Tag Extract] parse error", {
             raw,

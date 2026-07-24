@@ -1,9 +1,7 @@
 export const fetchZennRssArticles = async () => {
     console.log("[Zenn] fetch start");
 
-    const response = await fetch(
-        "https://zenn.dev/feed"
-    );
+    const response = await fetch("https://zenn.dev/feed");
 
     console.log("[Zenn] response status:", response.status);
 

@@ -1,30 +1,10 @@
 import { PlatformId, SourceType } from "../../../../constant/article";
 import { fetchQiitaApiArticles } from "../../external/api/qiitaClient";
+import { QiitaApiArticleCreateInput, QiitaArticle } from "../../types";
 
-type QiitaArticle = {
-    title: string;
-    url: string;
-    likes_count: number;
-    created_at: Date;
-    tags: string;
-    og_image_url: string | null;
-}
-
-// thumbnail_urlはOGP取得となり経路が違うがarticlesのスキーマとして見えるようNULL許容として置いておく
+// thumbnail_urlはOGPのため別経路で取得出来るようNULL許容として置いておく
 // 1リクエストで100記事を取得する想定の為タイムアウトを起こさないようOGP取得は切り離す
-type ArticleCreateInput = {
-    platform_id: number;
-    source_type: number;
-    title: string;
-    article_url: string;
-    tags: string | null;
-    thumbnail_url: string | null;
-    is_private: boolean;
-    likes_count: number;
-    published_at: Date;
-}
-
-export const transformQiitaApiArticles = async (): Promise<ArticleCreateInput[]> => {
+export const transformQiitaApiArticles = async (): Promise<QiitaApiArticleCreateInput[]> => {
     console.log("[Qiita Transform] start");
 
     const data: QiitaArticle[] = await fetchQiitaApiArticles();
@@ -42,7 +22,7 @@ export const transformQiitaApiArticles = async (): Promise<ArticleCreateInput[]>
         thumbnail_url: item.og_image_url ?? null,
         is_private: false,
         likes_count: item.likes_count,
-        published_at: new Date(item.created_at)
+        published_at: new Date(item.created_at),
     }));
 
     console.log("[Qiita Transform] result:", transformed);

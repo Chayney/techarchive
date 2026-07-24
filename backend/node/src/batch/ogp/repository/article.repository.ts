@@ -9,9 +9,7 @@ export const saveOgps = async (): Promise<Article[]> => {
 
     const ogpResults = await ogps();
 
-    const urls = ogpResults.map(
-        (item) => item.url
-    );
+    const urls = ogpResults.map((item) => item.url);
 
     const articles = await repo
         .createQueryBuilder("article")
@@ -20,26 +18,15 @@ export const saveOgps = async (): Promise<Article[]> => {
         })
         .getMany();
 
-    const ogpMap = new Map(
-        ogpResults.map((item) => [
-            item.url,
-            item.image,
-        ])
-    );
+    const ogpMap = new Map(ogpResults.map((item) => [item.url, item.image]));
 
     articles.forEach((article) => {
-        article.thumbnail_url =
-            ogpMap.get(article.article_url) ??
-            null;
+        article.thumbnail_url = ogpMap.get(article.article_url) ?? null;
     });
 
-    const savedArticles =
-        await repo.save(articles);
+    const savedArticles = await repo.save(articles);
 
-    console.log(
-        "[OGP] updated article count:",
-        savedArticles.length
-    );
+    console.log("[OGP] updated article count:", savedArticles.length);
 
     return savedArticles;
 };

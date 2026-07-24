@@ -31,11 +31,7 @@ export const fetchZennApiArticles = async () => {
     const data3 = await response3.json();
 
     const data = {
-        articles: [
-            ...data1.articles,
-            ...data2.articles,
-            ...data3.articles,
-        ],
+        articles: [...data1.articles, ...data2.articles, ...data3.articles],
     };
 
     console.log("[Zenn] fetched data:", data);

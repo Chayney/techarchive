@@ -1,16 +1,5 @@
 import { fetchZennLikesCountFromApi } from "../external/zennClient";
-
-type ZennArticle = {
-    path: string;
-    liked_count: number;
-    published_at: Date;
-};
-
-type ArticleCreateInput = {
-    article_url: string;
-    likes_count: number;
-    published_at: Date;
-};
+import { ArticleCreateInput, ZennArticle } from "../types";
 
 export const transformZennLikesCount = async (): Promise<ArticleCreateInput[]> => {
     console.log("[Zenn Transform] start");
@@ -22,7 +11,7 @@ export const transformZennLikesCount = async (): Promise<ArticleCreateInput[]> =
     const transformed = data.map((article) => ({
         article_url: `https://zenn.dev${article.path}`,
         likes_count: article.liked_count,
-        published_at: new Date(article.published_at)
+        published_at: new Date(article.published_at),
     }));
 
     console.log("[Zenn Transform] result:", transformed);

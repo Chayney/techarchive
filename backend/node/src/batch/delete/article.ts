@@ -45,10 +45,7 @@ export const deleteArticles = async () => {
 
     // 削除対象外の記事ID
     const protectedIds = [
-        ...new Set([
-            ...bookmarks.map((b) => b.article_id),
-            ...favorites.map((f) => f.article_id),
-        ]),
+        ...new Set([...bookmarks.map((b) => b.article_id), ...favorites.map((f) => f.article_id)]),
     ];
 
     // 削除対象の記事を古い公開日順に取得
@@ -78,9 +75,7 @@ export const deleteArticles = async () => {
         id: In(deleteIds),
     });
 
-    console.log(
-        `[deleteArticles] deleted ${result.affected ?? 0} articles`
-    );
+    console.log(`[deleteArticles] deleted ${result.affected ?? 0} articles`);
 
     console.log("[deleteArticles] end");
 };

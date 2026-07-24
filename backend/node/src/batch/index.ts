@@ -11,9 +11,7 @@ async function run() {
 
     console.log(
         "Loaded entities:",
-        AppDataSource.getInstance()
-            .entityMetadatas
-            .map((m) => m.name)
+        AppDataSource.getInstance().entityMetadatas.map((m) => m.name),
     );
     const mode = process.argv[2];
 

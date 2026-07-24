@@ -1,9 +1,7 @@
 export const fetchQiitaRssArticles = async () => {
     console.log("[Qiita] fetch start");
 
-    const response = await fetch(
-        "https://qiita.com/popular-items/feed.atom"
-    );
+    const response = await fetch("https://qiita.com/popular-items/feed.atom");
 
     console.log("[Qiita] response status:", response.status);
 

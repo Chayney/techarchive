@@ -1,31 +1,17 @@
 import { AppDataSource } from "../../../config/appDataSource";
 import { Trend } from "../../../domain/entity/trends.entity";
-
-type TrendInput = {
-    id: number;
-    platform_id: number;
-    likes_count: number;
-    tags: string | null;
-};
+import { TrendInput } from "../types";
 
 export const saveTrends = async (articles: TrendInput[]) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Trend);
-    const articleIds = articles.map(item => item.id);
+    const articleIds = articles.map((item) => item.id);
     const existing = await repo
         .createQueryBuilder("trend")
-        .where(
-            "trend.article_id IN (:...articleIds)",
-            { articleIds }
-        )
+        .where("trend.article_id IN (:...articleIds)", { articleIds })
         .getMany();
 
-    const trendMap = new Map(
-        existing.map(trend => [
-            trend.article_id,
-            trend
-        ])
-    );
+    const trendMap = new Map(existing.map((trend) => [trend.article_id, trend]));
 
     const insertData: Trend[] = [];
     const updateData: Trend[] = [];
@@ -46,7 +32,7 @@ export const saveTrends = async (articles: TrendInput[]) => {
                     platform_id: article.platform_id,
                     likes_count: article.likes_count,
                     tags: article.tags,
-                })
+                }),
             );
         }
     }

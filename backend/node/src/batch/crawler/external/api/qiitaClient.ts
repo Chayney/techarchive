@@ -1,9 +1,7 @@
 export const fetchQiitaApiArticles = async () => {
     console.log("[Qiita] fetch start");
 
-    const response1 = await fetch(
-        "https://qiita.com/api/v2/items?page=1&per_page=100"
-    );
+    const response1 = await fetch("https://qiita.com/api/v2/items?page=1&per_page=100");
 
     console.log("[Qiita] response1 status:", response1.status);
 

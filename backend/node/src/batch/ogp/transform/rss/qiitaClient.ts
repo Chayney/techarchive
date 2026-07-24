@@ -1,20 +1,12 @@
 import { getArticlesFromQiitaRssWithoutThumbnail } from "../../../crawler/repository/article.repository";
+import { OgpProps } from "../../types";
 
-type QiitaOgp = {
-    url: string;
-    image: string | null;
-};
-
-export const transformQiitaRssOgp = async (): Promise<QiitaOgp[]> => {
+export const transformQiitaRssOgp = async (): Promise<OgpProps[]> => {
     console.log("[Qiita RSS] transform start");
 
-    const articles =
-        await getArticlesFromQiitaRssWithoutThumbnail();
+    const articles = await getArticlesFromQiitaRssWithoutThumbnail();
 
-    console.log(
-        "[Qiita RSS] article count:",
-        articles.length
-    );
+    console.log("[Qiita RSS] article count:", articles.length);
 
     const result = [];
 
@@ -23,55 +15,37 @@ export const transformQiitaRssOgp = async (): Promise<QiitaOgp[]> => {
 
         const chunkResult = await Promise.all(
             chunk.map(async (article) => {
-                console.log(
-                    "[Qiita RSS] fetch ogp:",
-                    article.article_url
-                );
+                console.log("[Qiita RSS] fetch ogp:", article.article_url);
 
-                const image =
-                    await fetchQiitaOgpImage(
-                        article.article_url
-                    );
+                const image = await fetchQiitaOgpImage(article.article_url);
 
-                console.log(
-                    "[Qiita RSS] og:image:",
-                    image
-                );
+                console.log("[Qiita RSS] og:image:", image);
 
                 return {
                     url: article.article_url,
                     image,
                 };
-            })
+            }),
         );
 
         result.push(...chunkResult);
     }
 
-    console.log(
-        "[Qiita RSS] transform finished:",
-        result.length
-    );
+    console.log("[Qiita RSS] transform finished:", result.length);
 
     console.table(result);
 
     return result;
 };
 
-const fetchQiitaOgpImage = async (
-    url: string
-): Promise<string | null> => {
+const fetchQiitaOgpImage = async (url: string): Promise<string | null> => {
     const response = await fetch(url, {
         headers: {
             "User-Agent": "Mozilla/5.0",
         },
     });
 
-    console.log(
-        "[Qiita RSS] article response:",
-        response.status,
-        url
-    );
+    console.log("[Qiita RSS] article response:", response.status, url);
 
     if (!response.ok) {
         return null;
@@ -79,21 +53,14 @@ const fetchQiitaOgpImage = async (
 
     const html = await response.text();
 
-    let match = html.match(
-        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i
-    );
+    let match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
 
     if (!match) {
-        match = html.match(
-            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i
-        );
+        match = html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
     }
 
     if (!match) {
-        console.warn(
-            "[Qiita RSS] og:image not found:",
-            url
-        );
+        console.warn("[Qiita RSS] og:image not found:", url);
 
         return null;
     }
@@ -104,10 +71,7 @@ const fetchQiitaOgpImage = async (
         .replace(/&#39;/g, "'")
         .trim();
 
-    console.log(
-        "[Qiita RSS] extracted og:image:",
-        imageUrl
-    );
+    console.log("[Qiita RSS] extracted og:image:", imageUrl);
 
     return imageUrl;
 };

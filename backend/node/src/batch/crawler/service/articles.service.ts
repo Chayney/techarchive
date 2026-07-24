@@ -13,8 +13,8 @@ export const articles = async () => {
         ...qiitaApiReponse,
         ...zennApiResponse,
         ...qiitaRssResponse,
-        ...zennRssResponse
+        ...zennRssResponse,
     ];
 
     return articles;
-}
+};

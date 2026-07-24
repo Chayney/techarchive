@@ -14,9 +14,13 @@ export const feedArticles = async () => {
 
     // 記事取得元がRSSを抽出
     const feedInputs = savedArticles
-        .filter(article => article.source_type === SourceType.QIITARSS || article.source_type === SourceType.ZENNRSS)
-        .map(article => {
-            const source = articles.find(item => item.article_url === article.article_url);
+        .filter(
+            (article) =>
+                article.source_type === SourceType.QIITARSS ||
+                article.source_type === SourceType.ZENNRSS,
+        )
+        .map((article) => {
+            const source = articles.find((item) => item.article_url === article.article_url);
 
             return {
                 id: article.id,
@@ -28,4 +32,4 @@ export const feedArticles = async () => {
     await saveFeeds(feedInputs);
 
     return savedArticles;
-}
+};

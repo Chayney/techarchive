@@ -3,7 +3,6 @@ import { transformZennApiOgp } from "../transform/api/zennClient";
 import { transformQiitaRssOgp } from "../transform/rss/qiitaClient";
 import { transformZennRssOgp } from "../transform/rss/zennClient";
 
-
 export const ogps = async () => {
     const qiitaApiReponse = await transformQiitaApiOgp();
     const zennApiResponse = await transformZennApiOgp();
@@ -14,8 +13,8 @@ export const ogps = async () => {
         ...qiitaApiReponse,
         ...zennApiResponse,
         ...qiitaRssResponse,
-        ...zennRssResponse
+        ...zennRssResponse,
     ];
 
     return articles;
-}
+};

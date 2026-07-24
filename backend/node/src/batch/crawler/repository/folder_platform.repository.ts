@@ -13,27 +13,23 @@ export const getPlatformTags = async () => {
     const feeds = await feedRepo.find();
     const platforms = await platformRepo.find();
 
-    const platformMap = new Map(
-        platforms.map(platform => [
-            platform.id,
-            platform.name,
-        ])
-    );
+    const platformMap = new Map(platforms.map((platform) => [platform.id, platform.name]));
 
-    const result = new Map<string, {
-        platform_id: number;
-        platform: string;
-        tag: string;
-    }>();
+    const result = new Map<
+        string,
+        {
+            platform_id: number;
+            platform: string;
+            tag: string;
+        }
+    >();
 
-    feeds.forEach(feed => {
+    feeds.forEach((feed) => {
         if (!feed.tags) return;
 
-        const tags = feed.tags
-            .split(",")
-            .map(tag => tag.trim());
+        const tags = feed.tags.split(",").map((tag) => tag.trim());
 
-        tags.forEach(tag => {
+        tags.forEach((tag) => {
             const normalizedTag = tag.toLowerCase();
 
             const key = `${feed.platform_id}_${normalizedTag}`;

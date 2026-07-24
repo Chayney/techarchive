@@ -14,9 +14,13 @@ export const trendArticles = async () => {
 
     // 記事取得元がAPIを抽出
     const trendInputs = savedArticles
-        .filter(article => article.source_type === SourceType.QIITAAPI || article.source_type === SourceType.ZENNAPI)
-        .map(article => {
-            const source = articles.find(item => item.article_url === article.article_url);
+        .filter(
+            (article) =>
+                article.source_type === SourceType.QIITAAPI ||
+                article.source_type === SourceType.ZENNAPI,
+        )
+        .map((article) => {
+            const source = articles.find((item) => item.article_url === article.article_url);
 
             return {
                 id: article.id,
