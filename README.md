@@ -27,3 +27,7 @@ IT技術集約サイトです。
 ・postgresql  
 ・typeorm  
 ・docker  
+
+## 設計方針  
+設計方針は以下で確認  
+https://copper-kip-e54.notion.site/3a7e8959758d80769940f44a42713cb6?pvs=74
