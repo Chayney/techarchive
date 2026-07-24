@@ -16,6 +16,8 @@ IT技術集約サイトです。
 ### バックエンド  
 ・node.js  
 ・typescript  
+・eslint  
+・prettier 
 
 ### インフラ  
 ・cloud run  
