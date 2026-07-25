@@ -300,7 +300,13 @@ export const AllMyFeedTemplate = () => {
                             ))}
                         </div>
 
-                        <Button variant="secondary" onClick={() => setSelectOpen(true)}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setTagKeyword("");
+                                setSelectOpen(true);
+                            }}
+                        >
                             選択
                         </Button>
 
@@ -344,9 +350,6 @@ export const AllMyFeedTemplate = () => {
                     open={selectOpen}
                     onOpenChange={(value) => {
                         setSelectOpen(value);
-                        if (!value) {
-                            setTagKeyword("");
-                        }
                     }}
                 >
                     <DialogContent showCloseButton={false}>
