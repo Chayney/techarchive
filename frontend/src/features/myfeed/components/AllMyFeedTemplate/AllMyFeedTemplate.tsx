@@ -15,7 +15,7 @@ import { useAuthContext } from "../../../auth/hooks/useAuthContext";
 import { useAllMyFeedTemplate } from "./useAllMyFeedTemplate";
 
 export const AllMyFeedTemplate = () => {
-    const { requireAuth } = useAuthContext()
+    const { requireAuth } = useAuthContext();
     const { folderList, tagPlatforms, fetchFolders } = useFolderListContext();
     const { createFolder, saveFolderTagPlatforms, updateFolder, deleteFolder } = useFolder();
     const { folderNameError, validateFolderName, clearFolderNameError } = useAllMyFeedTemplate();
@@ -31,7 +31,7 @@ export const AllMyFeedTemplate = () => {
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmType, setConfirmType] = useState<"create" | "update" | "delete" | null>(null);
-    
+
     const openConfirm = (type: "create" | "update" | "delete") => {
         setConfirmType(type);
         setOpen(false);
@@ -40,7 +40,7 @@ export const AllMyFeedTemplate = () => {
 
     const filteredTagPlatforms = useMemo(() => {
         return tagPlatforms.filter((item) =>
-            item.tag.toLowerCase().includes(tagKeyword.toLowerCase())
+            item.tag.toLowerCase().includes(tagKeyword.toLowerCase()),
         );
     }, [tagPlatforms, tagKeyword]);
 
@@ -49,7 +49,7 @@ export const AllMyFeedTemplate = () => {
 
     // フォルダ内のリストが4件以上の表示処理
     const folderWithMeta = useMemo(() => {
-        return (folderList ?? []).map(folder => {
+        return (folderList ?? []).map((folder) => {
             const items = folder.folderTagPlatforms ?? [];
 
             return {
@@ -61,40 +61,37 @@ export const AllMyFeedTemplate = () => {
     }, [folderList]);
 
     const filteredFolders = useMemo(() => {
-        return folderWithMeta.filter(folder =>
-            folder.name.toLowerCase().includes(keyword.toLowerCase())
+        return folderWithMeta.filter((folder) =>
+            folder.name.toLowerCase().includes(keyword.toLowerCase()),
         );
     }, [folderWithMeta, searchKeyword]);
-    
+
     const openCreateDialog = () => {
         if (!requireAuth()) return;
         setEditingFolder(null);
         setFolderName("");
+        setTagKeyword("");
         setSelected([]);
         setOpen(true);
     };
 
     const toggle = (item: TagPlatform) => {
         const exists = selected.some(
-            x => x.tag === item.tag && x.platform.id === item.platform.id
+            (x) => x.tag === item.tag && x.platform.id === item.platform.id,
         );
 
         if (exists) {
-            setSelected(prev =>
-                prev.filter(
-                    x => !(x.tag === item.tag && x.platform.id === item.platform.id)
-                )
+            setSelected((prev) =>
+                prev.filter((x) => !(x.tag === item.tag && x.platform.id === item.platform.id)),
             );
         } else {
-            setSelected(prev => [...prev, item]);
+            setSelected((prev) => [...prev, item]);
         }
     };
 
     const remove = (item: TagPlatform) => {
-        setSelected(prev =>
-            prev.filter(
-                x => !(x.tag === item.tag && x.platform.id === item.platform.id)
-            )
+        setSelected((prev) =>
+            prev.filter((x) => !(x.tag === item.tag && x.platform.id === item.platform.id)),
         );
     };
 
@@ -109,21 +106,20 @@ export const AllMyFeedTemplate = () => {
                 await updateFolder(
                     editingFolder.id,
                     folderName,
-                    selected.map(item => ({
+                    selected.map((item) => ({
                         tag: item.tag,
                         platform_id: item.platform.id,
-                    }))
+                    })),
                 );
-
             } else {
                 const folder = await createFolder(folderName);
 
                 await saveFolderTagPlatforms(
                     folder.id,
-                    selected.map(item => ({
+                    selected.map((item) => ({
                         tag: item.tag,
                         platform_id: item.platform.id,
-                    }))
+                    })),
                 );
             }
 
@@ -133,7 +129,6 @@ export const AllMyFeedTemplate = () => {
             setSelected([]);
             setFolderName("");
             setEditingFolder(null);
-
         } catch (error) {
             console.error(error);
         } finally {
@@ -153,7 +148,6 @@ export const AllMyFeedTemplate = () => {
             setEditingFolder(null);
             setSelected([]);
             setFolderName("");
-
         } catch (error) {
             console.error(error);
         } finally {
@@ -168,12 +162,12 @@ export const AllMyFeedTemplate = () => {
         setFolderName(editingFolder.name);
 
         setSelected(
-            editingFolder.folderTagPlatforms.map(item => ({
+            editingFolder.folderTagPlatforms.map((item) => ({
                 id: item.platform.id,
                 tag: item.tag,
                 platform: item.platform,
-                articles: []
-            }))
+                articles: [],
+            })),
         );
     }, [editingFolder]);
 
@@ -196,15 +190,13 @@ export const AllMyFeedTemplate = () => {
             <main className={styles.container}>
                 <div className={styles.grid}>
                     {(filteredFolders ?? []).length === 0 ? (
-                        <div className={styles.empty}>
-                            フォルダがありません
-                        </div>
+                        <div className={styles.empty}>フォルダがありません</div>
                     ) : (
-                        filteredFolders.map(folder => (                           
+                        filteredFolders.map((folder) => (
                             <div key={folder.id} className={styles.card}>
                                 <Link to={`${NAVIGATION_PATH.MYFOLDER}/${folder.id}`}>
                                     <h2>{folder.name}</h2>
-                                </Link>                                                                  
+                                </Link>
                                 {/* tag/platform preview */}
                                 <div className={styles.labelInFolder}>
                                     {folder.visibleItems?.map((item, index) => (
@@ -289,13 +281,11 @@ export const AllMyFeedTemplate = () => {
                             inputSize="md"
                         />
                         {folderNameError && (
-                            <p className={styles.errorMessage}>
-                                {folderNameError}
-                            </p>
+                            <p className={styles.errorMessage}>{folderNameError}</p>
                         )}
 
                         <div className={styles.selectedArea}>
-                            {selected.map(item => (
+                            {selected.map((item) => (
                                 <div
                                     key={`${item.platform.id}-${item.tag}`}
                                     className={styles.tagChip}
@@ -311,18 +301,18 @@ export const AllMyFeedTemplate = () => {
                             ))}
                         </div>
 
-                        <Button
-                            variant="secondary"
-                            onClick={() => setSelectOpen(true)}
-                        >
+                        <Button variant="secondary" onClick={() => setSelectOpen(true)}>
                             選択
                         </Button>
 
                         <div className={styles.dialogFooter}>
-                            <Button variant="secondary" onClick={() => {
-                                setOpen(false);
-                                setEditingFolder(null);
-                            }}>
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    setOpen(false);
+                                    setEditingFolder(null);
+                                }}
+                            >
                                 閉じる
                             </Button>
                             <Button
@@ -332,9 +322,7 @@ export const AllMyFeedTemplate = () => {
                                     if (!isValid) {
                                         return;
                                     }
-                                    openConfirm(
-                                        editingFolder ? "update" : "create"
-                                    );
+                                    openConfirm(editingFolder ? "update" : "create");
                                 }}
                                 disabled={loading}
                             >
@@ -372,9 +360,7 @@ export const AllMyFeedTemplate = () => {
                         <div className={styles.platformList}>
                             {filteredTagPlatforms.map((item) => {
                                 const checked = selected.some(
-                                    x =>
-                                        x.tag === item.tag &&
-                                        x.platform.id === item.platform.id
+                                    (x) => x.tag === item.tag && x.platform.id === item.platform.id,
                                 );
 
                                 return (
@@ -383,11 +369,7 @@ export const AllMyFeedTemplate = () => {
                                         className={styles.platformRow}
                                         onClick={() => toggle(item)}
                                     >
-                                        <input
-                                            type="checkbox"
-                                            checked={checked}
-                                            readOnly
-                                        />
+                                        <input type="checkbox" checked={checked} readOnly />
 
                                         <div className={styles.platformLabel}>
                                             <span>{item.tag}</span>
@@ -416,29 +398,17 @@ export const AllMyFeedTemplate = () => {
                         </div>
                     </DialogContent>
                 </Dialog>
-                <Dialog
-                    open={confirmOpen}
-                    onOpenChange={setConfirmOpen}
-                >
+                <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                     <DialogContent showCloseButton={false}>
-
                         <DialogTitle>
-                            {confirmType === "create" &&
-                                "フォルダを作成してもよろしいですか？"
-                            }
+                            {confirmType === "create" && "フォルダを作成してもよろしいですか？"}
 
-                            {confirmType === "update" &&
-                                "フォルダを更新してもよろしいですか？"
-                            }
+                            {confirmType === "update" && "フォルダを更新してもよろしいですか？"}
 
-                            {confirmType === "delete" &&
-                                "フォルダを削除してもよろしいですか？"
-                            }
+                            {confirmType === "delete" && "フォルダを削除してもよろしいですか？"}
                         </DialogTitle>
 
-
                         <div className={styles.dialogFooter}>
-
                             <Button
                                 variant="secondary"
                                 onClick={() => {
@@ -448,7 +418,6 @@ export const AllMyFeedTemplate = () => {
                             >
                                 キャンセル
                             </Button>
-
 
                             <Button
                                 variant="destructive"
