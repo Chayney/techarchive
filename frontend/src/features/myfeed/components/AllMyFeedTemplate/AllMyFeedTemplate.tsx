@@ -70,7 +70,6 @@ export const AllMyFeedTemplate = () => {
         if (!requireAuth()) return;
         setEditingFolder(null);
         setFolderName("");
-        setTagKeyword("");
         setSelected([]);
         setOpen(true);
     };
@@ -345,6 +344,9 @@ export const AllMyFeedTemplate = () => {
                     open={selectOpen}
                     onOpenChange={(value) => {
                         setSelectOpen(value);
+                        if (!value) {
+                            setTagKeyword("");
+                        }
                     }}
                 >
                     <DialogContent showCloseButton={false}>
