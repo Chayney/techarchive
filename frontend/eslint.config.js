@@ -61,6 +61,9 @@ export default defineConfig([
 
       // 波括弧必須
       curly: ['error', 'multi-line'],
+
+      // コンポーネントのみのエクスポートを無効化
+      'react-refresh/only-export-components': 'off',
     },
   },
 ]);

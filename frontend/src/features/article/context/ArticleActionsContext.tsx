@@ -1,5 +1,6 @@
 import { createContext, type FC, type ReactNode } from "react";
 import { useArticleActions } from "../hooks/useArticleActions";
+import type { Category } from "../types/article";
 
 type ContextProps = {
     children: ReactNode;
@@ -35,7 +36,7 @@ type ArticleActionsContextType = {
     handleAddCategory: (
         profileId: number,
         categoryName: string
-    ) => Promise<any>;
+    ) => Promise<Category>;
 };
 
 export const ArticleActionsContext =
@@ -56,7 +57,10 @@ export const ArticleActionsContext =
         showTooltip: () => { },
         setOpenArticleId: () => { },
 
-        handleAddCategory: async () => ({})
+        handleAddCategory: async () => ({
+            id: 0,
+            name: ''
+        })
     });
 
 export const ArticleActionsProvider: FC<ContextProps> = ({

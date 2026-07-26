@@ -22,7 +22,7 @@ export const LoginTemplate = () => {
         try {
             await login();
             navigate(NAVIGATION_LIST.FEED);
-        } catch (error) {
+        } catch {
             alert('ログイン中にエラーが発生しました')
         }
     }

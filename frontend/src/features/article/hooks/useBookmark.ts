@@ -10,7 +10,6 @@ export const useBookmark = () => {
         articleId: number,
         profileId: number
     ) => {
-        console.log("addBookmark", articleId, profileId);
         const accessToken = await getAccessToken();
         const response = await fetch(`${API_URL}/bookmark`, {
             method: "POST",

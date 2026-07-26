@@ -62,7 +62,7 @@ export const AllMyFeedTemplate = () => {
 
     const filteredFolders = useMemo(() => {
         return folderWithMeta.filter((folder) =>
-            folder.name.toLowerCase().includes(keyword.toLowerCase()),
+            folder.name.toLowerCase().includes(searchKeyword.toLowerCase()),
         );
     }, [folderWithMeta, searchKeyword]);
 

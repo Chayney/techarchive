@@ -17,7 +17,7 @@ export const useShareArticle = () => {
             }
         } catch (error) {
             // ユーザーがキャンセルした場合
-            console.log("Share canceled", error);
+            console.error(error);
         }
     };
 

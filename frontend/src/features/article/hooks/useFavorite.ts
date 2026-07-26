@@ -11,7 +11,6 @@ export const useFavorite = () => {
         articleId: number,
         categoryId: number
     ) => {
-        console.log("addFavorite", articleId, categoryId);
         const accessToken = await getAccessToken();
         const response = await fetch(`${API_URL}/favorite`, {
             method: "POST",
