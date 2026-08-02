@@ -2,6 +2,26 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+# ------------------- Backend Lint -------------------
+- name: 'node:22'
+  dir: 'backend'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      npm ci
+      npm run check
+
+# ------------------- Frontend Lint -------------------
+- name: 'node:22'
+  dir: 'frontend'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      npm ci
+      npm run check
+      
 # ------------------- Backend Build -------------------
 - name: 'gcr.io/cloud-builders/docker'
   args:
