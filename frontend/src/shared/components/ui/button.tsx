@@ -18,7 +18,7 @@ const buttonVariants = cva(
         tertiary:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 hover:bg-red-500 text- white text- sm px- 2 py - 1 rounded",
         quaternary:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 bg-red-500 text- white text- sm px- 2 py - 1 rounded",
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 bg-red-500 text-white text-sm px-2 py-1 rounded",
         quinary:
           "ml-auto border-border bg-background hover:-translate-y-[1px] hover:shadow-sm transition-all aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         destructive:
