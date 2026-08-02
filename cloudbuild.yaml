@@ -4,7 +4,7 @@ options:
 steps:
 # ------------------- Backend Lint -------------------
 - name: 'node:22'
-  dir: 'backend'
+  dir: 'backend/node'
   entrypoint: 'bash'
   args:
     - '-c'
@@ -21,7 +21,7 @@ steps:
     - |
       npm ci
       npm run check
-      
+
 # ------------------- Backend Build -------------------
 - name: 'gcr.io/cloud-builders/docker'
   args:
