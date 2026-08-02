@@ -1,22 +1,17 @@
 .notFound {
     width: 100%;
     min-height: 100vh;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     position: relative;
     overflow: hidden;
-
     color: white;
-
     background:
         radial-gradient(circle at top,
             #273c75,
             #080b18 60%,
             #02030a);
-
     font-family:
         "Noto Sans JP",
         sans-serif;
