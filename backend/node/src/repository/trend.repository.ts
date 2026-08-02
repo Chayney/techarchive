@@ -27,6 +27,8 @@ export const findTrendArticles = async (
         return await query.getManyAndCount();
     } catch (error) {
         console.error(error);
-        throw new Error('Failed to find trend articles');
+        throw new Error("Failed to find trend articles", {
+            cause: error,
+        });
     }
 };

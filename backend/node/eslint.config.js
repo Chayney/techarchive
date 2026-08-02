@@ -75,7 +75,10 @@ export default defineConfig([
             ],
 
             // console.logなどの使用を許可
-            "no-console": "off"
+            "no-console": "off",
+
+            // namespaceはチェックの対象外
+            "@typescript-eslint/no-namespace": "off"
         }
     }
 ]);

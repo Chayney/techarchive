@@ -18,7 +18,9 @@ export const findBookmarkArticles = async (profileId: number) => {
         });
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to find bookmark articles");
+        throw new Error("Failed to find bookmark articles", {
+            cause: error,
+        });
     }
 };
 

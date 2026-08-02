@@ -19,6 +19,8 @@ export const findFeedArticles = async () => {
         });
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to find feed articles");
+        throw new Error("Failed to find feed articles", {
+            cause: error,
+        });
     }
 };

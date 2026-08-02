@@ -13,7 +13,9 @@ export const findCategories = async (profileId: number) => {
         });
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to find categories");
+        throw new Error("Failed to find categories", {
+            cause: error,
+        });
     }
 };
 
@@ -30,6 +32,8 @@ export const saveCategory = async (profile_id: number, name: string) => {
         return await repo.save(category);
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to create category");
+        throw new Error("Failed to create category", {
+            cause: error,
+        });
     }
 };
