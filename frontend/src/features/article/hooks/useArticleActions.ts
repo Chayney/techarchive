@@ -127,7 +127,6 @@ export const useArticleActions = () => {
                 }
 
                 const data: Favorite[] = await res.json();
-                console.log("favorites API response:", data);
                 const categoryMap: Record<string, boolean> = {};
                 const articleMap: Record<number, boolean> = {};
 
