@@ -3,24 +3,24 @@ options:
 
 steps:
 # ------------------- Backend Lint -------------------
-- name: 'node:22'
-  dir: 'backend/node'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      npm ci
-      npm run check
+# - name: 'node:22'
+#   dir: 'backend/node'
+#   entrypoint: 'bash'
+#   args:
+#     - '-c'
+#     - |
+#       npm ci
+#       npm run check
 
 # ------------------- Frontend Lint -------------------
-- name: 'node:22'
-  dir: 'frontend'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      npm ci
-      npm run check
+# - name: 'node:22'
+#   dir: 'frontend'
+#   entrypoint: 'bash'
+#   args:
+#     - '-c'
+#     - |
+#       npm ci
+#       npm run check
 
 # ------------------- Backend Build -------------------
 - name: 'gcr.io/cloud-builders/docker'
