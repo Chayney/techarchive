@@ -88,6 +88,16 @@ export const ArticleCard = ({
         setOpen(false);
     };
 
+    console.log(
+        "Heart状態",
+        {
+            articleId: article.id,
+            title: article.title,
+            isFavorite: favoriteArticleMap[article.id],
+            favoriteArticleMap,
+        }
+    );
+
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>

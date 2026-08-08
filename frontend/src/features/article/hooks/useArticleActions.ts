@@ -127,6 +127,7 @@ export const useArticleActions = () => {
                 }
 
                 const data: Favorite[] = await res.json();
+                console.log("Favorite API response:", data);
                 const categoryMap: Record<string, boolean> = {};
                 const articleMap: Record<number, boolean> = {};
 
@@ -135,7 +136,7 @@ export const useArticleActions = () => {
                     categoryMap[key] = true;
                     articleMap[row.article_id] = true;
                 });
-
+                console.log("Favorite articleMap:", articleMap);
                 setFavoriteCategoryMap(categoryMap);
                 setFavoriteArticleMap(articleMap);
             } catch (error) {
