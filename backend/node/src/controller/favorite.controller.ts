@@ -5,9 +5,11 @@ import {
     deleteFavoriteArticle,
 } from "../service/favorite/favorite.service";
 
-export const getFavoriteArticlesHandler: RequestHandler = async (_req, res) => {
+export const getFavoriteArticlesHandler: RequestHandler = async (req, res) => {
     try {
-        const favorites = await getFavoriteArticles();
+        const profileId = req.user?.profile_id ?? 2;
+
+        const favorites = await getFavoriteArticles(profileId);
 
         res.json(favorites);
     } catch (error) {

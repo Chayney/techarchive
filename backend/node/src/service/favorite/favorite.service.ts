@@ -10,8 +10,8 @@ type FavoriteParam = {
     article_id: number;
 };
 
-export const getFavoriteArticles = async () => {
-    return await findFavoriteArticles();
+export const getFavoriteArticles = async (profile_id: number) => {
+    return await findFavoriteArticles(profile_id);
 };
 
 export const createFavoriteArticle = async ({ category_id, article_id }: FavoriteParam) => {

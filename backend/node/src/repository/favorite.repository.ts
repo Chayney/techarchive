@@ -1,18 +1,30 @@
 import { AppDataSource } from "../config/appDataSource";
 import { Favorite } from "../domain/entity/favorites.entity";
 
-export const findFavoriteArticles = async () => {
+export const findFavoriteArticles = async (profile_id: number) => {
     const db = AppDataSource.getInstance();
     const repo = db.getRepository(Favorite);
 
-    return await repo.find({
-        relations: {
-            article: {
-                platform: true,
+    try {
+        return await repo.find({
+            where: {
+                category: {
+                    profile_id: profile_id,
+                },
             },
-            category: true,
-        },
-    });
+            relations: {
+                article: {
+                    platform: true,
+                },
+                category: true,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to find favorite articles", {
+            cause: error,
+        });
+    }
 };
 
 export const findFavoriteArticle = async (category_id: number, article_id: number) => {
