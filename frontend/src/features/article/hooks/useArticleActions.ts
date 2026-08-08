@@ -145,6 +145,12 @@ export const useArticleActions = () => {
         };
 
         fetchFavorites();
+
+        const unsubscribe = onAuthChange(() => {
+            fetchFavorites();
+        });
+
+        return unsubscribe;
     }, [setFavoriteCategoryMap, setFavoriteArticleMap]);
 
     // カテゴリー名の追加
