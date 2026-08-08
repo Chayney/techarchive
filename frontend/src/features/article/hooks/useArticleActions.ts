@@ -84,7 +84,7 @@ export const useArticleActions = () => {
             const res = await fetch(`${API_URL}/bookmarks`, {
                 headers: token
                     ? { Authorization: `Bearer ${token}` }
-                    : {},
+                    : {}
             });
 
             if (!res.ok) {
@@ -114,8 +114,13 @@ export const useArticleActions = () => {
     // お気に入り記事の取得
     useEffect(() => {
         const fetchFavorites = async () => {
+            const token = await getAccessToken();
             try {
-                const res = await fetch(`${API_URL}/favorites`);
+                const res = await fetch(`${API_URL}/favorites`, {
+                    headers: token
+                        ? { Authorization: `Bearer ${token}` }
+                        : {}
+                });
 
                 if (!res.ok) {
                     throw new Error("お気に入りの取得に失敗しました");
